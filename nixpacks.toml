@@ -8,4 +8,4 @@ cmds = ["cd artifacts/api-server && npm install"]
 cmds = ["cd artifacts/api-server && npm run build"]
 
 [start]
-cmd = "node --enable-source-maps artifacts/api-server/dist/index.mjs"
+cmd = "cd artifacts/api-server && node dist/index.mjs"
