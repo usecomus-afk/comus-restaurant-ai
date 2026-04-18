@@ -182,11 +182,12 @@ function renderPage(masaId: string): string {
     --safe-t:      env(safe-area-inset-top, 0px);
   }
 
-  html { height: 100%; }
+  html { height: 100%; overflow-x: hidden; }
   body {
     height: 100%;
     height: 100dvh;
     overflow: hidden;
+    overflow-x: hidden;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: var(--bg);
     color: var(--text);
@@ -486,17 +487,171 @@ function renderPage(masaId: string): string {
     bottom: calc(14px + var(--safe-b));
     width: 50px; height: 50px;
     border-radius: 50%;
-    background: var(--accent);
-    border: none;
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
     display: flex; align-items: center; justify-content: center;
-    font-size: 21px;
     cursor: pointer;
     z-index: 400;
-    box-shadow: 0 4px 20px rgba(230,57,70,.4);
-    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 16px rgba(0,0,0,.5);
+    transition: transform .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+    color: #fff;
+  }
+  #chatFab svg { width: 22px; height: 22px; fill: currentColor; }
+  #chatFab:active { transform: scale(.92); background: #252525; }
+
+  /* ════════ ACTION FABs (right side stack) ════════ */
+  .action-fab {
+    position: fixed;
+    right: 16px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 400;
+    box-shadow: 0 2px 10px rgba(0,0,0,.4);
+    transition: transform .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--text);
+  }
+  .action-fab svg { width: 18px; height: 18px; fill: currentColor; }
+  .action-fab:active { transform: scale(.9); background: #252525; }
+  #hesapFab  { bottom: calc(14px + var(--safe-b) + 60px); }
+  #garsonFab { bottom: calc(14px + var(--safe-b) + 116px); }
+
+  /* ════════ FEEDBACK FAB (bottom left) ════════ */
+  #feedbackFab {
+    position: fixed;
+    left: 16px;
+    bottom: calc(14px + var(--safe-b));
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 1px solid #2e2e2e;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    z-index: 400;
+    box-shadow: 0 2px 10px rgba(0,0,0,.4);
+    transition: transform .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--text);
+  }
+  #feedbackFab svg { width: 18px; height: 18px; fill: currentColor; }
+  #feedbackFab:active { transform: scale(.9); background: #252525; }
+
+  /* ════════ BIZI PUANLAYIN BANNER ════════ */
+  #ratingBanner {
+    display: flex; align-items: center; gap: 12px;
+    background: #1a1a1a;
+    border: 1px solid #252525;
+    border-radius: 14px;
+    padding: 13px 16px;
+    margin-bottom: 22px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color .15s;
+  }
+  #ratingBanner:active { border-color: #facc15; }
+  .rb-stars { font-size: 16px; letter-spacing: 1px; flex-shrink: 0; color: #facc15; }
+  .rb-text  { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .rb-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
+  .rb-sub   { font-size: 11px; color: var(--muted); }
+  .rb-arrow { color: var(--sub); font-size: 18px; font-weight: 300; flex-shrink: 0; }
+
+  /* ════════ GENERIC MODAL (feedback & rating) ════════ */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.8);
+    z-index: 800;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .modal-bg.open { opacity: 1; pointer-events: auto; }
+  .modal-sheet {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #111;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid #1e1e1e;
+    z-index: 810;
+    transform: translateY(100%);
+    transition: transform .32s cubic-bezier(.25,.46,.45,.94);
+    padding-bottom: calc(20px + var(--safe-b));
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-sheet.open { transform: translateY(0); }
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px 14px;
+    border-bottom: 1px solid #1e1e1e;
+    position: sticky; top: 0; background: #111; z-index: 1;
+  }
+  .modal-head h3 { font-size: 16px; font-weight: 700; color: var(--text); }
+  .modal-close {
+    background: #1e1e1e; border: none;
+    color: var(--muted); font-size: 16px;
+    width: 32px; height: 32px; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
     -webkit-tap-highlight-color: transparent;
   }
-  #chatFab:active { transform: scale(.92); box-shadow: 0 2px 10px rgba(230,57,70,.3); }
+  .modal-close:active { background: #2a2a2a; }
+  .modal-body { padding: 18px 18px 0; }
+  .modal-field { margin-bottom: 14px; }
+  .modal-field label {
+    display: block; font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: .08em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .modal-input, .modal-textarea {
+    width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a;
+    border-radius: 10px; color: var(--text);
+    font-family: inherit; font-size: 15px; padding: 11px 14px;
+    outline: none; transition: border-color .15s;
+  }
+  .modal-input:focus, .modal-textarea:focus { border-color: rgba(230,57,70,.5); }
+  .modal-textarea { resize: none; height: 90px; line-height: 1.45; }
+  .modal-submit {
+    width: 100%; height: 46px; border-radius: 12px;
+    background: var(--accent); border: none; color: #fff;
+    font-size: 15px; font-weight: 700; font-family: inherit;
+    cursor: pointer; margin-top: 4px;
+    transition: opacity .15s, transform .1s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .modal-submit:active { transform: scale(.97); opacity: .9; }
+  .modal-submit:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* ════════ RATING STARS ════════ */
+  .star-row {
+    display: flex; justify-content: center; gap: 6px;
+    padding: 20px 0 8px;
+  }
+  .star-btn {
+    background: none; border: none;
+    font-size: 38px; cursor: pointer;
+    opacity: .25; transition: opacity .12s, transform .1s;
+    -webkit-tap-highlight-color: transparent; line-height: 1; padding: 2px;
+  }
+  .star-btn.lit { opacity: 1; }
+  .star-btn:active { transform: scale(.82); }
+  .rating-hint {
+    text-align: center; font-size: 13px; color: var(--muted);
+    min-height: 20px; margin-bottom: 18px; padding: 0 18px;
+  }
+  .rating-action-row {
+    display: flex; gap: 10px; padding: 0 18px; margin-bottom: 4px;
+  }
+  .rating-action-btn {
+    flex: 1; height: 44px; border-radius: 11px;
+    border: 1px solid #2a2a2a; background: #1a1a1a;
+    color: var(--text); font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; -webkit-tap-highlight-color: transparent; transition: background .15s;
+  }
+  .rating-action-btn.primary { background: #4ade80; border-color: #4ade80; color: #000; }
+  .rating-action-btn:active { opacity: .8; }
 
   /* ════════ CHAT OVERLAY (full screen) ════════ */
   #chatOverlay {
@@ -933,7 +1088,7 @@ function renderPage(masaId: string): string {
     <div class="brand-name">rebel<span class="brand-accent">.</span></div>
     <div class="brand-sub">Bar &amp; Bistro</div>
   </div>
-  <button id="masaBadgeBtn" class="masa-badge" aria-label="Masa değiştir">Masa ${escapeHtml(displayMasaId)}</button>
+  <div style="width:38px;flex-shrink:0;"></div>
 </header>
 
 <!-- ═══ CATEGORY NAV ═══ -->
@@ -943,7 +1098,14 @@ function renderPage(masaId: string): string {
 
 <!-- ═══ MENU CONTENT ═══ -->
 <main id="menuContent">
-  <div id="menuInner">${menuSections}</div>
+  <div id="menuInner">
+    <button id="ratingBanner" aria-label="Bizi puanlayın">
+      <span class="rb-stars">★★★★★</span>
+      <span class="rb-text"><span class="rb-title">Bizi Puanlayın</span><span class="rb-sub">Deneyiminizi paylaşın</span></span>
+      <span class="rb-arrow">›</span>
+    </button>
+    ${menuSections}
+  </div>
 </main>
 
 <!-- ═══ TOAST ═══ -->
@@ -986,8 +1148,68 @@ function renderPage(masaId: string): string {
   </div>
 </aside>
 
+<!-- ═══ ACTION FABs (right side) ═══ -->
+<button id="garsonFab" class="action-fab" aria-label="Garson çağır">
+  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/><path d="M12 2c-1.1 0-2 .9-2 2v1H8V4a4 4 0 0 1 8 0v1h-2V4c0-1.1-.9-2-2-2zM4 20h16v2H4z"/></svg>
+</button>
+<button id="hesapFab" class="action-fab" aria-label="Hesap iste">
+  <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h2v2H6zm4-4h8v2h-8zm0 4h5v2h-5z"/></svg>
+</button>
+
 <!-- ═══ CHAT FAB ═══ -->
-<button id="chatFab" aria-label="Asistan aç" aria-expanded="false">🤖</button>
+<button id="chatFab" aria-label="Asistan aç" aria-expanded="false">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+</button>
+
+<!-- ═══ FEEDBACK FAB (bottom left) ═══ -->
+<button id="feedbackFab" aria-label="Düşünceleriniz">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+</button>
+
+<!-- ═══ FEEDBACK MODAL ═══ -->
+<div id="feedbackBg" class="modal-bg" aria-hidden="true"></div>
+<div id="feedbackSheet" class="modal-sheet" role="dialog" aria-label="Düşünceleriniz" aria-modal="true" aria-hidden="true">
+  <div class="modal-head">
+    <h3>Düşünceleriniz</h3>
+    <button class="modal-close" id="feedbackClose" aria-label="Kapat">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="modal-field">
+      <label for="fbName">Ad Soyad</label>
+      <input class="modal-input" id="fbName" type="text" placeholder="Adınız ve soyadınız" autocomplete="name">
+    </div>
+    <div class="modal-field">
+      <label for="fbPhone">Cep Numarası</label>
+      <input class="modal-input" id="fbPhone" type="tel" placeholder="0 5XX XXX XX XX" autocomplete="tel">
+    </div>
+    <div class="modal-field">
+      <label for="fbMessage">Mesajınız</label>
+      <textarea class="modal-textarea" id="fbMessage" placeholder="Deneyiminizi, önerilerinizi veya şikayetlerinizi buraya yazabilirsiniz…"></textarea>
+    </div>
+    <button class="modal-submit" id="fbSubmit">İlet</button>
+  </div>
+</div>
+
+<!-- ═══ RATING MODAL ═══ -->
+<div id="ratingBg" class="modal-bg" aria-hidden="true"></div>
+<div id="ratingSheet" class="modal-sheet" role="dialog" aria-label="Bizi Puanlayın" aria-modal="true" aria-hidden="true">
+  <div class="modal-head">
+    <h3>Bizi Puanlayın</h3>
+    <button class="modal-close" id="ratingClose" aria-label="Kapat">✕</button>
+  </div>
+  <div class="star-row" id="starRow">
+    <button class="star-btn" data-val="1" aria-label="1 yıldız">★</button>
+    <button class="star-btn" data-val="2" aria-label="2 yıldız">★</button>
+    <button class="star-btn" data-val="3" aria-label="3 yıldız">★</button>
+    <button class="star-btn" data-val="4" aria-label="4 yıldız">★</button>
+    <button class="star-btn" data-val="5" aria-label="5 yıldız">★</button>
+  </div>
+  <p class="rating-hint" id="ratingHint">Deneyiminizi değerlendirin</p>
+  <div class="rating-action-row" id="ratingActions" style="display:none">
+    <button class="rating-action-btn" id="ratingNo">Hayır</button>
+    <button class="rating-action-btn primary" id="ratingYes">Evet, değerlendireyim</button>
+  </div>
+</div>
 
 <!-- ═══ CHAT OVERLAY ═══ -->
 <div id="chatOverlay" role="dialog" aria-label="Rebel Menü Asistanı" aria-modal="true" aria-hidden="true">
@@ -1356,11 +1578,6 @@ function renderPage(masaId: string): string {
   const masaBgEl    = document.getElementById('masaBg');
   const masaSheetEl = document.getElementById('masaSheet');
 
-  function updateMasaBadge() {
-    document.getElementById('masaBadgeBtn').textContent = 'Masa ' + _masaId;
-  }
-  updateMasaBadge();
-
   function openMasaSheet() {
     document.querySelectorAll('.masa-num-btn').forEach(btn => {
       btn.classList.toggle('selected', btn.dataset.num === String(_masaId));
@@ -1375,7 +1592,6 @@ function renderPage(masaId: string): string {
     masaSheetEl.setAttribute('aria-hidden', 'true');
   }
 
-  document.getElementById('masaBadgeBtn').addEventListener('click', openMasaSheet);
   document.getElementById('masaCloseBtn').addEventListener('click', closeMasaSheet);
   masaBgEl.addEventListener('click', closeMasaSheet);
 
@@ -1383,7 +1599,6 @@ function renderPage(masaId: string): string {
     btn.addEventListener('click', () => {
       _masaId = btn.dataset.num;
       sessionStorage.setItem('rebel_masa', _masaId);
-      updateMasaBadge();
       closeMasaSheet();
       showToast('Masa ' + _masaId + ' seçildi ✓');
     });
@@ -1400,6 +1615,107 @@ function renderPage(masaId: string): string {
     } catch {}
     showToast('Talebiniz iletildi ✓');
   }
+  document.getElementById('garsonFab').addEventListener('click', () => sendNotify('garson'));
+  document.getElementById('hesapFab').addEventListener('click',  () => sendNotify('hesap'));
+
+  /* ── FEEDBACK MODAL ───────────────────────────────────── */
+  const feedbackBg    = document.getElementById('feedbackBg');
+  const feedbackSheet = document.getElementById('feedbackSheet');
+
+  function openFeedback() {
+    feedbackBg.classList.add('open');
+    feedbackSheet.classList.add('open');
+    feedbackSheet.removeAttribute('aria-hidden');
+    feedbackBg.removeAttribute('aria-hidden');
+    setTimeout(() => document.getElementById('fbName').focus(), 320);
+  }
+  function closeFeedback() {
+    feedbackBg.classList.remove('open');
+    feedbackSheet.classList.remove('open');
+    feedbackSheet.setAttribute('aria-hidden', 'true');
+    feedbackBg.setAttribute('aria-hidden', 'true');
+  }
+  document.getElementById('feedbackFab').addEventListener('click', openFeedback);
+  document.getElementById('feedbackClose').addEventListener('click', closeFeedback);
+  feedbackBg.addEventListener('click', closeFeedback);
+
+  document.getElementById('fbSubmit').addEventListener('click', async () => {
+    const name    = document.getElementById('fbName').value.trim();
+    const phone   = document.getElementById('fbPhone').value.trim();
+    const message = document.getElementById('fbMessage').value.trim();
+    if (!name || !message) { showToast('Ad ve mesaj alanları zorunludur'); return; }
+    const btn = document.getElementById('fbSubmit');
+    btn.disabled = true;
+    btn.textContent = 'Gönderiliyor…';
+    try {
+      await fetch('/api/feedback-form', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ name, phone, message, masaId: _masaId }),
+      });
+      closeFeedback();
+      document.getElementById('fbName').value    = '';
+      document.getElementById('fbPhone').value   = '';
+      document.getElementById('fbMessage').value = '';
+      showToast('Geri bildiriminiz iletildi ✓');
+    } catch {
+      showToast('Bağlantı hatası, tekrar deneyin');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'İlet';
+    }
+  });
+
+  /* ── RATING MODAL ─────────────────────────────────────── */
+  const ratingBg      = document.getElementById('ratingBg');
+  const ratingSheet   = document.getElementById('ratingSheet');
+  const ratingHint    = document.getElementById('ratingHint');
+  const ratingActions = document.getElementById('ratingActions');
+  const starBtns      = Array.from(document.querySelectorAll('.star-btn'));
+  const RATING_HINTS  = ['', 'Çok kötü 😟', 'Kötü 😕', 'Orta 🙂', 'İyi 😊', 'Mükemmel 🤩'];
+  let _selectedStar   = 0;
+
+  function openRating() {
+    _selectedStar = 0;
+    starBtns.forEach(b => b.classList.remove('lit'));
+    ratingHint.textContent = 'Deneyiminizi değerlendirin';
+    ratingActions.style.display = 'none';
+    ratingBg.classList.add('open');
+    ratingSheet.classList.add('open');
+    ratingSheet.removeAttribute('aria-hidden');
+    ratingBg.removeAttribute('aria-hidden');
+  }
+  function closeRating() {
+    ratingBg.classList.remove('open');
+    ratingSheet.classList.remove('open');
+    ratingSheet.setAttribute('aria-hidden', 'true');
+    ratingBg.setAttribute('aria-hidden', 'true');
+  }
+  document.getElementById('ratingBanner').addEventListener('click', openRating);
+  document.getElementById('ratingClose').addEventListener('click', closeRating);
+  ratingBg.addEventListener('click', closeRating);
+
+  starBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      _selectedStar = parseInt(btn.dataset.val, 10);
+      starBtns.forEach(b => b.classList.toggle('lit', parseInt(b.dataset.val, 10) <= _selectedStar));
+      ratingHint.textContent = RATING_HINTS[_selectedStar] ?? '';
+      if (_selectedStar <= 3) {
+        closeRating();
+        setTimeout(openFeedback, 350);
+      } else {
+        ratingHint.textContent = 'Google profilimizde değerlendirme yapmak ister misiniz?';
+        ratingActions.style.display = 'flex';
+      }
+    });
+  });
+
+  document.getElementById('ratingYes').addEventListener('click', () => {
+    window.open('https://g.page/r/PLACEHOLDER/review', '_blank', 'noopener');
+    closeRating();
+  });
+  document.getElementById('ratingNo').addEventListener('click', closeRating);
+
   function addMsg(text, role) {
     const el = document.createElement('div');
     el.className = 'msg ' + role;
