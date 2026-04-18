@@ -178,6 +178,7 @@ function renderPage(masaId: string): string {
     --tg:          #229ED9;
     --header-h:    60px;
     --nav-h:       48px;
+    --action-bar-h: 82px;
     --safe-b:      env(safe-area-inset-bottom, 0px);
     --safe-t:      env(safe-area-inset-top, 0px);
   }
@@ -292,7 +293,7 @@ function renderPage(masaId: string): string {
   /* ════════ SCROLLABLE MENU ════════ */
   #menuContent {
     position: fixed;
-    top: calc(var(--header-h) + var(--nav-h));
+    top: calc(var(--header-h) + var(--nav-h) + var(--action-bar-h));
     left: 0; right: 0;
     bottom: 0;
     overflow-y: auto;
@@ -480,68 +481,41 @@ function renderPage(masaId: string): string {
     color: #fff;
   }
 
-  /* ════════ CHAT FAB ════════ */
-  #chatFab {
-    position: fixed;
-    right: 16px;
-    bottom: calc(14px + var(--safe-b));
-    width: 60px;
-    display: flex; flex-direction: column; align-items: center; gap: 5px;
-    background: transparent; border: none;
-    cursor: pointer; z-index: 400;
-    -webkit-tap-highlight-color: transparent;
-    padding: 0;
-  }
-  .cf-circle {
-    width: 60px; height: 60px; border-radius: 50%;
-    background: #1a1a1a; border: 1px solid #2e2e2e;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    box-shadow: 0 4px 20px rgba(0,0,0,.55);
-    transition: transform .15s, background .15s;
-    color: #fff;
-  }
-  #chatFab:active .cf-circle { transform: scale(.91); background: #252525; }
-  #chatFab svg { width: 26px; height: 26px; fill: currentColor; pointer-events: none; }
-  .cf-dot {
-    position: absolute; top: 3px; right: 3px;
-    width: 11px; height: 11px; border-radius: 50%;
-    background: #22c55e; border: 2px solid #111;
-    animation: cfPulse 2.2s infinite;
-  }
-  @keyframes cfPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.55); }
-    60%       { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
-  }
-  .cf-label {
-    font-size: 10px; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: rgba(255,255,255,.6);
-    line-height: 1;
-  }
-
-  /* ════════ ACTION BAR ════════ */
+  /* ════════ STICKY ACTION BAR ════════ */
   #actionBar {
+    position: fixed;
+    top: calc(var(--header-h) + var(--nav-h));
+    left: 0; right: 0;
+    height: var(--action-bar-h);
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-    margin-bottom: 22px;
+    padding: 8px 12px;
+    background: #0a0a0a;
+    border-bottom: 1px solid #1c1c1c;
+    z-index: 280;
+    box-sizing: border-box;
   }
   .ab-btn {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 7px;
+    gap: 5px;
     background: #1a1a1a; border: 1px solid #252525;
-    border-radius: 12px; padding: 14px 6px;
+    border-radius: 11px; padding: 10px 4px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: transform .15s, border-color .15s, background .15s;
   }
   .ab-btn:active { transform: scale(.94); border-color: #facc15; background: #202020; }
-  .ab-icon  { font-size: 22px; line-height: 1; }
+  .ab-btn.ai-btn { border-color: rgba(230,57,70,.35); }
+  .ab-btn.ai-btn:active { border-color: var(--accent); }
+  .ab-icon  { font-size: 20px; line-height: 1; }
+  .ab-icon svg { width: 20px; height: 20px; fill: var(--accent); display: block; }
   .ab-label {
-    font-size: 9.5px; font-weight: 700; color: var(--muted);
-    text-align: center; line-height: 1.25; letter-spacing: .02em;
+    font-size: 9px; font-weight: 700; color: var(--muted);
+    text-align: center; line-height: 1.2; letter-spacing: .02em;
   }
+  .ab-btn.ai-btn .ab-label { color: var(--accent); }
 
   /* ════════ GENERIC MODAL (feedback & rating) ════════ */
   .modal-bg {
@@ -606,37 +580,6 @@ function renderPage(masaId: string): string {
   }
   .modal-submit:active { transform: scale(.97); opacity: .9; }
   .modal-submit:disabled { opacity: .35; cursor: not-allowed; }
-
-  /* ════════ INSTAGRAM BUTTON ════════ */
-  #igBtn {
-    display: flex; align-items: center; gap: 12px;
-    background: linear-gradient(135deg, #E1306C 0%, #F77737 100%);
-    border-radius: 12px; padding: 13px 16px;
-    text-decoration: none; color: #fff;
-    margin-bottom: 20px;
-    -webkit-tap-highlight-color: transparent;
-    transition: opacity .15s, transform .1s;
-    box-shadow: 0 3px 12px rgba(225,48,108,.35);
-  }
-  #igBtn:active { opacity: .85; transform: scale(.97); }
-  .ig-icon { width: 26px; height: 26px; fill: #fff; flex-shrink: 0; }
-  .ig-handle { font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
-
-  /* ════════ MODAL DIVIDER ════════ */
-  .modal-divider {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 18px;
-  }
-  .modal-divider::before,
-  .modal-divider::after {
-    content: ''; flex: 1;
-    height: 1px; background: #222;
-  }
-  .modal-divider-label {
-    font-size: 11px; font-weight: 700; color: var(--muted);
-    letter-spacing: .07em; text-transform: uppercase;
-    white-space: nowrap;
-  }
 
   /* ════════ RATING STARS ════════ */
   .star-row {
@@ -1110,27 +1053,31 @@ function renderPage(masaId: string): string {
   ${navPills}
 </nav>
 
+<!-- ═══ STICKY ACTION BAR ═══ -->
+<div id="actionBar" role="toolbar" aria-label="Hızlı işlemler">
+  <button class="ab-btn" id="abGarson">
+    <span class="ab-icon">🔔</span>
+    <span class="ab-label">Garson Çağır</span>
+  </button>
+  <button class="ab-btn" id="abHesap">
+    <span class="ab-icon">🧾</span>
+    <span class="ab-label">Hesap İste</span>
+  </button>
+  <button class="ab-btn ai-btn" id="abAI" aria-label="GurmeAI sohbeti aç">
+    <span class="ab-icon">
+      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    </span>
+    <span class="ab-label">GurmeAI</span>
+  </button>
+  <button class="ab-btn" id="abRating">
+    <span class="ab-icon">⭐</span>
+    <span class="ab-label">Bizi Puanlayın</span>
+  </button>
+</div>
+
 <!-- ═══ MENU CONTENT ═══ -->
 <main id="menuContent">
   <div id="menuInner">
-    <div id="actionBar">
-      <button class="ab-btn" id="abGarson">
-        <span class="ab-icon">🔔</span>
-        <span class="ab-label">Garson Çağır</span>
-      </button>
-      <button class="ab-btn" id="abHesap">
-        <span class="ab-icon">🧾</span>
-        <span class="ab-label">Hesap İste</span>
-      </button>
-      <button class="ab-btn" id="abFeedback">
-        <span class="ab-icon">📲</span>
-        <span class="ab-label">Sosyal Medya & İletişim</span>
-      </button>
-      <button class="ab-btn" id="abRating">
-        <span class="ab-icon">⭐</span>
-        <span class="ab-label">Bizi Puanlayın</span>
-      </button>
-    </div>
     ${menuSections}
   </div>
 </main>
@@ -1175,33 +1122,14 @@ function renderPage(masaId: string): string {
   </div>
 </aside>
 
-<!-- ═══ CHAT FAB ═══ -->
-<button id="chatFab" aria-label="Asistan aç" aria-expanded="false">
-  <span class="cf-circle">
-    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-    <span class="cf-dot"></span>
-  </span>
-  <span class="cf-label">Asistan</span>
-</button>
-
 <!-- ═══ FEEDBACK MODAL ═══ -->
 <div id="feedbackBg" class="modal-bg" aria-hidden="true"></div>
-<div id="feedbackSheet" class="modal-sheet" role="dialog" aria-label="Sosyal Medya ve İletişim" aria-modal="true" aria-hidden="true">
+<div id="feedbackSheet" class="modal-sheet" role="dialog" aria-label="Görüşleriniz" aria-modal="true" aria-hidden="true">
   <div class="modal-head">
-    <h3>Sosyal Medya &amp; İletişim</h3>
+    <h3>Görüşleriniz</h3>
     <button class="modal-close" id="feedbackClose" aria-label="Kapat">✕</button>
   </div>
   <div class="modal-body">
-    <!-- Instagram button -->
-    <a id="igBtn" href="https://instagram.com/rebelbarandbistro" target="_blank" rel="noopener noreferrer" aria-label="Instagram'da takip edin">
-      <svg class="ig-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      <span class="ig-handle">@rebelbarandbistro</span>
-    </a>
-    <!-- Divider -->
-    <div class="modal-divider">
-      <span class="modal-divider-label">Görüşlerinizi paylaşın</span>
-    </div>
-    <!-- Contact form -->
     <div class="modal-field">
       <label for="fbName">Ad Soyad</label>
       <input class="modal-input" id="fbName" type="text" placeholder="Adınız ve soyadınız" autocomplete="name">
@@ -1554,7 +1482,6 @@ function renderPage(masaId: string): string {
   detailBg.addEventListener('click', closeDetail);
 
   /* ── CHAT ─────────────────────────────────────────────── */
-  const fab      = document.getElementById('chatFab');
   const overlay  = document.getElementById('chatOverlay');
   const closeBtn = document.getElementById('chatCloseBtn');
   const msgs     = document.getElementById('chatMessages');
@@ -1565,16 +1492,14 @@ function renderPage(masaId: string): string {
   function openChat() {
     overlay.classList.add('open');
     overlay.removeAttribute('aria-hidden');
-    fab.setAttribute('aria-expanded', 'true');
     setTimeout(() => input.focus(), 380);
   }
   function closeChat() {
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
-    fab.setAttribute('aria-expanded', 'false');
     input.blur();
   }
-  fab.addEventListener('click', openChat);
+  document.getElementById('abAI').addEventListener('click', openChat);
   closeBtn.addEventListener('click', closeChat);
 
   /* keyboard inset */
@@ -1663,7 +1588,6 @@ function renderPage(masaId: string): string {
     feedbackSheet.setAttribute('aria-hidden', 'true');
     feedbackBg.setAttribute('aria-hidden', 'true');
   }
-  document.getElementById('abFeedback').addEventListener('click', openFeedback);
   document.getElementById('feedbackClose').addEventListener('click', closeFeedback);
   feedbackBg.addEventListener('click', closeFeedback);
 
