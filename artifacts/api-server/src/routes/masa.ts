@@ -178,7 +178,6 @@ function renderPage(masaId: string): string {
     --tg:          #229ED9;
     --header-h:    60px;
     --nav-h:       48px;
-    --bottom-h:    142px;
     --safe-b:      env(safe-area-inset-bottom, 0px);
     --safe-t:      env(safe-area-inset-top, 0px);
   }
@@ -294,7 +293,7 @@ function renderPage(masaId: string): string {
     position: fixed;
     top: calc(var(--header-h) + var(--nav-h));
     left: 0; right: 0;
-    bottom: var(--bottom-h);
+    bottom: 0;
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
@@ -401,90 +400,11 @@ function renderPage(masaId: string): string {
   .bdg-gf     { background: rgba(250,204,21,.12); color: #fbbf24; }
   .bdg-spicy  { background: rgba(230,57,70,.15);  color: #f87171; }
 
-  /* ════════ FIXED BOTTOM BAR ════════ */
-  #bottomBar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: var(--bottom-h);
-    background: #0c0c0c;
-    border-top: 1px solid #1c1c1c;
-    padding: 11px 14px calc(11px + var(--safe-b));
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-    z-index: 300;
-  }
-  .kvkk-row {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-  }
-  .kvkk-row input[type="checkbox"] {
-    width: 16px; height: 16px;
-    flex-shrink: 0;
-    accent-color: var(--accent);
-    cursor: pointer;
-  }
-  .kvkk-label { font-size: 11.5px; color: var(--sub); line-height: 1.4; }
-  .kvkk-link {
-    background: none; border: none; padding: 0;
-    color: var(--accent); text-decoration: underline;
-    font-size: inherit; font-family: inherit;
-    cursor: pointer; display: inline;
-  }
-  .kvkk-link:active { opacity: .7; }
-  .share-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .share-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    height: 38px;
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    color: #fff;
-    transition: opacity .15s, transform .1s;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .share-btn[aria-disabled="true"] { opacity: .3; cursor: not-allowed; pointer-events: none; }
-  .share-btn:not([aria-disabled="true"]):active { transform: scale(.97); }
-  .btn-wa { background: var(--wa); }
-  .btn-tg { background: var(--tg); }
-  .share-btn svg { width: 17px; height: 17px; fill: #fff; flex-shrink: 0; }
-
-  /* ════════ ACTION BUTTONS (garson / hesap) ════════ */
-  .action-row {
-    display: flex;
-    gap: 8px;
-  }
-  .action-btn {
-    flex: 1;
-    height: 36px;
-    border-radius: 10px;
-    border: 1px solid #2a2a2a;
-    background: #1a1a1a;
-    color: var(--text);
-    font-size: 12.5px;
-    font-weight: 700;
-    font-family: inherit;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-    -webkit-tap-highlight-color: transparent;
-    transition: border-color .15s, background .15s, transform .1s;
-  }
-  .action-btn:active { background: #242424; border-color: #3a3a3a; transform: scale(.97); }
-  .action-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
-  .action-btn.btn-bell  { color: #facc15; border-color: rgba(250,204,21,.25); }
-  .action-btn.btn-receipt { color: #86efac; border-color: rgba(134,239,172,.25); }
 
   /* ════════ TOAST ════════ */
   #toast {
     position: fixed;
-    bottom: calc(var(--bottom-h) + 16px);
+    bottom: 16px;
     left: 50%; transform: translateX(-50%) translateY(12px);
     background: #252525;
     border: 1px solid #333;
@@ -563,7 +483,7 @@ function renderPage(masaId: string): string {
   #chatFab {
     position: fixed;
     right: 16px;
-    bottom: calc(var(--bottom-h) + 14px + var(--safe-b));
+    bottom: calc(14px + var(--safe-b));
     width: 50px; height: 50px;
     border-radius: 50%;
     background: var(--accent);
@@ -999,62 +919,6 @@ function renderPage(masaId: string): string {
   #orderMsg.ok  { color: #4ade80; }
   #orderMsg.err { color: #f87171; }
 
-  /* ════════ KVKK MODAL ════════ */
-  #kvkkBg {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,.8);
-    z-index: 800;
-    opacity: 0; pointer-events: none;
-    transition: opacity .25s;
-  }
-  #kvkkBg.open { opacity: 1; pointer-events: auto; }
-  #kvkkModal {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -40%) scale(.96);
-    width: min(92vw, 480px);
-    max-height: 78vh;
-    background: #1a1a1a;
-    border: 1px solid #2a2a2a;
-    border-radius: 18px;
-    z-index: 810;
-    display: flex;
-    flex-direction: column;
-    opacity: 0; pointer-events: none;
-    transition: opacity .25s, transform .28s cubic-bezier(.25,.46,.45,.94);
-  }
-  #kvkkModal.open {
-    opacity: 1; pointer-events: auto;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  #kvkkModalHead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 18px 12px;
-    border-bottom: 1px solid #262626;
-    flex-shrink: 0;
-  }
-  #kvkkModalHead h3 {
-    font-size: 15px; font-weight: 700; color: var(--text);
-  }
-  #kvkkCloseBtn {
-    background: #252525; border: none;
-    color: var(--muted); font-size: 16px;
-    width: 30px; height: 30px; border-radius: 50%;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #kvkkCloseBtn:active { background: #333; }
-  #kvkkBody {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 16px 18px calc(16px + var(--safe-b));
-    font-size: 13px; color: #bbb; line-height: 1.65;
-  }
-  #kvkkBody h4 { color: var(--text); font-size: 13px; margin: 14px 0 4px; }
-  #kvkkBody p  { margin-bottom: 10px; }
 </style>
 </head>
 <body>
@@ -1081,40 +945,6 @@ function renderPage(masaId: string): string {
 <main id="menuContent">
   <div id="menuInner">${menuSections}</div>
 </main>
-
-<!-- ═══ BOTTOM BAR ═══ -->
-<div id="bottomBar">
-  <div class="action-row">
-    <button id="garsonBtn" class="action-btn btn-bell" aria-label="Garson çağır">
-      <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5S10.5 3.17 10.5 4v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-      Garson Çağır
-    </button>
-    <button id="hesapBtn" class="action-btn btn-receipt" aria-label="Hesap iste">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14l4-4h12c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 10H7l-2 2V5h14v8z"/></svg>
-      Hesap İste
-    </button>
-  </div>
-  <div class="kvkk-row">
-    <input type="checkbox" id="kvkk">
-    <label class="kvkk-label" for="kvkk">
-      <button type="button" class="kvkk-link" onclick="openKvkk()">KVKK aydınlatma metnini</button> okudum, onaylıyorum.
-    </label>
-  </div>
-  <div class="share-buttons">
-    <a id="btnWa" class="share-btn btn-wa" aria-disabled="true"
-       href="https://wa.me/905000000000?text=Merhaba%20masa-${escapeHtml(masaId)}"
-       target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      WhatsApp
-    </a>
-    <a id="btnTg" class="share-btn btn-tg" aria-disabled="true"
-       href="https://t.me/ComusBot?start=masa-${escapeHtml(masaId)}"
-       target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-      Telegram
-    </a>
-  </div>
-</div>
 
 <!-- ═══ TOAST ═══ -->
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1155,28 +985,6 @@ function renderPage(masaId: string): string {
     <p id="orderMsg"></p>
   </div>
 </aside>
-
-<!-- ═══ KVKK MODAL ═══ -->
-<div id="kvkkBg" aria-hidden="true"></div>
-<div id="kvkkModal" role="dialog" aria-label="KVKK Aydınlatma Metni" aria-modal="true" aria-hidden="true">
-  <div id="kvkkModalHead">
-    <h3>KVKK Aydınlatma Metni</h3>
-    <button id="kvkkCloseBtn" aria-label="Kapat">✕</button>
-  </div>
-  <div id="kvkkBody">
-    <p>Rebel Bar &amp; Bistro olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında kişisel verilerinizi aşağıda açıklanan amaçlar doğrultusunda işlemekteyiz.</p>
-    <h4>Veri Sorumlusu</h4>
-    <p>Rebel Bar &amp; Bistro — veri sorumlusu sıfatıyla hareket etmektedir.</p>
-    <h4>İşlenen Kişisel Veriler</h4>
-    <p>Ad, telefon numarası, masa numarası ve iletişim tercihleri gibi veriler işlenebilir.</p>
-    <h4>İşleme Amaçları</h4>
-    <p>Verileriniz; sipariş yönetimi, müşteri ilişkileri, WhatsApp/Telegram üzerinden iletişim kurulması ve yasal yükümlülüklerin yerine getirilmesi amaçlarıyla işlenmektedir.</p>
-    <h4>Veri Güvenliği</h4>
-    <p>Kişisel verileriniz güvenli sistemlerde saklanmakta ve üçüncü kişilerle yalnızca yasal zorunluluk halinde paylaşılmaktadır.</p>
-    <h4>Haklarınız</h4>
-    <p>KVKK md. 11 kapsamında verilerinize erişim, düzeltme, silme ve itiraz hakkına sahipsiniz. Başvurularınız için: <strong>info@rebelbar.com</strong></p>
-  </div>
-</div>
 
 <!-- ═══ CHAT FAB ═══ -->
 <button id="chatFab" aria-label="Asistan aç" aria-expanded="false">🤖</button>
@@ -1411,37 +1219,6 @@ function renderPage(masaId: string): string {
     }
   });
 
-  /* ── KVKK CHECKBOX ────────────────────────────────────── */
-  const kvkkEl = document.getElementById('kvkk');
-  const btnWa  = document.getElementById('btnWa');
-  const btnTg  = document.getElementById('btnTg');
-  kvkkEl.addEventListener('change', () => {
-    const ok = kvkkEl.checked;
-    [btnWa, btnTg].forEach(b => b.setAttribute('aria-disabled', ok ? 'false' : 'true'));
-  });
-  [btnWa, btnTg].forEach(b => b.addEventListener('click', e => {
-    if (b.getAttribute('aria-disabled') === 'true') e.preventDefault();
-  }));
-
-  /* ── KVKK MODAL ───────────────────────────────────────── */
-  const kvkkBg    = document.getElementById('kvkkBg');
-  const kvkkModal = document.getElementById('kvkkModal');
-
-  function openKvkk() {
-    kvkkBg.classList.add('open');
-    kvkkModal.classList.add('open');
-    kvkkModal.removeAttribute('aria-hidden');
-    kvkkBg.removeAttribute('aria-hidden');
-  }
-  function closeKvkk() {
-    kvkkBg.classList.remove('open');
-    kvkkModal.classList.remove('open');
-    kvkkModal.setAttribute('aria-hidden', 'true');
-    kvkkBg.setAttribute('aria-hidden', 'true');
-  }
-  document.getElementById('kvkkCloseBtn').addEventListener('click', closeKvkk);
-  kvkkBg.addEventListener('click', closeKvkk);
-
   /* ── DETAIL MODAL ─────────────────────────────────────── */
   const detailBg    = document.getElementById('detailBg');
   const detailSheet = document.getElementById('detailSheet');
@@ -1623,9 +1400,6 @@ function renderPage(masaId: string): string {
     } catch {}
     showToast('Talebiniz iletildi ✓');
   }
-  document.getElementById('garsonBtn').addEventListener('click', () => sendNotify('garson'));
-  document.getElementById('hesapBtn').addEventListener('click',  () => sendNotify('hesap'));
-
   function addMsg(text, role) {
     const el = document.createElement('div');
     el.className = 'msg ' + role;
