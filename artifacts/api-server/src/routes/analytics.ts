@@ -203,7 +203,7 @@ ${allFeedbackComments.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 If there is not enough data to extract a meaningful insight, return empty arrays. Do not invent data.`;
 
       const completion = await client.messages.create({
-        model: "claude-sonnet-4-5-20251022",
+        model: "claude-sonnet-4-5-20251001",
         max_tokens: 1024,
         system: "You are a data analyst. Always respond with valid JSON only — no markdown, no explanation.",
         messages: [{ role: "user", content: aiPrompt }],

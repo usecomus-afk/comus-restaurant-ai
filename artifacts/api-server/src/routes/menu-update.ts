@@ -239,7 +239,7 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     const completion = await client.messages.create({
-      model: "claude-sonnet-4-5-20251022",
+      model: "claude-sonnet-4-5-20251001",
       max_tokens: 1024,
       system: PARSER_PROMPT,
       messages: [
