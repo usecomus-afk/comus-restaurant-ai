@@ -65,7 +65,7 @@ router.post("/", async (req: Request, res: Response) => {
   let aiResponse = "";
   try {
     const completion = await client.messages.create({
-      model: "claude-sonnet-4-5-20251001",
+      model: "claude-sonnet-4-20250514",
       max_tokens: 256,
       system: AI_RESPONSE_PROMPT,
       messages: [{ role: "user", content: userPrompt }],
