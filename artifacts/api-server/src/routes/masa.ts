@@ -490,7 +490,7 @@ function renderPage(masaId: string): string {
     left: 0; right: 0;
     height: var(--action-bar-h);
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
     padding: 8px 12px;
     background: #0a0a0a;
@@ -1077,8 +1077,7 @@ function renderPage(masaId: string): string {
     <div class="brand-sub">Bar &amp; Bistro</div>
   </div>
   <button id="rateBtn" class="hdr-btn" aria-label="Bizi değerlendirin">
-    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    <span class="hdr-btn-label">Değerlendirin</span>
+    <span class="hdr-btn-label">Bizi Değerlendirin</span>
     <span class="hdr-stars">★★★★★</span>
   </button>
 </header>
@@ -1094,13 +1093,11 @@ function renderPage(masaId: string): string {
     <span class="ab-icon">🖐️</span>
     <span class="ab-label">Garson Çağırın</span>
   </button>
-  <button class="ab-btn" id="abAdisyon">
-    <span class="ab-icon">🧾</span>
-    <span class="ab-label">Adisyon</span>
-  </button>
   <button class="ab-btn ai-btn" id="abAI" aria-label="GurmeAI sohbeti aç">
     <span class="ai-dot"></span>
-    <span class="ab-icon">🍴</span>
+    <span class="ab-icon">
+      <svg viewBox="0 0 24 24" style="fill:#fff;width:22px;height:22px;display:block"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    </span>
     <span class="ab-label">GurmeAI</span>
   </button>
 </div>
@@ -1603,8 +1600,7 @@ function renderPage(masaId: string): string {
   /* ── RATE (header) ────────────────────────────────────── */
   document.getElementById('rateBtn').addEventListener('click', openRating);
 
-  document.getElementById('abGarson').addEventListener('click',   () => sendNotify('garson'));
-  document.getElementById('abAdisyon').addEventListener('click',  () => sendNotify('hesap'));
+  document.getElementById('abGarson').addEventListener('click', () => sendNotify('garson'));
 
   /* ── FEEDBACK MODAL ───────────────────────────────────── */
   const feedbackBg    = document.getElementById('feedbackBg');

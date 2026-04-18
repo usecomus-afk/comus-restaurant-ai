@@ -169,7 +169,7 @@ router.post("/notify", async (req: Request, res: Response) => {
   if (type === "garson") {
     text = `🔔 *GARSON ÇAĞRISI*\n\n📍 Masa: *${display}*\n⏰ ${time}\nMüşteri garson bekliyor.`;
   } else if (type === "hesap") {
-    text = `💳 *HESAP TALEBİ*\n\n📍 Masa: *${display}*\n⏰ ${time}\nMüşteri hesap istiyor.`;
+    text = `💳 *ADİSYON TALEBİ*\n\n📍 Masa: *${display}*\n⏰ ${time}`;
   } else {
     res.status(400).json({ success: false, error: "type must be 'garson' or 'hesap'" });
     return;
