@@ -2,7 +2,7 @@
 nixPkgs = ["nodejs_20"]
 
 [phases.install]
-cmds = ["cd artifacts/api-server && npm install"]
+cmds = ["cd artifacts/api-server && npm install --legacy-peer-deps"]
 
 [phases.build]
 cmds = ["cd artifacts/api-server && npm run build"]
