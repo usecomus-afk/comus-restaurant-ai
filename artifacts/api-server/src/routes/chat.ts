@@ -133,7 +133,7 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-6",
       max_tokens: 512,
       system: systemParts.join("\n\n"),
       messages: [{ role: "user", content: message.trim() }],
