@@ -178,7 +178,7 @@ function renderPage(masaId: string): string {
     --tg:          #229ED9;
     --header-h:    60px;
     --nav-h:       48px;
-    --action-bar-h: 82px;
+    --action-bar-h: 88px;
     --safe-b:      env(safe-area-inset-bottom, 0px);
     --safe-t:      env(safe-area-inset-top, 0px);
   }
@@ -488,7 +488,7 @@ function renderPage(masaId: string): string {
     left: 0; right: 0;
     height: var(--action-bar-h);
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
     padding: 8px 12px;
     background: #0a0a0a;
@@ -501,21 +501,48 @@ function renderPage(masaId: string): string {
     align-items: center; justify-content: center;
     gap: 5px;
     background: #1a1a1a; border: 1px solid #252525;
-    border-radius: 11px; padding: 10px 4px;
+    border-radius: 11px; padding: 10px 6px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: transform .15s, border-color .15s, background .15s;
   }
   .ab-btn:active { transform: scale(.94); border-color: #facc15; background: #202020; }
-  .ab-btn.ai-btn { border-color: rgba(230,57,70,.35); }
+  .ab-btn:disabled { opacity: .4; pointer-events: none; }
+  .ab-btn.ai-btn { border-color: rgba(230,57,70,.35); position: relative; }
   .ab-btn.ai-btn:active { border-color: var(--accent); }
-  .ab-icon  { font-size: 20px; line-height: 1; }
-  .ab-icon svg { width: 20px; height: 20px; fill: var(--accent); display: block; }
+  .ab-icon  { font-size: 22px; line-height: 1; }
+  .ab-icon svg { width: 22px; height: 22px; fill: var(--accent); display: block; }
   .ab-label {
-    font-size: 9px; font-weight: 700; color: var(--muted);
-    text-align: center; line-height: 1.2; letter-spacing: .02em;
+    font-size: 11px; font-weight: 700; color: var(--muted);
+    text-align: center; line-height: 1.2; letter-spacing: .01em;
   }
-  .ab-btn.ai-btn .ab-label { color: var(--accent); }
+  .ab-btn.ai-btn .ab-label { font-size: 12px; color: var(--accent); }
+
+  /* GurmeAI pulsing green online dot */
+  .ai-dot {
+    position: absolute; top: 6px; right: 8px;
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #22c55e; border: 2px solid #1a1a1a;
+    animation: aiPulse 2s infinite;
+  }
+  @keyframes aiPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); }
+    55%       { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+  }
+
+  /* ════════ LOCATION WARNING BANNER ════════ */
+  #locationBanner {
+    display: none;
+    align-items: center; gap: 10px;
+    background: rgba(234,179,8,.08);
+    border: 1px solid rgba(234,179,8,.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+  }
+  #locationBanner.visible { display: flex; }
+  .loc-icon { font-size: 18px; flex-shrink: 0; }
+  .loc-text { font-size: 12px; color: #fbbf24; font-weight: 600; line-height: 1.35; }
 
   /* ════════ GENERIC MODAL (feedback & rating) ════════ */
   .modal-bg {
@@ -830,22 +857,34 @@ function renderPage(masaId: string): string {
   }
   #detailClose:active { background: rgba(0,0,0,.75); }
 
-  /* ════════ CART ICON (header) ════════ */
-  #cartBtn {
-    position: relative;
-    width: 38px; height: 38px;
+  /* ════════ HEADER SIDE BUTTONS ════════ */
+  .hdr-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px;
+    min-width: 56px; height: 44px;
     background: #1a1a1a;
     border: 1.5px solid #2a2a2a;
     border-radius: 11px;
     color: var(--text);
     cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    transition: border-color .15s;
+    transition: border-color .15s, background .15s;
     -webkit-tap-highlight-color: transparent;
+    padding: 0 10px;
   }
-  #cartBtn:active { border-color: var(--accent); }
-  #cartBtn svg { width: 20px; height: 20px; fill: currentColor; }
+  .hdr-btn:active { border-color: var(--accent); background: #202020; }
+  .hdr-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .hdr-btn-label {
+    font-size: 9px; font-weight: 700; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--muted); line-height: 1;
+  }
+  #adisyonBtn { border-color: rgba(230,57,70,.3); }
+  #adisyonBtn svg { fill: var(--accent); }
+  #adisyonBtn .hdr-btn-label { color: var(--accent); }
+  #adisyonBtn:active { border-color: var(--accent); }
+  #rateBtn svg { fill: #facc15; }
+
+  /* [kept for cart drawer badge functionality] */
   .cart-badge {
     position: absolute;
     top: -7px; right: -7px;
@@ -1037,15 +1076,18 @@ function renderPage(masaId: string): string {
 
 <!-- ═══ HEADER ═══ -->
 <header id="appHeader">
-  <button id="cartBtn" aria-label="Sepeti aç">
-    <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM5.83 6H20l-1.68 8.39c-.16.8-.95 1.61-1.77 1.61H8.1c-.82 0-1.6-.8-1.75-1.6L4.77 3.96A1 1 0 0 0 3.78 3H1V1h3.5c.44 0 .82.3.93.72L5.83 6z"/></svg>
-    <span id="cartBadge" class="cart-badge hidden">0</span>
+  <button id="adisyonBtn" class="hdr-btn" aria-label="Adisyon iste">
+    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+    <span class="hdr-btn-label">Adisyon</span>
   </button>
   <div class="brand-center">
     <div class="brand-name">rebel<span class="brand-accent">.</span></div>
     <div class="brand-sub">Bar &amp; Bistro</div>
   </div>
-  <div style="width:38px;flex-shrink:0;"></div>
+  <button id="rateBtn" class="hdr-btn" aria-label="Deneyiminizi paylaşın">
+    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    <span class="hdr-btn-label">Puanla</span>
+  </button>
 </header>
 
 <!-- ═══ CATEGORY NAV ═══ -->
@@ -1056,14 +1098,13 @@ function renderPage(masaId: string): string {
 <!-- ═══ STICKY ACTION BAR ═══ -->
 <div id="actionBar" role="toolbar" aria-label="Hızlı işlemler">
   <button class="ab-btn" id="abGarson">
-    <span class="ab-icon">🔔</span>
-    <span class="ab-label">Garson Çağır</span>
-  </button>
-  <button class="ab-btn" id="abHesap">
-    <span class="ab-icon">🧾</span>
-    <span class="ab-label">Hesap İste</span>
+    <span class="ab-icon">
+      <svg viewBox="0 0 24 24" style="fill:var(--muted)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+    </span>
+    <span class="ab-label">Garson Çağırın</span>
   </button>
   <button class="ab-btn ai-btn" id="abAI" aria-label="GurmeAI sohbeti aç">
+    <span class="ai-dot"></span>
     <span class="ab-icon">
       <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
     </span>
@@ -1071,13 +1112,17 @@ function renderPage(masaId: string): string {
   </button>
   <button class="ab-btn" id="abRating">
     <span class="ab-icon">⭐</span>
-    <span class="ab-label">Bizi Puanlayın</span>
+    <span class="ab-label">Deneyiminizi Paylaşın</span>
   </button>
 </div>
 
 <!-- ═══ MENU CONTENT ═══ -->
 <main id="menuContent">
   <div id="menuInner">
+    <div id="locationBanner" role="alert">
+      <span class="loc-icon">📍</span>
+      <span class="loc-text" id="locationBannerText">Sipariş için restoranda olmanız gerekmektedir</span>
+    </div>
     ${menuSections}
   </div>
 </main>
@@ -1300,7 +1345,6 @@ function renderPage(masaId: string): string {
     cartDrawerEl.setAttribute('aria-hidden', 'true');
   }
 
-  document.getElementById('cartBtn').addEventListener('click', openCart);
   document.getElementById('cartCloseBtn').addEventListener('click', closeCart);
   cartBgEl.addEventListener('click', closeCart);
 
@@ -1568,8 +1612,51 @@ function renderPage(masaId: string): string {
     } catch {}
     showToast('Talebiniz iletildi ✓');
   }
+  /* ── ADISYON (header) ────────────────────────────────── */
+  document.getElementById('adisyonBtn').addEventListener('click', () => sendNotify('hesap'));
+
+  /* ── RATE (header) ────────────────────────────────────── */
+  document.getElementById('rateBtn').addEventListener('click', openRating);
+
   document.getElementById('abGarson').addEventListener('click', () => sendNotify('garson'));
-  document.getElementById('abHesap').addEventListener('click',  () => sendNotify('hesap'));
+  document.getElementById('abRating').addEventListener('click', openRating);
+
+  /* ── GEOLOCATION ──────────────────────────────────────── */
+  const RESTAURANT_LAT = 41.0082;
+  const RESTAURANT_LNG = 28.9784;
+  const MAX_DISTANCE_M = 300;
+
+  function haversineM(lat1, lng1, lat2, lng2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  }
+
+  function restrictActions(msg) {
+    document.getElementById('locationBannerText').textContent = msg;
+    document.getElementById('locationBanner').classList.add('visible');
+    document.getElementById('abGarson').disabled    = true;
+    document.getElementById('adisyonBtn').disabled  = true;
+    const sob = document.getElementById('sendOrderBtn');
+    if (sob) sob.disabled = true;
+  }
+
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const dist = haversineM(pos.coords.latitude, pos.coords.longitude, RESTAURANT_LAT, RESTAURANT_LNG);
+        if (dist > MAX_DISTANCE_M) {
+          restrictActions('Sipariş için restoranda olmanız gerekmektedir');
+        }
+      },
+      () => {
+        restrictActions('Konum izni gerekli — garson ve sipariş işlemleri devre dışı');
+      },
+      { timeout: 8000, maximumAge: 60000 }
+    );
+  }
 
   /* ── FEEDBACK MODAL ───────────────────────────────────── */
   const feedbackBg    = document.getElementById('feedbackBg');
@@ -1643,7 +1730,6 @@ function renderPage(masaId: string): string {
     ratingSheet.setAttribute('aria-hidden', 'true');
     ratingBg.setAttribute('aria-hidden', 'true');
   }
-  document.getElementById('abRating').addEventListener('click', openRating);
   document.getElementById('ratingClose').addEventListener('click', closeRating);
   ratingBg.addEventListener('click', closeRating);
 
