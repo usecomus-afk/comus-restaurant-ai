@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { randomUUID } from "crypto";
 import {
   feedbacks,
@@ -10,7 +10,7 @@ import {
 import { broadcast } from "../lib/ws.js";
 
 const router: IRouter = Router();
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const AI_RESPONSE_PROMPT = `You are Comus, an AI maître d' crafting a personal response to a guest's restaurant review.
 
@@ -64,16 +64,13 @@ router.post("/", async (req: Request, res: Response) => {
 
   let aiResponse = "";
   try {
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: AI_RESPONSE_PROMPT },
-        { role: "user", content: userPrompt },
-      ],
+    const completion = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
       max_tokens: 256,
-      temperature: 0.75,
+      system: AI_RESPONSE_PROMPT,
+      messages: [{ role: "user", content: userPrompt }],
     });
-    aiResponse = completion.choices[0]?.message?.content ?? "";
+    aiResponse = completion.content[0]?.type === "text" ? completion.content[0].text : "";
   } catch (err) {
     req.log.error({ err }, "AI feedback response error");
     aiResponse =

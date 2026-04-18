@@ -1,9 +1,9 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { orders, feedbacks, chatLog, menus } from "../lib/store.js";
 
 const router: IRouter = Router();
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 function isoWeek(date: Date): string {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -202,15 +202,14 @@ ${allFeedbackComments.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
 If there is not enough data to extract a meaningful insight, return empty arrays. Do not invent data.`;
 
-      const completion = await client.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: aiPrompt }],
+      const completion = await client.messages.create({
+        model: "claude-sonnet-4-20250514",
         max_tokens: 1024,
-        temperature: 0.2,
-        response_format: { type: "json_object" },
+        system: "You are a data analyst. Always respond with valid JSON only — no markdown, no explanation.",
+        messages: [{ role: "user", content: aiPrompt }],
       });
 
-      const raw = completion.choices[0]?.message?.content ?? "{}";
+      const raw = completion.content[0]?.type === "text" ? completion.content[0].text : "{}";
       const parsed = JSON.parse(raw) as {
         missingMenuItems?: typeof missingMenuItems;
         topComplaints?: typeof topComplaints;

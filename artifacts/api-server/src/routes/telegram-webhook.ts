@@ -1,10 +1,10 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { menus } from "../lib/store.js";
 import { PARSER_PROMPT, applyChanges, type ParsedChanges } from "./menu-update.js";
 
 const router: IRouter = Router();
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const RESTAURANT_ID = "default";
 
@@ -129,21 +129,19 @@ router.post("/webhook", async (req: Request, res: Response) => {
 
   let parsed: ParsedChanges;
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const completion = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1024,
+      system: PARSER_PROMPT,
       messages: [
-        { role: "system", content: PARSER_PROMPT },
         {
           role: "user",
           content: `Güncel menü (${RESTAURANT_ID}):\n${menuSummary}\n\nYönetici mesajı: "${text}"`,
         },
       ],
-      max_tokens: 1024,
-      temperature: 0.2,
-      response_format: { type: "json_object" },
     });
 
-    const raw = completion.choices[0]?.message?.content ?? "{}";
+    const raw = completion.content[0]?.type === "text" ? completion.content[0].text : "{}";
     parsed = JSON.parse(raw) as ParsedChanges;
   } catch (err) {
     req.log.error({ err, text }, "Telegram webhook AI parse error");

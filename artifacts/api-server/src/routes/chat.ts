@@ -1,50 +1,52 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { randomUUID } from "crypto";
 import { customers, stock, menus, chatLog } from "../lib/store.js";
 
 const router: IRouter = Router();
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const SYSTEM_PROMPT = `You are the AI assistant for Rebel Bar & Bistro. You help guests with menu questions, cocktail recommendations, allergen info, and orders. Your tone is friendly, casual, and welcoming — like a knowledgeable bar host.
+const SYSTEM_PROMPT = `Sen Rebel Bar & Bistro'nun kişisel menü asistanısın. Misafirlerimizin gözde dostu, menüyü içten içe bilen ve onlara en güzel deneyimi yaşatmak için can atan bir rehbersin.
 
-LANGUAGE: Always respond in Turkish by default. Switch to English if the guest writes in English, or Arabic if they write in Arabic.
+Görevin; menü soruları, kokteyl önerileri, alerjen bilgisi ve siparişlerde misafire gerçekten yardımcı olmak. Konuşma tonun sıcak, samimi ve rafine — sanki masanın başındaki deneyimli ve neşeli bir host gibi.
 
-HAPPY HOUR: Every day until 18:55. Special prices: Tuborg Fıçı 105₺, Carlsberg Fıçı 115₺, Guinness Fıçı 230₺, Weihenstephaner 230₺. Tuborg Ice is available all day at 105₺.
+DİL: Varsayılan olarak Türkçe yanıt ver. Misafir İngilizce yazarsa İngilizce, Arapça yazarsa Arapça yanıtla.
 
-COCKTAIL PAIRING TIPS: Actively recommend cocktails with food. Example pairings: Negroni or Rebel Şarap Tabağı → wine board; Fire Twist or Passion Inferno → spicy dishes; Espresso Martini → after dinner; Aperol Spritz / Campari Spritz → starters and salads; Long Island or Berry Salt → burgers.
+MUTLU SAAT: Her gün saat 18:55'e kadar geçerli. Özel fiyatlar: Tuborg Fıçı 105₺, Carlsberg Fıçı 115₺, Guinness Fıçı 230₺, Weihenstephaner 230₺. Tuborg Ice tüm gün 105₺.
 
-STYLE: Keep answers to 2-3 sentences unless detail is requested. Be warm and specific, not generic.
+KOKTEYLLERİ YİYECEKLE BULUŞTUR: Yemek önerirken mutlaka bir kokteyl eşleşmesi sun. Negroni veya Rebel Şarap Tabağı → şarap & peynir tabaklarıyla; Fire Twist veya Passion Inferno → acılı ve baharatlı yemeklerle; Espresso Martini → yemek sonrası tatlı alternatifi olarak; Aperol Spritz / Campari Spritz → başlangıçlar ve salatalarla; Long Island veya Berry Salt → burgerlerle harika gider.
 
-CRITICAL INGREDIENT RULE: Before recommending any dish, carefully read its full description in [Today's Available Menu]. If the guest asks to avoid an ingredient (e.g. onion, garlic, gluten), check every word of each dish's description. Never recommend a dish if the excluded ingredient appears anywhere in its description — even if it is not listed as a formal allergen. When in doubt, do not recommend the dish.`;
+ÜSLUP: Yanıtlarını 2-3 cümleyle sınırla, detay istenmedikçe. İçten ve özgün ol — kuru bilgi verme, hafifçe anı canlandır. "Bu tabağın yanında..." ya da "Bugün özellikle tavsiye ederim..." gibi ifadeler kullan.
+
+MALZEME KURALI (KRİTİK): Herhangi bir yemek önermeden önce [Bugünkü Menü]'deki o yemeğin tam açıklamasını dikkatle oku. Misafir bir malzemeyi istemiyorsa (örn. soğan, sarımsak, gluten), her yemeğin açıklamasının her kelimesini kontrol et. İstenmayan malzeme yemeğin açıklamasında geçiyorsa — resmi alerjen listesinde olmasa bile — o yemeği önerme. Emin değilsen önerme.`;
 
 function buildCustomerContext(customerId: string): string | null {
   const customer = customers.get(customerId);
   if (!customer) return null;
 
-  const parts: string[] = [`[Guest Profile] Name: ${customer.name}`];
+  const parts: string[] = [`[Misafir Profili] Ad: ${customer.name}`];
 
   if (customer.allergies.length > 0) {
-    parts.push(`Allergies: ${customer.allergies.join(", ")} — always flag these proactively.`);
+    parts.push(`Alerjiler: ${customer.allergies.join(", ")} — her yanıtta proaktif olarak belirt.`);
   }
   if (customer.preferences.length > 0) {
-    parts.push(`Preferences: ${customer.preferences.join(", ")}.`);
+    parts.push(`Tercihler: ${customer.preferences.join(", ")}.`);
   }
   if (customer.notes) {
-    parts.push(`Notes: ${customer.notes}.`);
+    parts.push(`Notlar: ${customer.notes}.`);
   }
 
   const visitCount = customer.visitHistory.length;
   if (visitCount > 0) {
     const lastVisit = customer.visitHistory[customer.visitHistory.length - 1];
-    const lastDate = new Date(lastVisit.date).toLocaleDateString("en-GB", {
+    const lastDate = new Date(lastVisit.date).toLocaleDateString("tr-TR", {
       day: "numeric", month: "long", year: "numeric",
     });
     parts.push(
-      `This is a returning guest — ${visitCount} visit${visitCount > 1 ? "s" : ""} on record. Last visit: ${lastDate}. Greet them warmly as a valued regular.`,
+      `Bu misafir bizimle daha önce ${visitCount} kez buluştu. Son ziyaret: ${lastDate}. Onu tanıdık ve değerli biri olarak içtenlikle karşıla.`,
     );
   } else {
-    parts.push("This is a first-time guest — make them feel especially welcome.");
+    parts.push("Bu misafir ilk kez burada — kendini özel hissettir, ilk izlenimi unutulmaz kıl.");
   }
 
   return parts.join(" ");
@@ -60,7 +62,7 @@ function buildStockContext(restaurantId: string): string | null {
     .map((s) => `"${s.dishName}"${s.reason ? ` (${s.reason})` : ""}`)
     .join(", ");
 
-  return `[Kitchen Stock] The following dishes are currently UNAVAILABLE — do NOT recommend them. If a guest asks, apologise gracefully and suggest available alternatives: ${list}.`;
+  return `[Mutfak Durumu] Şu an hazırlanamayan yemekler — kesinlikle önerme. Misafir sorarsa nezaketle özür dile ve mevcut alternatifler sun: ${list}.`;
 }
 
 function buildMenuContext(restaurantId: string): string | null {
@@ -76,13 +78,13 @@ function buildMenuContext(restaurantId: string): string | null {
   const available = menu.dishes
     .filter((d) => !outOfStockIds.has(d.id))
     .map((d) => {
-      const allergenLine = d.allergens.length ? ` | Allergens: ${d.allergens.join(", ")}` : "";
+      const allergenLine = d.allergens.length ? ` | Alerjenler: ${d.allergens.join(", ")}` : "";
       const description = d.description || "";
-      return `• ${d.name}${d.nameEn ? ` (${d.nameEn})` : ""} — ${d.price} ${menu.currency} | ${d.category}${allergenLine}\n  Description: ${description}`;
+      return `• ${d.name}${d.nameEn ? ` (${d.nameEn})` : ""} — ${d.price} ${menu.currency} | ${d.category}${allergenLine}\n  Açıklama: ${description}`;
     })
     .join("\n");
 
-  return `[Today's Available Menu]\n${available}`;
+  return `[Bugünkü Menü]\n${available}`;
 }
 
 router.post("/", async (req: Request, res: Response) => {
@@ -100,46 +102,45 @@ router.post("/", async (req: Request, res: Response) => {
     return;
   }
 
-  const systemMessages: { role: "system"; content: string }[] = [
-    { role: "system", content: SYSTEM_PROMPT },
-  ];
+  const systemParts: string[] = [SYSTEM_PROMPT];
 
   const sessionParts = [
-    restaurantId && `Restaurant ID: ${restaurantId}`,
-    tableNumber != null && `Table: ${tableNumber}`,
-    language && `Language preference: ${language}`,
+    restaurantId && `Restoran ID: ${restaurantId}`,
+    tableNumber != null && `Masa: ${tableNumber}`,
+    language && `Dil tercihi: ${language}`,
   ].filter(Boolean).join(", ");
 
   if (sessionParts) {
-    systemMessages.push({ role: "system", content: `[Session] ${sessionParts}` });
+    systemParts.push(`[Oturum] ${sessionParts}`);
   }
 
   if (restaurantId) {
     const menuCtx = buildMenuContext(restaurantId);
-    if (menuCtx) systemMessages.push({ role: "system", content: menuCtx });
+    if (menuCtx) systemParts.push(menuCtx);
 
     const stockCtx = buildStockContext(restaurantId);
-    if (stockCtx) systemMessages.push({ role: "system", content: stockCtx });
+    if (stockCtx) systemParts.push(stockCtx);
   }
 
   let customerResolved: { name: string } | null = null;
   if (customerId) {
     const ctx = buildCustomerContext(customerId);
     if (ctx) {
-      systemMessages.push({ role: "system", content: ctx });
+      systemParts.push(ctx);
       customerResolved = customers.get(customerId) ?? null;
     }
   }
 
   try {
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [...systemMessages, { role: "user", content: message }],
+    const response = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
       max_tokens: 512,
-      temperature: 0.7,
+      system: systemParts.join("\n\n"),
+      messages: [{ role: "user", content: message.trim() }],
     });
 
-    const reply = completion.choices[0]?.message?.content ?? "";
+    const reply =
+      response.content[0]?.type === "text" ? response.content[0].text : "";
 
     if (restaurantId) {
       chatLog.push({
@@ -162,7 +163,7 @@ router.post("/", async (req: Request, res: Response) => {
       success: true,
       data: {
         reply,
-        model: completion.model,
+        model: response.model,
         restaurantId: restaurantId ?? null,
         tableNumber: tableNumber ?? null,
         language: language ?? "auto",
@@ -172,7 +173,7 @@ router.post("/", async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    req.log.error({ err }, "OpenAI chat error");
+    req.log.error({ err }, "Anthropic chat error");
     res.status(502).json({ success: false, error: "AI service unavailable" });
   }
 });

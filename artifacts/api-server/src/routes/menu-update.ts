@@ -1,10 +1,10 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import { randomUUID } from "crypto";
 import { menus, type Dish, type Menu } from "../lib/store.js";
 
 const router: IRouter = Router();
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export const PARSER_PROMPT = `You are a menu management assistant for Rebel Bar & Bistro.
 A restaurant manager has sent you a natural-language message (Turkish or English) to update their menu.
@@ -238,21 +238,19 @@ router.post("/", async (req: Request, res: Response) => {
     .join("\n");
 
   try {
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+    const completion = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1024,
+      system: PARSER_PROMPT,
       messages: [
-        { role: "system", content: PARSER_PROMPT },
         {
           role: "user",
           content: `Current menu for restaurant "${restaurantId}":\n${currentMenuSummary}\n\nManager message: "${message}"`,
         },
       ],
-      max_tokens: 1024,
-      temperature: 0.2,
-      response_format: { type: "json_object" },
     });
 
-    const raw = completion.choices[0]?.message?.content ?? "{}";
+    const raw = completion.content[0]?.type === "text" ? completion.content[0].text : "{}";
     let parsed: ParsedChanges;
 
     try {

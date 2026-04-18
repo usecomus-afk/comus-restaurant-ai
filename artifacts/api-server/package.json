@@ -10,10 +10,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.90.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2",
     "express": "^5",
-    "openai": "^6.34.0",
     "pino": "^9",
     "pino-http": "^10",
     "ws": "^8.20.0",
