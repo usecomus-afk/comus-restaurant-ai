@@ -130,7 +130,7 @@ router.post("/webhook", async (req: Request, res: Response) => {
   let parsed: ParsedChanges;
   try {
     const completion = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-5-20251022",
       max_tokens: 1024,
       system: PARSER_PROMPT,
       messages: [
