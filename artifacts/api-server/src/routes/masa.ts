@@ -91,7 +91,9 @@ function renderDishCard(d: any): string {
      data-veg="${!d.vegan && d.vegetarian ? "1" : "0"}"
      data-gf="${d.glutenFree ? "1" : "0"}"
      data-spicy="${(d.spiceLevel ?? 0) >= 2 ? "1" : "0"}">
-  <div class="dish-img-ph" aria-hidden="true"></div>
+  <div class="dish-img-ph" aria-hidden="true">
+    <button class="add-btn" data-id="${escapeHtml(d.id)}" aria-label="${escapeHtml(d.name)} sepete ekle">+</button>
+  </div>
   <div class="card-body">
     <div class="card-row">
       <span class="dish-name">${escapeHtml(d.name)}</span>
@@ -100,7 +102,6 @@ function renderDishCard(d: any): string {
     <p class="dish-desc">${escapeHtml(d.description)}</p>
     ${badgeHtml}
   </div>
-  <button class="add-btn" data-id="${escapeHtml(d.id)}" aria-label="${escapeHtml(d.name)} sepete ekle">+</button>
 </div>`;
 }
 
@@ -355,6 +356,7 @@ function renderPage(masaId: string): string {
     height: 180px;
     background: #252525;
     display: block;
+    position: relative;
   }
   .card-body { padding: 13px 14px 14px; }
   .card-row {
@@ -520,29 +522,17 @@ function renderPage(masaId: string): string {
 
   /* GurmeAI pulsing green online dot */
   .ai-dot {
-    position: absolute; top: 6px; right: 8px;
-    width: 9px; height: 9px; border-radius: 50%;
-    background: #22c55e; border: 2px solid #1a1a1a;
-    animation: aiPulse 2s infinite;
+    position: absolute; top: 7px; right: 10px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #22c55e; border: 2.5px solid #1a1a1a;
+    animation: aiPulse 1.8s infinite;
+    z-index: 2;
   }
   @keyframes aiPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.6); }
-    55%       { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.7); }
+    50%       { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
   }
 
-  /* ════════ LOCATION WARNING BANNER ════════ */
-  #locationBanner {
-    display: none;
-    align-items: center; gap: 10px;
-    background: rgba(234,179,8,.08);
-    border: 1px solid rgba(234,179,8,.25);
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-  }
-  #locationBanner.visible { display: flex; }
-  .loc-icon { font-size: 18px; flex-shrink: 0; }
-  .loc-text { font-size: 12px; color: #fbbf24; font-weight: 600; line-height: 1.35; }
 
   /* ════════ GENERIC MODAL (feedback & rating) ════════ */
   .modal-bg {
@@ -882,7 +872,9 @@ function renderPage(masaId: string): string {
   #adisyonBtn svg { fill: var(--accent); }
   #adisyonBtn .hdr-btn-label { color: var(--accent); }
   #adisyonBtn:active { border-color: var(--accent); }
+  #rateBtn { height: 50px; }
   #rateBtn svg { fill: #facc15; }
+  .hdr-stars { font-size: 8px; color: #facc15; letter-spacing: 1px; line-height: 1; }
 
   /* [kept for cart drawer badge functionality] */
   .cart-badge {
@@ -1084,9 +1076,10 @@ function renderPage(masaId: string): string {
     <div class="brand-name">rebel<span class="brand-accent">.</span></div>
     <div class="brand-sub">Bar &amp; Bistro</div>
   </div>
-  <button id="rateBtn" class="hdr-btn" aria-label="Deneyiminizi paylaşın">
+  <button id="rateBtn" class="hdr-btn" aria-label="Bizi değerlendirin">
     <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    <span class="hdr-btn-label">Puanla</span>
+    <span class="hdr-btn-label">Değerlendirin</span>
+    <span class="hdr-stars">★★★★★</span>
   </button>
 </header>
 
@@ -1098,31 +1091,23 @@ function renderPage(masaId: string): string {
 <!-- ═══ STICKY ACTION BAR ═══ -->
 <div id="actionBar" role="toolbar" aria-label="Hızlı işlemler">
   <button class="ab-btn" id="abGarson">
-    <span class="ab-icon">
-      <svg viewBox="0 0 24 24" style="fill:var(--muted)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
-    </span>
+    <span class="ab-icon">🖐️</span>
     <span class="ab-label">Garson Çağırın</span>
+  </button>
+  <button class="ab-btn" id="abAdisyon">
+    <span class="ab-icon">🧾</span>
+    <span class="ab-label">Adisyon</span>
   </button>
   <button class="ab-btn ai-btn" id="abAI" aria-label="GurmeAI sohbeti aç">
     <span class="ai-dot"></span>
-    <span class="ab-icon">
-      <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-    </span>
+    <span class="ab-icon">🍴</span>
     <span class="ab-label">GurmeAI</span>
-  </button>
-  <button class="ab-btn" id="abRating">
-    <span class="ab-icon">⭐</span>
-    <span class="ab-label">Deneyiminizi Paylaşın</span>
   </button>
 </div>
 
 <!-- ═══ MENU CONTENT ═══ -->
 <main id="menuContent">
   <div id="menuInner">
-    <div id="locationBanner" role="alert">
-      <span class="loc-icon">📍</span>
-      <span class="loc-text" id="locationBannerText">Sipariş için restoranda olmanız gerekmektedir</span>
-    </div>
     ${menuSections}
   </div>
 </main>
@@ -1618,45 +1603,8 @@ function renderPage(masaId: string): string {
   /* ── RATE (header) ────────────────────────────────────── */
   document.getElementById('rateBtn').addEventListener('click', openRating);
 
-  document.getElementById('abGarson').addEventListener('click', () => sendNotify('garson'));
-  document.getElementById('abRating').addEventListener('click', openRating);
-
-  /* ── GEOLOCATION ──────────────────────────────────────── */
-  const RESTAURANT_LAT = 41.0082;
-  const RESTAURANT_LNG = 28.9784;
-  const MAX_DISTANCE_M = 300;
-
-  function haversineM(lat1, lng1, lat2, lng2) {
-    const R = 6371000;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  }
-
-  function restrictActions(msg) {
-    document.getElementById('locationBannerText').textContent = msg;
-    document.getElementById('locationBanner').classList.add('visible');
-    document.getElementById('abGarson').disabled    = true;
-    document.getElementById('adisyonBtn').disabled  = true;
-    const sob = document.getElementById('sendOrderBtn');
-    if (sob) sob.disabled = true;
-  }
-
-  if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        const dist = haversineM(pos.coords.latitude, pos.coords.longitude, RESTAURANT_LAT, RESTAURANT_LNG);
-        if (dist > MAX_DISTANCE_M) {
-          restrictActions('Sipariş için restoranda olmanız gerekmektedir');
-        }
-      },
-      () => {
-        restrictActions('Konum izni gerekli — garson ve sipariş işlemleri devre dışı');
-      },
-      { timeout: 8000, maximumAge: 60000 }
-    );
-  }
+  document.getElementById('abGarson').addEventListener('click',   () => sendNotify('garson'));
+  document.getElementById('abAdisyon').addEventListener('click',  () => sendNotify('hesap'));
 
   /* ── FEEDBACK MODAL ───────────────────────────────────── */
   const feedbackBg    = document.getElementById('feedbackBg');
