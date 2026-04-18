@@ -485,80 +485,63 @@ function renderPage(masaId: string): string {
     position: fixed;
     right: 16px;
     bottom: calc(14px + var(--safe-b));
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #2e2e2e;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    z-index: 400;
-    box-shadow: 0 4px 16px rgba(0,0,0,.5);
-    transition: transform .15s, background .15s;
+    width: 60px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    background: transparent; border: none;
+    cursor: pointer; z-index: 400;
     -webkit-tap-highlight-color: transparent;
+    padding: 0;
+  }
+  .cf-circle {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: #1a1a1a; border: 1px solid #2e2e2e;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0,0,0,.55);
+    transition: transform .15s, background .15s;
     color: #fff;
   }
-  #chatFab svg { width: 22px; height: 22px; fill: currentColor; }
-  #chatFab:active { transform: scale(.92); background: #252525; }
-
-  /* ════════ ACTION FABs (right side stack) ════════ */
-  .action-fab {
-    position: fixed;
-    right: 16px;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #2e2e2e;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    z-index: 400;
-    box-shadow: 0 2px 10px rgba(0,0,0,.4);
-    transition: transform .15s, background .15s;
-    -webkit-tap-highlight-color: transparent;
-    color: var(--text);
+  #chatFab:active .cf-circle { transform: scale(.91); background: #252525; }
+  #chatFab svg { width: 26px; height: 26px; fill: currentColor; pointer-events: none; }
+  .cf-dot {
+    position: absolute; top: 3px; right: 3px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #22c55e; border: 2px solid #111;
+    animation: cfPulse 2.2s infinite;
   }
-  .action-fab svg { width: 18px; height: 18px; fill: currentColor; }
-  .action-fab:active { transform: scale(.9); background: #252525; }
-  #hesapFab  { bottom: calc(14px + var(--safe-b) + 60px); }
-  #garsonFab { bottom: calc(14px + var(--safe-b) + 116px); }
-
-  /* ════════ FEEDBACK FAB (bottom left) ════════ */
-  #feedbackFab {
-    position: fixed;
-    left: 16px;
-    bottom: calc(14px + var(--safe-b));
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #2e2e2e;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    z-index: 400;
-    box-shadow: 0 2px 10px rgba(0,0,0,.4);
-    transition: transform .15s, background .15s;
-    -webkit-tap-highlight-color: transparent;
-    color: var(--text);
+  @keyframes cfPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,.55); }
+    60%       { box-shadow: 0 0 0 5px rgba(34,197,94,0); }
   }
-  #feedbackFab svg { width: 18px; height: 18px; fill: currentColor; }
-  #feedbackFab:active { transform: scale(.9); background: #252525; }
+  .cf-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; color: rgba(255,255,255,.6);
+    line-height: 1;
+  }
 
-  /* ════════ BIZI PUANLAYIN BANNER ════════ */
-  #ratingBanner {
-    display: flex; align-items: center; gap: 12px;
-    background: #1a1a1a;
-    border: 1px solid #252525;
-    border-radius: 14px;
-    padding: 13px 16px;
+  /* ════════ ACTION BAR ════════ */
+  #actionBar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
     margin-bottom: 22px;
+  }
+  .ab-btn {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 7px;
+    background: #1a1a1a; border: 1px solid #252525;
+    border-radius: 12px; padding: 14px 6px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-    transition: border-color .15s;
+    transition: transform .15s, border-color .15s, background .15s;
   }
-  #ratingBanner:active { border-color: #facc15; }
-  .rb-stars { font-size: 16px; letter-spacing: 1px; flex-shrink: 0; color: #facc15; }
-  .rb-text  { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-  .rb-title { font-size: 13.5px; font-weight: 700; color: var(--text); }
-  .rb-sub   { font-size: 11px; color: var(--muted); }
-  .rb-arrow { color: var(--sub); font-size: 18px; font-weight: 300; flex-shrink: 0; }
+  .ab-btn:active { transform: scale(.94); border-color: #facc15; background: #202020; }
+  .ab-icon  { font-size: 22px; line-height: 1; }
+  .ab-label {
+    font-size: 9.5px; font-weight: 700; color: var(--muted);
+    text-align: center; line-height: 1.25; letter-spacing: .02em;
+  }
 
   /* ════════ GENERIC MODAL (feedback & rating) ════════ */
   .modal-bg {
@@ -1099,11 +1082,24 @@ function renderPage(masaId: string): string {
 <!-- ═══ MENU CONTENT ═══ -->
 <main id="menuContent">
   <div id="menuInner">
-    <button id="ratingBanner" aria-label="Bizi puanlayın">
-      <span class="rb-stars">★★★★★</span>
-      <span class="rb-text"><span class="rb-title">Bizi Puanlayın</span><span class="rb-sub">Deneyiminizi paylaşın</span></span>
-      <span class="rb-arrow">›</span>
-    </button>
+    <div id="actionBar">
+      <button class="ab-btn" id="abGarson">
+        <span class="ab-icon">🔔</span>
+        <span class="ab-label">Garson Çağır</span>
+      </button>
+      <button class="ab-btn" id="abHesap">
+        <span class="ab-icon">🧾</span>
+        <span class="ab-label">Hesap İste</span>
+      </button>
+      <button class="ab-btn" id="abFeedback">
+        <span class="ab-icon">💬</span>
+        <span class="ab-label">Düşünceleriniz</span>
+      </button>
+      <button class="ab-btn" id="abRating">
+        <span class="ab-icon">⭐</span>
+        <span class="ab-label">Bizi Puanlayın</span>
+      </button>
+    </div>
     ${menuSections}
   </div>
 </main>
@@ -1148,22 +1144,13 @@ function renderPage(masaId: string): string {
   </div>
 </aside>
 
-<!-- ═══ ACTION FABs (right side) ═══ -->
-<button id="garsonFab" class="action-fab" aria-label="Garson çağır">
-  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/><path d="M12 2c-1.1 0-2 .9-2 2v1H8V4a4 4 0 0 1 8 0v1h-2V4c0-1.1-.9-2-2-2zM4 20h16v2H4z"/></svg>
-</button>
-<button id="hesapFab" class="action-fab" aria-label="Hesap iste">
-  <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h2v2H6zm4-4h8v2h-8zm0 4h5v2h-5z"/></svg>
-</button>
-
 <!-- ═══ CHAT FAB ═══ -->
 <button id="chatFab" aria-label="Asistan aç" aria-expanded="false">
-  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-</button>
-
-<!-- ═══ FEEDBACK FAB (bottom left) ═══ -->
-<button id="feedbackFab" aria-label="Düşünceleriniz">
-  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+  <span class="cf-circle">
+    <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+    <span class="cf-dot"></span>
+  </span>
+  <span class="cf-label">Asistan</span>
 </button>
 
 <!-- ═══ FEEDBACK MODAL ═══ -->
@@ -1615,8 +1602,8 @@ function renderPage(masaId: string): string {
     } catch {}
     showToast('Talebiniz iletildi ✓');
   }
-  document.getElementById('garsonFab').addEventListener('click', () => sendNotify('garson'));
-  document.getElementById('hesapFab').addEventListener('click',  () => sendNotify('hesap'));
+  document.getElementById('abGarson').addEventListener('click', () => sendNotify('garson'));
+  document.getElementById('abHesap').addEventListener('click',  () => sendNotify('hesap'));
 
   /* ── FEEDBACK MODAL ───────────────────────────────────── */
   const feedbackBg    = document.getElementById('feedbackBg');
@@ -1635,7 +1622,7 @@ function renderPage(masaId: string): string {
     feedbackSheet.setAttribute('aria-hidden', 'true');
     feedbackBg.setAttribute('aria-hidden', 'true');
   }
-  document.getElementById('feedbackFab').addEventListener('click', openFeedback);
+  document.getElementById('abFeedback').addEventListener('click', openFeedback);
   document.getElementById('feedbackClose').addEventListener('click', closeFeedback);
   feedbackBg.addEventListener('click', closeFeedback);
 
@@ -1691,7 +1678,7 @@ function renderPage(masaId: string): string {
     ratingSheet.setAttribute('aria-hidden', 'true');
     ratingBg.setAttribute('aria-hidden', 'true');
   }
-  document.getElementById('ratingBanner').addEventListener('click', openRating);
+  document.getElementById('abRating').addEventListener('click', openRating);
   document.getElementById('ratingClose').addEventListener('click', closeRating);
   ratingBg.addEventListener('click', closeRating);
 
