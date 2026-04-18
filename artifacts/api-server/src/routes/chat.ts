@@ -173,8 +173,16 @@ router.post("/", async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    req.log.error({ err }, "Anthropic chat error");
-    res.status(502).json({ success: false, error: "AI service unavailable" });
+    const errMsg = err instanceof Error ? err.message : String(err);
+    const errStatus = (err as Record<string, unknown>)?.status ?? null;
+    const errBody = (err as Record<string, unknown>)?.error ?? null;
+    console.error("[Anthropic chat error]", { status: errStatus, message: errMsg, body: errBody });
+    req.log.error({ err, errStatus, errMsg }, "Anthropic chat error");
+    res.status(502).json({
+      success: false,
+      error: `AI error: ${errMsg}`,
+      detail: { status: errStatus, body: errBody },
+    });
   }
 });
 

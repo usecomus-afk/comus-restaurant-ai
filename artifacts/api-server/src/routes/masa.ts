@@ -1424,7 +1424,12 @@ function renderPage(masaId: string): string {
         body: JSON.stringify({ message: text, restaurantId: 'rest-01', tableNumber: _masaId }),
       });
       const data = await res.json();
-      thinking.textContent = data.data?.reply ?? data.reply ?? 'Bir hata oluştu.';
+      if (!res.ok || !data.success) {
+        console.error('[Chat error]', res.status, JSON.stringify(data));
+        thinking.textContent = data.error ?? 'Bir hata oluştu.';
+      } else {
+        thinking.textContent = data.data?.reply ?? data.reply ?? 'Yanıt alınamadı.';
+      }
       thinking.classList.remove('thinking');
     } catch {
       thinking.textContent = 'Bağlantı hatası, lütfen tekrar deneyin.';
