@@ -18,13 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const SESSION_KEY = 'gunesin_masa';
   const INIT_ID = window.GS_INIT_ID || '1';
   let _masaId = sessionStorage.getItem(SESSION_KEY) || INIT_ID;
-  document.getElementById('gsMasaNum').textContent = _masaId;
 
   const masaBg    = document.getElementById('gsMasaBg');
   const masaSheet = document.getElementById('gsMasaSheet');
   function openMasa()  { masaBg.classList.add('open');    masaSheet.classList.add('open'); }
   function closeMasa() { masaBg.classList.remove('open'); masaSheet.classList.remove('open'); }
-  document.getElementById('gsMasaBadge').addEventListener('click', openMasa);
   masaBg.addEventListener('click', closeMasa);
   document.getElementById('gsMasaCloseBtn').addEventListener('click', closeMasa);
   document.querySelectorAll('.gs-masa-btn').forEach(btn => {
@@ -117,15 +115,21 @@ document.addEventListener('DOMContentLoaded', function () {
     showToast('Siparişiniz iletildi ✓');
   });
 
-  /* ── GARSON / HESAP ── */
-  document.getElementById('gsGarsonBtn').addEventListener('click', () => {
-    console.log('[Güneşin Sofrası] 🖐 GARSON ÇAĞRISI — Masa:', _masaId, new Date().toLocaleTimeString('tr-TR'));
-    showToast('Garson çağrıldı ✓');
-  });
-  document.getElementById('gsHesapBtn').addEventListener('click', () => {
-    console.log('[Güneşin Sofrası] 🧾 HESAP TALEBİ — Masa:', _masaId, new Date().toLocaleTimeString('tr-TR'));
-    showToast('Hesap talebi iletildi ✓');
-  });
+  /* ── GARSON / HESAP (shared send function) ── */
+  async function sendNotify(type) {
+    showToast(type === 'garson' ? 'Garson çağrıldı ✓' : 'Hesap talebi iletildi ✓');
+    try {
+      await fetch('/api/order/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ masaId: _masaId, restaurantId: 'gunesin-sofrasi', type }),
+      });
+    } catch (e) { console.error('[GS] notify error', e); }
+  }
+  document.getElementById('gsGarsonBtn').addEventListener('click',  () => sendNotify('garson'));
+  document.getElementById('gsHesapBtn').addEventListener('click',   () => sendNotify('hesap'));
+  document.getElementById('gsGarsonFab').addEventListener('click',  () => sendNotify('garson'));
+  document.getElementById('gsHesapFab').addEventListener('click',   () => sendNotify('hesap'));
 
   /* ── GURMEAI CHAT ── */
   const aiBg     = document.getElementById('ai-overlay');
@@ -258,58 +262,88 @@ document.addEventListener('DOMContentLoaded', function () {
     sects.forEach(s => io.observe(s));
   }
 
-  /* ── FEEDBACK ── */
-  let _fbRating = 0;
-  const fbStarEls = document.querySelectorAll('.fb-star');
-  const fbHigh    = document.getElementById('fbHigh');
-  const fbLow     = document.getElementById('fbLow');
+  /* ── DÜŞÜNCELERİNİZ MODAL ── */
+  const dushBg    = document.getElementById('gsDushBg');
+  const dushSheet = document.getElementById('gsDushSheet');
+  function openDush()  { dushBg.classList.add('open');    dushSheet.classList.add('open'); }
+  function closeDush() { dushBg.classList.remove('open'); dushSheet.classList.remove('open'); }
 
-  function renderStars(val) {
-    fbStarEls.forEach(s => s.classList.toggle('lit', Number(s.dataset.v) <= val));
+  document.getElementById('gsDushuncelerFab').addEventListener('click', openDush);
+  document.getElementById('gsDushClose').addEventListener('click', closeDush);
+  dushBg.addEventListener('click', closeDush);
+
+  document.getElementById('dushSubmit').addEventListener('click', async () => {
+    const name = document.getElementById('dushName').value.trim();
+    if (!name) { showToast('Ad Soyad zorunludur'); return; }
+    const btn = document.getElementById('dushSubmit');
+    btn.disabled = true;
+    try {
+      await fetch('/api/feedback/form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          masaId: _masaId,
+          name,
+          phone: document.getElementById('dushPhone').value.trim() || undefined,
+          message: document.getElementById('dushMsg').value.trim() || undefined,
+        }),
+      });
+      showToast('Mesajınız iletildi, teşekkürler 🙏');
+      document.getElementById('dushName').value  = '';
+      document.getElementById('dushPhone').value = '';
+      document.getElementById('dushMsg').value   = '';
+      closeDush();
+    } catch {
+      showToast('Gönderim hatası, tekrar deneyin');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  /* ── PUANLAMA MODAL ── */
+  const ratingBg     = document.getElementById('gsRatingBg');
+  const ratingSheet  = document.getElementById('gsRatingSheet');
+  const starBtns     = Array.from(document.querySelectorAll('.gs-star-btn'));
+  const ratingHint   = document.getElementById('gsRatingHint');
+  const gmapsMsg     = document.getElementById('gsGmapsMsg');
+  const ratingActions= document.getElementById('gsRatingActions');
+  let _rating = 0;
+
+  const RATING_HINTS = ['','Çok kötü','Kötü','Orta','İyi','Mükemmel'];
+
+  function openRating()  { _rating = 0; renderRatingStars(0); gmapsMsg.classList.remove('show'); ratingActions.classList.remove('show'); ratingHint.textContent = 'Deneyiminizi değerlendirin'; ratingBg.classList.add('open'); ratingSheet.classList.add('open'); }
+  function closeRating() { ratingBg.classList.remove('open'); ratingSheet.classList.remove('open'); }
+
+  function renderRatingStars(val) {
+    starBtns.forEach(s => s.classList.toggle('lit', Number(s.dataset.v) <= val));
   }
 
-  fbStarEls.forEach(star => {
-    star.addEventListener('mouseenter', () => renderStars(Number(star.dataset.v)));
-    star.addEventListener('mouseleave', () => renderStars(_fbRating));
+  document.getElementById('gsBiziBtn').addEventListener('click', openRating);
+  document.getElementById('gsRatingClose').addEventListener('click', closeRating);
+  ratingBg.addEventListener('click', closeRating);
+
+  starBtns.forEach(star => {
     star.addEventListener('click', () => {
-      _fbRating = Number(star.dataset.v);
-      renderStars(_fbRating);
-      if (_fbRating >= 4) {
-        fbHigh.classList.add('show'); fbLow.classList.remove('show');
+      _rating = Number(star.dataset.v);
+      renderRatingStars(_rating);
+      ratingHint.textContent = RATING_HINTS[_rating] || '';
+      if (_rating >= 4) {
+        gmapsMsg.classList.add('show');
+        ratingActions.classList.add('show');
       } else {
-        fbLow.classList.add('show'); fbHigh.classList.remove('show');
-        document.getElementById('fbSuccess').classList.remove('show');
-        document.getElementById('fbSubmitBtn').disabled = false;
+        gmapsMsg.classList.remove('show');
+        ratingActions.classList.remove('show');
+        setTimeout(() => {
+          closeRating();
+          openDush();
+        }, 420);
       }
     });
   });
 
-  document.getElementById('fbSubmitBtn').addEventListener('click', async () => {
-    const name = document.getElementById('fbName').value.trim();
-    if (!name) { showToast('Ad Soyad zorunludur'); return; }
-    const btn = document.getElementById('fbSubmitBtn');
-    btn.disabled = true;
-    try {
-      await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          restaurantId: 'gunesin-sofrasi',
-          tableNumber: _masaId,
-          rating: _fbRating,
-          guestName: name,
-          phone: document.getElementById('fbPhone').value.trim() || undefined,
-          comment: document.getElementById('fbMessage').value.trim() || undefined,
-        }),
-      });
-      document.getElementById('fbSuccess').classList.add('show');
-      document.getElementById('fbName').value = '';
-      document.getElementById('fbPhone').value = '';
-      document.getElementById('fbMessage').value = '';
-    } catch {
-      btn.disabled = false;
-      showToast('Gönderim hatası, tekrar deneyin');
-    }
+  document.getElementById('gsRatingNo').addEventListener('click', closeRating);
+  document.getElementById('gsRatingYes').addEventListener('click', () => {
+    setTimeout(closeRating, 300);
   });
 
   /* ── RAKI SIZE TILES: click to add to cart ── */
