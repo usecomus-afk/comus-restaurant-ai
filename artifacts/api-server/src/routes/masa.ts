@@ -1808,10 +1808,11 @@ function gsCatSlug(cat: string): string {
 
 function parseRakiPrices(desc: string): string {
   return desc.split(" · ").map(p => {
-    const sp = p.trim().lastIndexOf(" ");
-    const size  = sp < 0 ? p : p.slice(0, sp);
-    const price = sp < 0 ? "" : p.slice(sp + 1);
-    return `<div class="rp-item"><span class="rp-size">${gsEsc(size)}</span><span class="rp-price">${gsEsc(price)}</span></div>`;
+    const sp       = p.trim().lastIndexOf(" ");
+    const size     = (sp < 0 ? p.trim() : p.slice(0, sp).trim());
+    const priceStr = sp < 0 ? "" : p.slice(sp + 1).trim();
+    const priceNum = parseInt(priceStr.replace(/[^0-9]/g, ""), 10) || 0;
+    return `<button class="rp-btn" data-size="${gsEsc(size)}" data-price="${priceNum}" type="button"><span class="rp-size">${gsEsc(size)}</span><span class="rp-price">${gsEsc(priceStr)}</span></button>`;
   }).join("");
 }
 
@@ -1828,7 +1829,7 @@ function renderGsDish(dish: Dish, catType: "fix" | "raki" | "standard"): string 
   }
   if (catType === "raki") {
     return `
-<div class="gs-raki-card">
+<div class="gs-raki-card" data-raki-id="${gsEsc(dish.id)}" data-raki-name="${gsEsc(dish.name)}">
   <div class="raki-name">${gsEsc(dish.name)}</div>
   <div class="raki-prices">${parseRakiPrices(dish.description)}</div>
 </div>`;
@@ -1841,7 +1842,7 @@ function renderGsDish(dish: Dish, catType: "fix" | "raki" | "standard"): string 
     ${dish.description ? `<div class="std-desc">${gsEsc(dish.description)}</div>` : ""}
     ${dish.spiceLevel ? `<span class="spice-badge">🌶️</span>` : ""}
   </div>
-  ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}" aria-label="Sepete ekle">+</button>` : ""}
+  ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}" aria-label="Masaya ekle">+</button>` : ""}
 </div>`;
 }
 
@@ -1855,13 +1856,15 @@ function renderGunesinPage(masaId: string): string {
     "Fix Menü","Soğuk Mezeler","Deniz Mezeleri","Günün Mezeleri",
     "Ara Sıcaklar","Ana Yemekler (Deniz)","Ana Yemekler (Et)",
     "Salatalar","Tatlı & Meyve","Rakı",
-    "Şarap (Kırmızı)","Şarap (Beyaz)","Şarap (Rosé)","İçecekler",
+    "Şarap (Kırmızı)","Şarap (Beyaz)","Şarap (Rosé)","Meşrubatlar",
   ];
 
+  const GS_CAT_RENAME: Record<string, string> = { "İçecekler": "Meşrubatlar" };
   const byCategory: Record<string, Dish[]> = {};
   for (const dish of menu.dishes) {
     if (dish.available === false) continue;
-    (byCategory[dish.category] ??= []).push(dish);
+    const displayCat = GS_CAT_RENAME[dish.category] ?? dish.category;
+    (byCategory[displayCat] ??= []).push(dish);
   }
   const orderedCats = [
     ...GS_CAT_ORDER.filter(c => byCategory[c]),
@@ -2014,11 +2017,14 @@ body{padding-bottom:var(--bh)}
 }
 .raki-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:9px}
 .raki-prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px 7px}
-.rp-item{
+.rp-btn{
   display:flex;flex-direction:column;align-items:center;
   background:#FFF3E8;border:1px solid rgba(212,137,10,.3);
-  border-radius:6px;padding:4px 5px
+  border-radius:6px;padding:6px 5px;cursor:pointer;
+  transition:background .15s,border-color .15s,transform .1s;
 }
+.rp-btn:active,.rp-btn:hover{background:#FFE8CC;border-color:var(--accent);transform:scale(.96)}
+.rp-btn.rp-added{background:#d4890a;border-color:#d4890a}.rp-btn.rp-added .rp-size,.rp-btn.rp-added .rp-price{color:#fff}
 .rp-size{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.03em}
 .rp-price{font-size:12px;font-weight:700;color:var(--text)}
 
@@ -2256,9 +2262,9 @@ textarea.fb-form-field{resize:vertical;min-height:80px}
 <nav id="gsCatNav" aria-label="Kategoriler">${navPills}</nav>
 
 <!-- ═══ MENU CONTENT ═══ -->
-<main id="gsContent">${menuSections}
+<main id="gsContent">
 
-<!-- FEEDBACK -->
+<!-- FEEDBACK — sayfanın üstünde, Fix Menü'den önce -->
 <section id="gsFeedbackSection">
   <div class="fb-title">Deneyiminizi Değerlendirin</div>
   <div class="fb-stars" id="fbStars">
@@ -2283,6 +2289,8 @@ textarea.fb-form-field{resize:vertical;min-height:80px}
     <div class="fb-success" id="fbSuccess">Geri bildiriminiz iletildi, teşekkürler 🙏</div>
   </div>
 </section>
+
+${menuSections}
 </main>
 
 <!-- ═══ TOAST ═══ -->

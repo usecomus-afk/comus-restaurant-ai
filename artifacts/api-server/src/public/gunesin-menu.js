@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (cart.has(id)) cart.get(id).qty++;
     else cart.set(id, { id, name, price: p, qty: 1 });
     updateCartUI();
-    showToast(name + ' sepete eklendi ✓');
+    showToast(name + ' masaya eklendi ✓');
   });
 
   const cartBg     = document.getElementById('gsCartBg');
@@ -288,5 +288,35 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast('Gönderim hatası, tekrar deneyin');
     }
   });
+
+  /* ── RAKI SIZE TILES: click to add to cart ── */
+  document.getElementById('gsContent').addEventListener('click', e => {
+    const btn = e.target.closest('.rp-btn');
+    if (!btn) return;
+    const card = btn.closest('.gs-raki-card');
+    if (!card) return;
+    const id    = card.dataset.rakiId;
+    const base  = card.dataset.rakiName || 'Rakı';
+    const size  = btn.dataset.size || '';
+    const price = parseInt(btn.dataset.price, 10) || 0;
+    const name  = size ? `${base} (${size})` : base;
+    const cartKey = `${id}-${size}`;
+    if (cart.has(cartKey)) cart.get(cartKey).qty++;
+    else cart.set(cartKey, { id: cartKey, name, price, qty: 1 });
+    updateCartUI();
+    showToast(name + ' masaya eklendi ✓');
+    btn.classList.add('rp-added');
+    setTimeout(() => btn.classList.remove('rp-added'), 700);
+  });
+
+  /* ── AI DRAWER: prevent keyboard from pushing content up on mobile ── */
+  if (window.visualViewport) {
+    const aiDrawer = document.getElementById('gsAiDrawer');
+    window.visualViewport.addEventListener('resize', () => {
+      if (!aiDrawer || !aiDrawer.classList.contains('open')) return;
+      const gap = window.innerHeight - window.visualViewport.height;
+      aiDrawer.style.bottom = gap > 0 ? `${gap}px` : '0';
+    });
+  }
 
 });
