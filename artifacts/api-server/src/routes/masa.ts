@@ -2118,7 +2118,9 @@ function renderPage(masaId: string): string {
   #aiDrawer{
     position:fixed;left:0;right:0;bottom:0;
     background:#fff;border-radius:16px 16px 0 0;
-    display:flex;flex-direction:column;height:62vh;overflow:hidden;
+    display:flex;flex-direction:column;
+    height:auto;min-height:50vh;max-height:85dvh;max-height:85vh;
+    overflow:hidden;
     transform:translateY(110%);transition:transform .3s ease;z-index:310;
   }
   #aiDrawer.open{transform:translateY(0)}
