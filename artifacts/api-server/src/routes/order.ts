@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import { randomUUID } from "crypto";
 import { orders, type Order, type OrderItem, type OrderStatus } from "../lib/store.js";
 import { broadcast } from "../lib/ws.js";
+import { dbLogOrder } from "../lib/supabaseDb.js";
 
 const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   received: ["preparing", "served"],
@@ -57,6 +58,7 @@ router.post("/", (req: Request, res: Response) => {
   };
 
   orders.set(orderId, order);
+  dbLogOrder(order);
   req.log.info({ orderId, restaurantId, tableNumber }, "order placed");
   broadcast("order:created", order);
 
