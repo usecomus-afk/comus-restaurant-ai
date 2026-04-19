@@ -1917,7 +1917,7 @@ body{padding-bottom:var(--bh)}
   position:fixed;top:0;left:0;right:0;height:var(--hh);
   background:#FFFFFF;border-bottom:1px solid var(--card-b);
   display:flex;align-items:center;justify-content:center;
-  padding:8px 16px 8px 52px;z-index:200;
+  padding:8px 52px;z-index:200;
   box-shadow:0 1px 8px rgba(44,24,16,.07);
 }
 #gsLogoImg{height:120px;width:120px;object-fit:contain;display:block}
@@ -2043,7 +2043,7 @@ body{padding-bottom:var(--bh)}
 
 /* ── CART FAB ── */
 #gsCartFab{
-  position:fixed;bottom:calc(var(--bh) + 192px);right:16px;
+  position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
   width:48px;height:48px;border-radius:50%;
   background:var(--accent);border:none;
   display:flex;align-items:center;justify-content:center;
@@ -2055,7 +2055,7 @@ body{padding-bottom:var(--bh)}
 
 /* ── AI FAB ── */
 #gsAiFab{
-  position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
+  position:fixed;bottom:calc(var(--bh) + 72px);right:16px;
   width:52px;height:52px;border-radius:50%;
   background:#1c1c3e;border:1.5px solid #3d3d7a;
   display:flex;align-items:center;justify-content:center;
@@ -2065,7 +2065,7 @@ body{padding-bottom:var(--bh)}
 #gsAiFab:active{transform:scale(.9)}
 /* ── GARSON FAB (above AI) ── */
 #gsGarsonFab{
-  position:fixed;bottom:calc(var(--bh) + 76px);right:16px;
+  position:fixed;bottom:calc(var(--bh) + 134px);right:16px;
   width:48px;height:48px;border-radius:50%;
   background:#2980B9;border:none;
   display:flex;align-items:center;justify-content:center;
@@ -2075,7 +2075,7 @@ body{padding-bottom:var(--bh)}
 #gsGarsonFab:active{transform:scale(.9)}
 /* ── HESAP FAB (above Garson) ── */
 #gsHesapFab{
-  position:fixed;bottom:calc(var(--bh) + 134px);right:16px;
+  position:fixed;bottom:calc(var(--bh) + 192px);right:16px;
   width:48px;height:48px;border-radius:50%;
   background:#C0392B;border:none;
   display:flex;align-items:center;justify-content:center;
