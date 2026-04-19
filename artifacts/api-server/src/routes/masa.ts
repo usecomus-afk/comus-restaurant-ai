@@ -2352,7 +2352,7 @@ ${menuSections}
 </div>
 
 <script>window.GS_INIT_ID = ${JSON.stringify(displayMasaId)};</script>
-<script src="/assets/gunesin-menu.js?v=20260419" defer></script>
+<script src="/assets/gunesin-menu.js?v=20260419c" defer></script>
 </body>
 </html>`;
 }

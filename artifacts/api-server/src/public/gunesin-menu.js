@@ -132,6 +132,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const aiDrawer = document.getElementById('ai-drawer');
   const aiMsgs   = document.getElementById('ai-messages');
   const aiInput  = document.getElementById('ai-input');
+  if (!aiBg || !aiDrawer || !aiMsgs || !aiInput) {
+    console.error('[GurmeAI] Drawer elements not found:', { aiBg, aiDrawer, aiMsgs, aiInput });
+  }
   let _aiOpened   = false;
   let _aiLoading  = false;
   let _firstReply = false;
