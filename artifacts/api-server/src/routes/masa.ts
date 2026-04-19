@@ -1902,7 +1902,7 @@ function renderPage(masaId: string): string {
     --bg:#FDF6EC;--card:#fff;--cb:#E8D5B7;
     --pri:#C0392B;--acc:#E86B2E;--gold:#D4890A;--blue:#2980B9;
     --txt:#2C1810;--muted:#8B6347;
-    --hh:130px;--nh:50px;--bh:76px;
+    --hh:160px;--nh:50px;--bh:76px;
   }
   html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow-x:hidden}
 
@@ -1911,16 +1911,16 @@ function renderPage(masaId: string): string {
     position:fixed;top:0;left:0;right:0;height:var(--hh);
     background:#fff;border-bottom:1px solid var(--cb);
     display:grid;grid-template-columns:auto 1fr auto;align-items:center;
-    padding:10px 0;z-index:200;
+    padding:6px 0;z-index:200;
     box-shadow:0 1px 8px rgba(44,24,16,.07);
   }
-  #hdrLeft{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;padding-left:14px}
-  #hdrCenter{/* spacer */}
-  #hdrRight{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:10px;padding-right:14px}
-  #gsLogo{height:110px;width:110px;max-width:110px;max-height:110px;object-fit:contain;display:block}
-  #gsBrand{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
-  .gs-brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:left}
-  .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:left}
+  #hdrLeft{width:48px}
+  #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+  #hdrRight{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;padding-right:14px}
+  #gsLogo{height:150px;width:150px;max-width:150px;max-height:150px;object-fit:contain;display:block}
+  #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .gs-brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
+  .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
   #igBtn{
     display:flex;align-items:center;
     text-decoration:none;border-radius:50%;border:none;-webkit-tap-highlight-color:transparent;
@@ -1971,7 +1971,7 @@ function renderPage(masaId: string): string {
   .rt-hint{font-size:8px;font-weight:700;color:var(--acc);letter-spacing:.3px;text-transform:uppercase;white-space:nowrap}
   @media(max-width:380px){
     .rt-hint{display:none}
-    #hdrRight{padding-right:8px;gap:8px}
+    #hdrRight{padding-right:8px;gap:6px}
   }
 
   /* ── STANDARD CARD ── */
@@ -2208,22 +2208,22 @@ function renderPage(masaId: string): string {
 
   <!-- HEADER -->
   <header id="hdr">
-    <div id="hdrLeft">
+    <div id="hdrLeft"></div>
+    <div id="hdrCenter">
       <img id="gsLogo" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası" loading="eager">
       <div id="gsBrand">
         <div class="gs-brand-name">Güneşin Sofrası</div>
         <div class="gs-brand-sub">Meyhane</div>
       </div>
     </div>
-    <div id="hdrCenter"></div>
     <div id="hdrRight">
+      <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
+      </a>
       <button id="ratingBtn">
         <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
       </button>
-      <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
-      </a>
     </div>
   </header>
 
