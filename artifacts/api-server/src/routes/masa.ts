@@ -2180,17 +2180,17 @@ body{padding-bottom:var(--bh)}
 
 /* ── FEEDBACK SECTION ── */
 #gsFeedbackSection{
-  margin:24px 0 32px;
-  background:var(--card);border:1px solid var(--card-b);border-radius:14px;
-  padding:20px 18px;box-shadow:0 1px 6px rgba(44,24,16,.06);
+  margin:12px 0 20px;
+  background:var(--card);border:1px solid var(--card-b);border-radius:12px;
+  padding:10px 12px;box-shadow:0 1px 4px rgba(44,24,16,.05);
 }
 .fb-title{
-  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
-  color:var(--primary);margin-bottom:14px;text-align:center;
+  font-family:'Playfair Display',serif;font-size:16px;font-weight:700;
+  color:var(--primary);margin-bottom:8px;text-align:center;
 }
-.fb-stars{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+.fb-stars{display:flex;justify-content:center;gap:6px;margin-bottom:8px}
 .fb-star{
-  font-size:34px;cursor:pointer;color:#D4B8A8;transition:color .15s,transform .1s;
+  font-size:28px;cursor:pointer;color:#D4B8A8;transition:color .15s,transform .1s;
   line-height:1;user-select:none;
 }
 .fb-star.lit{color:#F0A500}
@@ -2351,7 +2351,7 @@ ${menuSections}
 </div>
 
 <script>window.GS_INIT_ID = ${JSON.stringify(displayMasaId)};</script>
-<script src="/assets/gunesin-menu.js" defer></script>
+<script src="/assets/gunesin-menu.js?v=20260419" defer></script>
 </body>
 </html>`;
 }

@@ -191,13 +191,14 @@ document.addEventListener('DOMContentLoaded', function () {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ restaurantId: 'gunesin-sofrasi', message: msg, tableNumber: _masaId }),
       });
-      const data = await res.json();
+      const json = await res.json();
       loadingEl.remove();
       if (!res.ok) {
-        console.error('[GurmeAI] API error:', res.status, data);
+        console.error('[GurmeAI] API error:', res.status, json);
         appendAiMsg('assistant', 'Üzgünüm, şu an yanıt veremiyorum. Lütfen birazdan tekrar deneyin.');
       } else {
-        appendAiMsg('assistant', data.data?.reply || data.reply || 'Üzgünüm, yanıt alınamadı.');
+        const reply = json?.data?.reply || json?.reply || json?.message || 'Yanıt alınamadı';
+        appendAiMsg('assistant', reply);
       }
     } catch (err) {
       console.error('[GurmeAI] fetch error:', err);
