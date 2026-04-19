@@ -1962,13 +1962,14 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
-    display:inline-flex;flex-direction:row;align-items:center;gap:5px;
+    display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
     padding:6px 12px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:20px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;width:max-content;
+    line-height:1.1;
   }
   #ratingBtn:active{background:#FFF3D0}
   .rt-stars{font-size:13px;letter-spacing:1px;color:#f5b700;line-height:1}
-  .rt-hint{font-size:9px;font-weight:800;color:var(--acc);letter-spacing:.04em;text-transform:uppercase}
+  .rt-hint{font-size:9px;font-weight:700;color:var(--acc);letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
   @media(max-width:380px){
     .rt-hint{display:none}
     #igBtn span{display:none}
