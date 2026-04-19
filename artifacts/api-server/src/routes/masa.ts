@@ -2161,12 +2161,89 @@ body{padding-bottom:var(--bh)}
 }
 .gs-masa-btn.selected{background:var(--primary);border-color:var(--primary);color:#fff}
 .gs-masa-btn:active{background:var(--primary);color:#fff}
+
+/* ── INSTAGRAM ICON ── */
+#gsInstaLink{
+  position:absolute;top:50%;left:14px;transform:translateY(-50%);
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  text-decoration:none;border-radius:8px;transition:opacity .15s;
+}
+#gsInstaLink:active{opacity:.7}
+#gsInstaLink svg{display:block;width:28px;height:28px}
+
+/* ── FEEDBACK SECTION ── */
+#gsFeedbackSection{
+  margin:24px 0 32px;
+  background:var(--card);border:1px solid var(--card-b);border-radius:14px;
+  padding:20px 18px;box-shadow:0 1px 6px rgba(44,24,16,.06);
+}
+.fb-title{
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;
+  color:var(--primary);margin-bottom:14px;text-align:center;
+}
+.fb-stars{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+.fb-star{
+  font-size:34px;cursor:pointer;color:#D4B8A8;transition:color .15s,transform .1s;
+  line-height:1;user-select:none;
+}
+.fb-star.lit{color:#F0A500}
+.fb-star:active{transform:scale(.85)}
+.fb-high{display:none;text-align:center;margin-top:4px}
+.fb-high.show{display:block}
+.fb-high-msg{font-size:14px;color:var(--text);margin-bottom:12px;line-height:1.5}
+.fb-gmaps-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:#4285F4;color:#fff;border:none;border-radius:10px;
+  padding:11px 20px;font-family:'Nunito',sans-serif;font-size:14px;
+  font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .15s;
+}
+.fb-gmaps-btn:active{opacity:.85}
+.fb-low{display:none;margin-top:4px}
+.fb-low.show{display:block}
+.fb-form-field{
+  width:100%;border:1.5px solid var(--card-b);border-radius:9px;
+  padding:10px 12px;font-family:'Nunito',sans-serif;font-size:14px;
+  color:var(--text);background:#fff;outline:none;margin-bottom:10px;
+  transition:border-color .2s;box-sizing:border-box;
+}
+.fb-form-field:focus{border-color:var(--blue)}
+textarea.fb-form-field{resize:vertical;min-height:80px}
+.fb-submit-btn{
+  width:100%;padding:13px;background:var(--primary);border:none;
+  border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;
+}
+.fb-submit-btn:active{opacity:.82}
+.fb-submit-btn:disabled{background:#D4B8A8;cursor:default}
+.fb-success{
+  display:none;text-align:center;padding:14px;
+  color:#2E7D32;background:#E8F5E9;border-radius:10px;
+  font-size:14px;font-weight:600;margin-top:6px;
+}
+.fb-success.show{display:block}
 </style>
 </head>
 <body>
 
 <!-- ═══ HEADER ═══ -->
 <header id="gsHdr">
+  <a id="gsInstaLink" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram'da takip edin">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="ig-grad" cx="30%" cy="107%" r="150%">
+          <stop offset="0%" stop-color="#fdf497"/>
+          <stop offset="5%" stop-color="#fdf497"/>
+          <stop offset="45%" stop-color="#fd5949"/>
+          <stop offset="60%" stop-color="#d6249f"/>
+          <stop offset="90%" stop-color="#285AEB"/>
+        </radialGradient>
+      </defs>
+      <rect width="24" height="24" rx="5.5" fill="url(#ig-grad)"/>
+      <circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="1.7"/>
+      <circle cx="17.3" cy="6.7" r="1.1" fill="#fff"/>
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="none" stroke="#fff" stroke-width="1.4" stroke-opacity=".3"/>
+    </svg>
+  </a>
   <img id="gsLogoImg" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası Logo" onerror="this.style.display='none'">
   <div class="gs-brand" id="gsBrand" style="display:none">
     <div class="gs-brand-name">Güneşin Sofrası</div>
@@ -2179,7 +2256,34 @@ body{padding-bottom:var(--bh)}
 <nav id="gsCatNav" aria-label="Kategoriler">${navPills}</nav>
 
 <!-- ═══ MENU CONTENT ═══ -->
-<main id="gsContent">${menuSections}</main>
+<main id="gsContent">${menuSections}
+
+<!-- FEEDBACK -->
+<section id="gsFeedbackSection">
+  <div class="fb-title">Deneyiminizi Değerlendirin</div>
+  <div class="fb-stars" id="fbStars">
+    <span class="fb-star" data-v="1">★</span>
+    <span class="fb-star" data-v="2">★</span>
+    <span class="fb-star" data-v="3">★</span>
+    <span class="fb-star" data-v="4">★</span>
+    <span class="fb-star" data-v="5">★</span>
+  </div>
+  <div class="fb-high" id="fbHigh">
+    <p class="fb-high-msg">Harika! Google'da değerlendirme yapmak ister misiniz?</p>
+    <a class="fb-gmaps-btn" href="#" target="_blank" rel="noopener noreferrer" id="fbGmapsBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#fff"/></svg>
+      Google'da Değerlendir
+    </a>
+  </div>
+  <div class="fb-low" id="fbLow">
+    <input class="fb-form-field" type="text" id="fbName" placeholder="Ad Soyad *">
+    <input class="fb-form-field" type="tel" id="fbPhone" placeholder="Telefon (opsiyonel)">
+    <textarea class="fb-form-field" id="fbMessage" placeholder="Görüşleriniz..."></textarea>
+    <button class="fb-submit-btn" id="fbSubmitBtn">Gönder</button>
+    <div class="fb-success" id="fbSuccess">Geri bildiriminiz iletildi, teşekkürler 🙏</div>
+  </div>
+</section>
+</main>
 
 <!-- ═══ TOAST ═══ -->
 <div id="gsToast" role="status" aria-live="polite"></div>
@@ -2238,7 +2342,7 @@ body{padding-bottom:var(--bh)}
 </div>
 
 <script>
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
   /* ── LOGO ── */
   const logoImg = document.getElementById('gsLogoImg');
   const brand   = document.getElementById('gsBrand');
@@ -2469,7 +2573,62 @@ body{padding-bottom:var(--bh)}
     );
     sects.forEach(s => io.observe(s));
   }
-})();
+
+  /* ── FEEDBACK ── */
+  let _fbRating = 0;
+  const fbStarEls = document.querySelectorAll('.fb-star');
+  const fbHigh    = document.getElementById('fbHigh');
+  const fbLow     = document.getElementById('fbLow');
+
+  function renderStars(val) {
+    fbStarEls.forEach(s => s.classList.toggle('lit', Number(s.dataset.v) <= val));
+  }
+
+  fbStarEls.forEach(star => {
+    star.addEventListener('mouseenter', () => renderStars(Number(star.dataset.v)));
+    star.addEventListener('mouseleave', () => renderStars(_fbRating));
+    star.addEventListener('click', () => {
+      _fbRating = Number(star.dataset.v);
+      renderStars(_fbRating);
+      if (_fbRating >= 4) {
+        fbHigh.classList.add('show'); fbLow.classList.remove('show');
+      } else {
+        fbLow.classList.add('show'); fbHigh.classList.remove('show');
+        document.getElementById('fbSuccess').classList.remove('show');
+        document.getElementById('fbSubmitBtn').disabled = false;
+      }
+    });
+  });
+
+  document.getElementById('fbSubmitBtn').addEventListener('click', async () => {
+    const name = document.getElementById('fbName').value.trim();
+    if (!name) { showToast('Ad Soyad zorunludur'); return; }
+    const btn = document.getElementById('fbSubmitBtn');
+    btn.disabled = true;
+    try {
+      await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          restaurantId: 'gunesin-sofrasi',
+          tableNumber: _masaId,
+          rating: _fbRating,
+          guestName: name,
+          phone: document.getElementById('fbPhone').value.trim() || undefined,
+          comment: document.getElementById('fbMessage').value.trim() || undefined,
+        }),
+      });
+      document.getElementById('fbSuccess').classList.add('show');
+      document.getElementById('fbName').value = '';
+      document.getElementById('fbPhone').value = '';
+      document.getElementById('fbMessage').value = '';
+    } catch {
+      btn.disabled = false;
+      showToast('Gönderim hatası, tekrar deneyin');
+    }
+  });
+
+});
 </script>
 </body>
 </html>`;
