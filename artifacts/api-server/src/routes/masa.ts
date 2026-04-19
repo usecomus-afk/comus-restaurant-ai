@@ -1920,7 +1920,7 @@ function renderPage(masaId: string): string {
   #gsLogo{height:110px;width:110px;max-width:110px;max-height:110px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
   .gs-brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:left}
-  .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;text-align:left}
+  .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:left}
   #igBtn{
     display:flex;align-items:center;
     text-decoration:none;border-radius:50%;border:none;-webkit-tap-highlight-color:transparent;
