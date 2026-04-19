@@ -160,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
     $('aiOverlay').classList.add('v');
     $('aiDrawer').classList.add('open');
     if (!aiOpened) { aiOpened = true; aiAppend('bot', 'Güneşin Sofrası Meyhanesine hoş geldiniz. Size yardımcı olmamı istediğiniz bir konu var mı?'); }
-    setTimeout(() => $('aiInput').focus(), 300);
   };
   const closeAi = () => {
     document.body.style.overflow = '';
     $('aiOverlay').classList.remove('v');
     $('aiDrawer').classList.remove('open');
+    $('aiDrawer').style.maxHeight = '';
   };
 
   async function sendAiMsg() {
@@ -201,6 +201,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = $('aiInput'); el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 80) + 'px';
   });
+
+  /* ── Mobil klavye scroll düzeltmesi ── */
+  (function() {
+    const aiInputEl = document.getElementById('aiInput');
+    const aiMessagesEl = document.getElementById('aiMessages');
+    const aiDrawerEl = document.getElementById('aiDrawer');
+
+    function scrollToLastMsg() {
+      if (!aiMessagesEl) return;
+      const lastMsg = aiMessagesEl.lastElementChild;
+      if (lastMsg) lastMsg.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    if (aiInputEl && aiMessagesEl) {
+      aiInputEl.addEventListener('focus', () => {
+        setTimeout(scrollToLastMsg, 300);
+      });
+    }
+
+    if (window.visualViewport && aiDrawerEl) {
+      window.visualViewport.addEventListener('resize', () => {
+        if (!aiDrawerEl.classList.contains('open')) return;
+        aiDrawerEl.style.maxHeight = Math.floor(window.visualViewport.height * 0.85) + 'px';
+        setTimeout(scrollToLastMsg, 100);
+      });
+    }
+  })();
 
   /* ── 8. DEĞERLENDİRME: 4-5★ Google, 1-3★ form ── */
   let _star = 0;
