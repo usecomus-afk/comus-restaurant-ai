@@ -6,23 +6,35 @@ import { customers, stock, menus, chatLog } from "../lib/store.js";
 const router: IRouter = Router();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const GUNESIN_SYSTEM_PROMPT = `Sen Güneşin Sofrası Meyhane'nin yapay zeka asistanısın. Geleneksel İstanbul meyhane kültürünü temsil ediyorsun. Samimi, sıcak ama ölçülü bir dil kullan. Emoji kullanma, sadece metin.
+const GUNESIN_SYSTEM_PROMPT = `Sen Güneşin Sofrası Meyhane'nin deneyimli bir garsonusun. Geleneksel İstanbul meyhane kültürünü yaşatıyorsun. Samimi, sıcak, ölçülü konuş. Emoji kullanma.
 
-KARSILAMA: Her yeni müşteriyle önce kısa bir hoş geldiniz yaz, ardından içecek tercihini sor (rakı mı, şarap mı, bira mı). Cevaba göre kaç kişilik sofra kurduklarını sor ve kişi sayısına uygun porsiyon ve tabak önerisi yap.
+TEMEL KURALLAR:
+- Konuşma geçmişini takip et. Sorduğun soruyu bir daha sorma.
+- Müşteri cevap verdiyse o konuyu kapat, ilerle.
+- Kısa ve doğal cevaplar ver. Uzun paragraflar yazma.
+- Fiyatları sorulmadan söyleme.
+- Israrcı olma, öner ve bekle.
 
-AMAÇ: Sipariş almaya yönelik konuş. Menüdeki ürünleri iyi tanı — başta rakı çeşitleri, mezeleri ve balıkları — ve doğal bir şekilde öne çıkar. Misafir bir şey sorarsa menüden somut öneri sun, fiyatı belirt.
+KONUŞMA AKIŞI — SADECE BİR KEZ sor, cevap geldikten sonra bir daha sorma:
+- İlk mesajda: kısa hoş geldiniz, içecek tercihini sor
+- İçecek öğrenince: kaç kişi olduklarını sor
+- Kişi sayısını öğrenince: o kişi sayısına uygun öneri yap, menüden bahset
+- Bundan sonra müşterinin yönlendirmesine göre devam et
+
+İÇECEK ÖNERİLERİ:
+- Rakı isterse: hangi marka sorar (Yeni Rakı, Tekirdağ, Efe, Beylerbeyi)
+- Şarap isterse: kırmızı mı beyaz mı rosé mi sorar
+- Cevap geldikten sonra bir daha sormaz, devam eder
+
+FİYAT KURALI: Müşteri bir ürün sorduğunda içeriğini, hikayesini ve nasıl hazırlandığını anlat. Fiyatı asla kendiliğinden söyleme. Yalnızca müşteri açıkça "fiyatı nedir", "kaç para" veya "ne kadar" diye sorarsa fiyat bilgisi ver.
+
+MEYHANE KÜLTÜRÜ:
+- Meze önerirken meyhane geleneğini anlat
+- Yemek hikayelerini paylaş ama kısa tut
+- Müşteriye "efendim" diye hitap et
 
 MENÜ BİLGİSİ: [Bugünkü Menü] bölümünü temel al. Stokta olmayan ürünleri önerme.
-
-DİL: Varsayılan Türkçe. Misafir başka dilde yazarsa o dilde yanıtla.
-
-RAKI SEÇİMİ: Müşteri rakı içmek istediğinde "Rakı tercihiniz nedir efendim? Yeni Rakı mı, Tekirdağ mı, Efe mi tercih edersiniz?" diye sor. Menüdeki rakı markalarını doğal bir şekilde sırala, ısrarcı olma.
-
-ŞARAP SEÇİMİ: Müşteri şarap istediğinde "Şarap tercihiniz nedir efendim? Kırmızı mı, beyaz mı, rosé mi?" diye sor. Kırmızı seçerse Turasan, Terra, Kayra markalarını öner. Beyaz seçerse Turasan Narince, Emir, Terra Narince öner. Samimi ama kısa tut.
-
-FİYAT KURALI: Müşteri bir ürün sorduğunda içeriğini, hikayesini ve nasıl hazırlandığını anlat. Fiyatı asla kendiliğinden söyleme. Yalnızca müşteri açıkça "fiyatı nedir", "kaç para" veya "ne kadar" diye sorarsa fiyat bilgisi ver. Aksi halde sadece içerik ve lezzet hakkında konuş.
-
-ÜSLUP: Yanıtlarını kısa tut, en fazla 3 cümle. Resmi değil ama saygılı ol. Meyhane atmosferini hissettir.`;
+DİL: Varsayılan Türkçe. Misafir başka dilde yazarsa o dilde yanıtla.`;
 
 const SYSTEM_PROMPT = `Sen Rebel Bar & Bistro'nun kişisel menü asistanısın. Misafirlerimizin gözde dostu, menüyü içten içe bilen ve onlara en güzel deneyimi yaşatmak için can atan bir rehbersin.
 
@@ -106,16 +118,18 @@ function buildMenuContext(restaurantId: string): string | null {
 }
 
 router.post("/", async (req: Request, res: Response) => {
-  const { message, restaurantId, tableNumber, language, customerId } =
+  const { message, messages, restaurantId, tableNumber, language, customerId } =
     req.body as {
       message?: string;
+      messages?: Array<{ role: "user" | "assistant"; content: string }>;
       restaurantId?: string;
       tableNumber?: string | number;
       language?: string;
       customerId?: string;
     };
 
-  if (!message || typeof message !== "string" || message.trim() === "") {
+  const lastMessage = message?.trim() || messages?.[messages.length - 1]?.content?.trim();
+  if (!lastMessage) {
     res.status(400).json({ success: false, error: "message is required" });
     return;
   }
@@ -150,12 +164,17 @@ router.post("/", async (req: Request, res: Response) => {
     }
   }
 
+  const claudeMessages: Array<{ role: "user" | "assistant"; content: string }> =
+    messages && messages.length > 0
+      ? messages.map((m) => ({ role: m.role, content: m.content }))
+      : [{ role: "user", content: lastMessage }];
+
   try {
     const response = await client.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 512,
       system: systemParts.join("\n\n"),
-      messages: [{ role: "user", content: message.trim() }],
+      messages: claudeMessages,
     });
 
     const reply =
@@ -167,7 +186,7 @@ router.post("/", async (req: Request, res: Response) => {
         restaurantId,
         tableNumber: tableNumber ?? undefined,
         customerId: customerId ?? undefined,
-        message: message.trim(),
+        message: lastMessage,
         language: language ?? undefined,
         timestamp: new Date().toISOString(),
       });

@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   let _aiOpened   = false;
   let _aiLoading  = false;
-  let _firstReply = false;
+  const conversationHistory = [];
 
   function openAi() {
     document.body.style.position = 'fixed';
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
     aiBg.classList.add('open'); aiDrawer.classList.add('open');
     if (!_aiOpened) {
       _aiOpened = true;
-      appendAiMsg('assistant', "Hoş geldiniz. Güneşin Sofrası'na beklenirsiniz. İçecek olarak ne tercih edersiniz, rakı mı şarap mı?");
+      appendAiMsg('assistant', 'Hoş geldiniz efendim. Bu akşam içecek olarak ne tercih edersiniz?');
     }
     setTimeout(() => aiInput.focus(), 350);
   }
@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!msg || _aiLoading) return;
     aiInput.value = '';
     aiInput.style.height = 'auto';
+    conversationHistory.push({ role: 'user', content: msg });
     appendAiMsg('user', msg);
     _aiLoading = true;
     const loadingEl = appendAiLoading();
@@ -192,7 +193,11 @@ document.addEventListener('DOMContentLoaded', function () {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ restaurantId: 'gunesin-sofrasi', message: msg, tableNumber: _masaId }),
+        body: JSON.stringify({
+          restaurantId: 'gunesin-sofrasi',
+          tableNumber: _masaId,
+          messages: conversationHistory,
+        }),
       });
       const json = await res.json();
       loadingEl.remove();
@@ -200,11 +205,8 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('[GurmeAI] API error:', res.status, json);
         appendAiMsg('assistant', 'Üzgünüm, şu an yanıt veremiyorum. Lütfen birazdan tekrar deneyin.');
       } else {
-        let reply = json?.data?.reply || json?.reply || json?.message || 'Yanıt alınamadı';
-        if (!_firstReply) {
-          _firstReply = true;
-          reply = reply + '\n\nKaç kişilik sofra kuracağınızı söylerseniz size daha iyi öneri yapabilirim.';
-        }
+        const reply = json?.data?.reply || json?.reply || json?.message || 'Yanıt alınamadı';
+        conversationHistory.push({ role: 'assistant', content: reply });
         appendAiMsg('assistant', reply);
       }
     } catch (err) {
