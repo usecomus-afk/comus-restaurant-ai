@@ -1902,7 +1902,7 @@ function renderPage(masaId: string): string {
     --bg:#FDF6EC;--card:#fff;--cb:#E8D5B7;
     --pri:#C0392B;--acc:#E86B2E;--gold:#D4890A;--blue:#2980B9;
     --txt:#2C1810;--muted:#8B6347;
-    --hh:255px;--nh:50px;--bh:76px;
+    --hh:130px;--nh:50px;--bh:76px;
   }
   html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow-x:hidden}
 
@@ -1915,12 +1915,12 @@ function renderPage(masaId: string): string {
     box-shadow:0 1px 8px rgba(44,24,16,.07);
   }
   #hdrLeft{}
-  #hdrCenter{display:flex;flex-direction:column;align-items:center;gap:6px}
+  #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px}
   #hdrRight{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:10px;padding-right:14px}
-  #gsLogo{height:192px;width:192px;max-width:calc(100vw - 160px);max-height:192px;object-fit:contain;display:block}
-  #gsBrand{display:flex;flex-direction:column;align-items:center;gap:3px}
-  .gs-brand-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--pri);letter-spacing:.04em}
-  .gs-brand-sub{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
+  #gsLogo{height:150px;width:150px;max-width:calc(100vw - 120px);max-height:112px;object-fit:contain;display:block}
+  #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .gs-brand-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--pri);letter-spacing:.04em}
+  .gs-brand-sub{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
   #igBtn{
     display:flex;align-items:center;gap:6px;
     text-decoration:none;border-radius:10px;-webkit-tap-highlight-color:transparent;
@@ -1967,8 +1967,8 @@ function renderPage(masaId: string): string {
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;width:max-content;
   }
   #ratingBtn:active{background:#FFF3D0}
-  .rt-icon{font-size:14px;line-height:1}
-  .rt-hint{font-size:10px;font-weight:700;color:var(--acc);letter-spacing:.03em;text-transform:uppercase}
+  .rt-stars{font-size:13px;letter-spacing:1px;color:#f5b700;line-height:1}
+  .rt-hint{font-size:9px;font-weight:800;color:var(--acc);letter-spacing:.04em;text-transform:uppercase}
   @media(max-width:380px){
     .rt-hint{display:none}
     #igBtn span{display:none}
@@ -2217,8 +2217,8 @@ function renderPage(masaId: string): string {
     </div>
     <div id="hdrRight">
       <button id="ratingBtn">
-        <span class="rt-icon">⭐</span>
-        <span class="rt-hint">Deneyiminizi paylaşın</span>
+        <span class="rt-stars">★★★★★</span>
+        <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
       </button>
       <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
