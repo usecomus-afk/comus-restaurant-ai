@@ -1792,657 +1792,545 @@ function renderPage(masaId: string): string {
 </html>`;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   GÜNEŞIN SOFRASI MEYHANE — Custom Page Renderer
-   ════════════════════════════════════════════════════════════════ */
 
-function gsEsc(s: string): string {
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
+  /* ════════════════════════════════════════════════════════════════
+     GÜNEŞIN SOFRASI MEYHANE — Custom Page Renderer
+     ════════════════════════════════════════════════════════════════ */
 
-function gsCatSlug(cat: string): string {
-  return cat.toLowerCase()
-    .replace(/ç/g,"c").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u")
-    .replace(/ö/g,"o").replace(/ı/g,"i").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-}
-
-function parseRakiPrices(desc: string): string {
-  return desc.split(" · ").map(p => {
-    const sp       = p.trim().lastIndexOf(" ");
-    const size     = (sp < 0 ? p.trim() : p.slice(0, sp).trim());
-    const priceStr = sp < 0 ? "" : p.slice(sp + 1).trim();
-    const priceNum = parseInt(priceStr.replace(/[^0-9]/g, ""), 10) || 0;
-    return `<button class="rp-btn" data-size="${gsEsc(size)}" data-price="${priceNum}" type="button"><span class="rp-size">${gsEsc(size)}</span><span class="rp-price">${gsEsc(priceStr)}</span></button>`;
-  }).join("");
-}
-
-function renderGsDish(dish: Dish, catType: "fix" | "raki" | "standard"): string {
-  if (catType === "fix") {
-    return `
-<div class="gs-fix-card">
-  <div class="fix-badge">FIX MENÜ</div>
-  <div class="fix-name">${gsEsc(dish.name)}</div>
-  <div class="fix-price">${dish.price > 0 ? dish.price.toLocaleString("tr-TR") + " ₺" : "Fiyat için görüşünüz"}</div>
-  <div class="fix-desc">${gsEsc(dish.description)}</div>
-  ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}" aria-label="Ekle">+</button>` : ""}
-</div>`;
+  function gsEsc(s: string): string {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
   }
-  if (catType === "raki") {
-    return `
-<div class="gs-raki-card" data-raki-id="${gsEsc(dish.id)}" data-raki-name="${gsEsc(dish.name)}">
-  <div class="raki-name">${gsEsc(dish.name)}</div>
-  <div class="raki-prices">${parseRakiPrices(dish.description)}</div>
-</div>`;
+
+  function gsCatSlug(cat: string): string {
+    return "s-" + cat.toLowerCase()
+      .replace(/ğ/g,"g").replace(/[üÜ]/g,"u").replace(/[şŞ]/g,"s")
+      .replace(/[ıİ]/g,"i").replace(/[öÖ]/g,"o").replace(/[çÇ]/g,"c")
+      .replace(/\s+/g,"-").replace(/[^a-z0-9-]/g,"");
   }
-  return `
-<div class="gs-std-card">
-  <div class="std-body">
-    <div class="std-name">${gsEsc(dish.name)}</div>
-    ${dish.price > 0 ? `<div class="std-price">${dish.price.toLocaleString("tr-TR")} ₺</div>` : `<div class="std-price-na">Fiyat için garsonla görüşünüz</div>`}
-    ${dish.description ? `<div class="std-desc">${gsEsc(dish.description)}</div>` : ""}
-    ${dish.spiceLevel ? `<span class="spice-badge">🌶️</span>` : ""}
-  </div>
-  ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}" aria-label="Masaya ekle">+</button>` : ""}
-</div>`;
-}
 
-function renderGunesinPage(masaId: string): string {
-  const restaurant = restaurants.get("gunesin-sofrasi")!;
-  const menu       = menus.get("gunesin-sofrasi")!;
-  const masaCount  = restaurant.masaCount;
-  const displayMasaId = masaId.replace(/^gunesin-/i, "");
-
-  const GS_CAT_ORDER = [
-    "Fix Menü","Soğuk Mezeler","Deniz Mezeleri","Günün Mezeleri",
-    "Ara Sıcaklar","Ana Yemekler (Deniz)","Ana Yemekler (Et)",
-    "Salatalar","Tatlı & Meyve","Rakı",
-    "Şarap (Kırmızı)","Şarap (Beyaz)","Şarap (Rosé)","Meşrubatlar",
-  ];
-
-  const GS_CAT_RENAME: Record<string, string> = { "İçecekler": "Meşrubatlar" };
-  const byCategory: Record<string, Dish[]> = {};
-  for (const dish of menu.dishes) {
-    if (dish.available === false) continue;
-    const displayCat = GS_CAT_RENAME[dish.category] ?? dish.category;
-    (byCategory[displayCat] ??= []).push(dish);
+  function parseRakiPrices(desc: string): string {
+    return desc.split(",").map(part => {
+      const [size, price] = part.split(":").map(s => s.trim());
+      if (!size) return "";
+      const p = parseInt(price ?? "0", 10) || 0;
+      return `<button class="rp-btn" data-size="${gsEsc(size)}" data-price="${p}">
+    <span class="rp-size">${gsEsc(size)}</span>
+    <span class="rp-price">${p > 0 ? p.toLocaleString("tr-TR") + " ₺" : ""}</span>
+  </button>`;
+    }).filter(Boolean).join("");
   }
-  const orderedCats = [
-    ...GS_CAT_ORDER.filter(c => byCategory[c]),
-    ...Object.keys(byCategory).filter(c => !GS_CAT_ORDER.includes(c)),
-  ];
 
-  const navPills = orderedCats.map(c =>
-    `<button class="gs-pill" data-cat="${gsCatSlug(c)}">${gsEsc(c)}</button>`
-  ).join("");
+  function renderGsDish(dish: Dish, catType: "fix" | "raki" | "standard"): string {
+    if (catType === "fix") return `<div class="gs-fix-card">
+    <div class="fix-badge">FIX MENÜ</div>
+    <div class="fix-name">${gsEsc(dish.name)}</div>
+    <div class="fix-price">${dish.price > 0 ? dish.price.toLocaleString("tr-TR") + " ₺" : "Fiyat için görüşünüz"}</div>
+    <div class="fix-desc">${gsEsc(dish.description)}</div>
+    ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}">+</button>` : ""}
+  </div>`;
+    if (catType === "raki") return `<div class="gs-raki-card" data-raki-id="${gsEsc(dish.id)}" data-raki-name="${gsEsc(dish.name)}">
+    <div class="raki-name">${gsEsc(dish.name)}</div>
+    <div class="raki-prices">${parseRakiPrices(dish.description)}</div>
+  </div>`;
+    return `<div class="gs-std-card">
+    <div class="std-body">
+      <div class="std-name">${gsEsc(dish.name)}</div>
+      ${dish.price > 0 ? `<div class="std-price">${dish.price.toLocaleString("tr-TR")} ₺</div>` : `<div class="std-pna">Fiyat için garsonla görüşünüz</div>`}
+      ${dish.description ? `<div class="std-desc">${gsEsc(dish.description)}</div>` : ""}
+    </div>
+    ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}">+</button>` : ""}
+  </div>`;
+  }
 
-  const menuSections = orderedCats.map(c => {
-    const dishes = byCategory[c];
-    const isRaki = c === "Rakı";
-    const isFix  = c === "Fix Menü";
-    const cards  = dishes.map(d => renderGsDish(d, isFix ? "fix" : isRaki ? "raki" : "standard")).join("");
-    return `
-<section class="gs-section" id="${gsCatSlug(c)}">
-  <h2 class="gs-cat-title">${gsEsc(c)}</h2>
-  <div class="${isFix ? "gs-fix-grid" : isRaki ? "gs-raki-grid" : "gs-cards-grid"}">${cards}</div>
-</section>`;
-  }).join("");
+  function renderGunesinPage(masaId: string): string {
+    const menu        = menus.get("gunesin-sofrasi")!;
+    const displayN    = masaId.replace(/^gunesin-/i, "");
 
-  const masaGrid = Array.from({ length: masaCount }, (_, i) => i + 1)
-    .map(n => `<button class="gs-masa-btn" data-num="${n}">${n}</button>`).join("");
+    const CAT_ORDER = [
+      "Fix Menü","Soğuk Mezeler","Deniz Mezeleri","Günün Mezeleri",
+      "Ara Sıcaklar","Ana Yemekler (Deniz)","Ana Yemekler (Et)",
+      "Salatalar","Tatlı & Meyve","Rakı",
+      "Şarap (Kırmızı)","Şarap (Beyaz)","Şarap (Rosé)","Meşrubatlar",
+    ];
+    const CAT_RENAME: Record<string,string> = { "İçecekler": "Meşrubatlar" };
 
-  return `<!DOCTYPE html>
-<html lang="tr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-visual">
-<meta name="theme-color" content="#FDF6EC">
-<title>Güneşin Sofrası · Masa ${gsEsc(displayMasaId)}</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#FDF6EC;--card:#FFFFFF;--card-b:#E8D5B7;
-  --primary:#C0392B;--accent:#E86B2E;--gold:#D4890A;--blue:#2980B9;
-  --text:#2C1810;--muted:#8B6347;--muted2:#B8956A;
-  --hh:110px;--nh:50px;--bh:76px;
-}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden}
-body{padding-bottom:var(--bh)}
+    const byCategory: Record<string, Dish[]> = {};
+    for (const dish of menu.dishes) {
+      if (dish.available === false) continue;
+      const cat = CAT_RENAME[dish.category] ?? dish.category;
+      (byCategory[cat] ??= []).push(dish);
+    }
+    const orderedCats = [
+      ...CAT_ORDER.filter(c => byCategory[c]),
+      ...Object.keys(byCategory).filter(c => !CAT_ORDER.includes(c)),
+    ];
 
-/* ── HEADER ── */
-#gsHdr{
-  position:fixed;top:0;left:0;right:0;height:var(--hh);
-  background:#FFFFFF;border-bottom:1px solid var(--card-b);
-  display:flex;align-items:center;justify-content:center;
-  padding:8px 52px;z-index:200;
-  box-shadow:0 1px 8px rgba(44,24,16,.07);
-}
-#gsLogoImg{height:120px;width:120px;object-fit:contain;display:block}
-.gs-brand{display:flex;flex-direction:column;align-items:center;gap:2px}
-.gs-brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--primary);letter-spacing:.04em}
-.gs-brand-sub{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
+    const navPills = orderedCats.map(c =>
+      `<button class="gs-pill" data-cat="${gsCatSlug(c)}">${gsEsc(c)}</button>`
+    ).join("");
 
-/* ── CAT NAV ── */
-#gsCatNav{
-  position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
-  background:#FFF8F0;border-bottom:1px solid var(--card-b);
-  overflow-x:auto;overflow-y:hidden;white-space:nowrap;
-  display:flex;align-items:center;gap:7px;padding:0 12px;
-  scrollbar-width:none;-webkit-overflow-scrolling:touch;z-index:100
-}
-#gsCatNav::-webkit-scrollbar{display:none}
-.gs-pill{
-  flex-shrink:0;padding:5px 13px;border-radius:20px;
-  border:1px solid var(--card-b);background:#FFFFFF;
-  color:var(--muted);font-family:'Nunito',sans-serif;
-  font-size:12px;font-weight:600;cursor:pointer;transition:all .2s
-}
-.gs-pill.active{background:var(--primary);border-color:var(--primary);color:#fff}
+    const menuSections = orderedCats.map(c => {
+      const isFix  = c === "Fix Menü";
+      const isRaki = c === "Rakı";
+      const cards  = byCategory[c].map(d => renderGsDish(d, isFix ? "fix" : isRaki ? "raki" : "standard")).join("\n");
+      return `<section class="gs-section" id="${gsCatSlug(c)}">
+    <h2 class="gs-cat-title">${gsEsc(c)}</h2>
+    <div class="${isFix ? "gs-fix-grid" : isRaki ? "gs-raki-grid" : "gs-std-grid"}">${cards}</div>
+  </section>`;
+    }).join("\n");
 
-/* ── CONTENT ── */
-#gsContent{
-  margin-top:calc(var(--hh) + var(--nh));
-  padding:16px 12px 24px;
-  height:calc(100dvh - var(--hh) - var(--nh) - var(--bh));
-  overflow-y:auto;
-}
-.gs-section{margin-bottom:28px}
-.gs-cat-title{
-  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;
-  color:var(--primary);margin-bottom:12px;padding-bottom:7px;
-  border-bottom:2px solid rgba(192,57,43,.15);letter-spacing:.02em
-}
+    return `<!DOCTYPE html>
+  <html lang="tr">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-visual">
+  <meta name="theme-color" content="#FDF6EC">
+  <title>Güneşin Sofrası · Masa ${gsEsc(displayN)}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#FDF6EC;--card:#fff;--cb:#E8D5B7;
+    --pri:#C0392B;--acc:#E86B2E;--gold:#D4890A;--blue:#2980B9;
+    --txt:#2C1810;--muted:#8B6347;
+    --hh:110px;--nh:50px;--bh:76px;
+  }
+  html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow-x:hidden}
 
-/* ── STANDARD CARD ── */
-.gs-cards-grid{display:flex;flex-direction:column;gap:9px}
-.gs-std-card{
-  background:var(--card);border:1px solid var(--card-b);border-radius:10px;
-  padding:12px 14px;display:flex;justify-content:space-between;
-  align-items:flex-start;gap:10px;
-  box-shadow:0 1px 4px rgba(44,24,16,.05);transition:border-color .2s,box-shadow .2s;
-}
-.gs-std-card:active{border-color:var(--accent);box-shadow:0 2px 8px rgba(232,107,46,.12)}
-.std-body{flex:1;min-width:0}
-.std-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.3}
-.std-price{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:4px}
-.std-price-na{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px}
-.std-desc{font-size:12px;color:var(--muted);line-height:1.45}
-.spice-badge{font-size:11px;display:inline-block;margin-top:3px}
-.gs-add-btn{
-  flex-shrink:0;width:32px;height:32px;border-radius:50%;
-  border:1.5px solid var(--accent);background:transparent;color:var(--accent);
-  font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;transition:all .15s;align-self:center;line-height:1
-}
-.gs-add-btn:active{background:var(--accent);color:#fff;transform:scale(.88)}
+  /* ── HEADER ── */
+  #hdr{
+    position:fixed;top:0;left:0;right:0;height:var(--hh);
+    background:#fff;border-bottom:1px solid var(--cb);
+    display:flex;align-items:center;justify-content:center;
+    padding:4px 52px;z-index:200;
+    box-shadow:0 1px 8px rgba(44,24,16,.07);
+  }
+  #gsLogo{height:96px;width:96px;object-fit:contain;display:block}
+  #gsBrand{display:none;flex-direction:column;align-items:center;gap:2px}
+  .gs-brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--pri);letter-spacing:.04em}
+  .gs-brand-sub{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
+  #igBtn{
+    position:absolute;top:50%;left:14px;transform:translateY(-50%);
+    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    text-decoration:none;border-radius:10px;-webkit-tap-highlight-color:transparent;
+    transition:opacity .15s;
+  }
+  #igBtn:active{opacity:.65}
+  #igBtn img{width:30px;height:30px;border-radius:8px;display:block}
 
-/* ── FIX MENÜ CARD ── */
-.gs-fix-grid{display:flex;flex-direction:column;gap:12px}
-.gs-fix-card{
-  background:linear-gradient(135deg,#FFFDF5 0%,#FFF9ED 100%);
-  border:1.5px solid var(--gold);border-radius:14px;
-  padding:16px 16px 52px;position:relative;overflow:hidden;
-  box-shadow:0 2px 10px rgba(212,137,10,.1);
-}
-.gs-fix-card::before{
-  content:'';position:absolute;top:-20px;right:-20px;
-  width:90px;height:90px;pointer-events:none;
-  background:radial-gradient(circle,rgba(212,137,10,.1) 0%,transparent 70%)
-}
-.fix-badge{
-  display:inline-block;background:var(--gold);color:#fff;
-  font-size:9px;font-weight:800;letter-spacing:.14em;padding:3px 8px;
-  border-radius:4px;margin-bottom:10px;text-transform:uppercase
-}
-.fix-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:5px}
-.fix-price{font-size:24px;font-weight:800;color:var(--gold);margin-bottom:8px}
-.fix-desc{font-size:12px;color:var(--muted);line-height:1.55}
-.gs-fix-card .gs-add-btn{position:absolute;bottom:14px;right:14px;border-color:var(--gold);color:var(--gold)}
-.gs-fix-card .gs-add-btn:active{background:var(--gold);color:#fff}
+  /* ── CAT NAV ── */
+  #catNav{
+    position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
+    background:#FFF8F0;border-bottom:1px solid var(--cb);
+    overflow-x:auto;white-space:nowrap;display:flex;align-items:center;gap:7px;padding:0 12px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;z-index:100;
+  }
+  #catNav::-webkit-scrollbar{display:none}
+  .gs-pill{
+    flex-shrink:0;padding:5px 13px;border-radius:20px;
+    border:1px solid var(--cb);background:#fff;
+    color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:600;
+    cursor:pointer;transition:all .18s;-webkit-tap-highlight-color:transparent;
+  }
+  .gs-pill.active{background:var(--pri);border-color:var(--pri);color:#fff}
 
-/* ── RAKI CARD ── */
-.gs-raki-grid{display:flex;flex-direction:column;gap:10px}
-.gs-raki-card{
-  background:var(--card);border:1px solid var(--card-b);
-  border-radius:10px;padding:12px 14px;
-  box-shadow:0 1px 4px rgba(44,24,16,.05);
-}
-.raki-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:9px}
-.raki-prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px 7px}
-.rp-btn{
-  display:flex;flex-direction:column;align-items:center;
-  background:#FFF3E8;border:1px solid rgba(212,137,10,.3);
-  border-radius:6px;padding:6px 5px;cursor:pointer;
-  transition:background .15s,border-color .15s,transform .1s;
-}
-.rp-btn:active,.rp-btn:hover{background:#FFE8CC;border-color:var(--accent);transform:scale(.96)}
-.rp-btn.rp-added{background:#d4890a;border-color:#d4890a}.rp-btn.rp-added .rp-size,.rp-btn.rp-added .rp-price{color:#fff}
-.rp-size{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.03em}
-.rp-price{font-size:12px;font-weight:700;color:var(--text)}
+  /* ── MAIN CONTENT ── */
+  #menuContent{
+    margin-top:calc(var(--hh) + var(--nh));
+    padding:16px 12px 24px;
+    height:calc(100dvh - var(--hh) - var(--nh) - var(--bh));
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  .gs-section{margin-bottom:28px}
+  .gs-cat-title{
+    font-family:'Playfair Display',serif;font-size:20px;font-weight:700;
+    color:var(--pri);margin-bottom:12px;padding-bottom:7px;
+    border-bottom:2px solid rgba(192,57,43,.15);
+  }
 
-/* ── BOTTOM BAR ── */
-#gsBar{
-  position:fixed;bottom:0;left:0;right:0;height:var(--bh);
-  background:#FFFFFF;border-top:1px solid var(--card-b);
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));z-index:200;
-  box-shadow:0 -2px 10px rgba(44,24,16,.07);
-}
-.gs-bar-btn{
-  border-radius:10px;border:none;color:#fff;
-  font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  cursor:pointer;transition:opacity .15s;
-}
-.gs-bar-btn:active{opacity:.8}
-#gsGarsonBtn{background:var(--blue)}
-#gsHesapBtn{background:var(--primary)}
+  /* ── RATING BUTTON ── */
+  #ratingWrap{margin:0 0 20px;text-align:center}
+  #ratingBtn{
+    display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+    padding:10px 28px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:12px;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;
+  }
+  #ratingBtn:active{background:#FFF3D0}
+  .rt-hint{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+  .rt-stars{font-size:22px;letter-spacing:3px;color:var(--gold);line-height:1}
 
-/* ── CART FAB ── */
-#gsCartFab{
-  position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
-  width:48px;height:48px;border-radius:50%;
-  background:var(--accent);border:none;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 3px 12px rgba(232,107,46,.45);
-  transition:transform .15s;z-index:150;
-}
-#gsCartFab:active{transform:scale(.9)}
-.gs-cart-inner{font-size:20px;line-height:1;pointer-events:none}
+  /* ── STANDARD CARD ── */
+  .gs-std-grid{display:flex;flex-direction:column;gap:9px}
+  .gs-std-card{
+    background:var(--card);border:1px solid var(--cb);border-radius:10px;
+    padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;
+    box-shadow:0 1px 4px rgba(44,24,16,.05);
+  }
+  .std-body{flex:1;min-width:0}
+  .std-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--txt);margin-bottom:3px;line-height:1.3}
+  .std-price{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:4px}
+  .std-pna{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px}
+  .std-desc{font-size:12px;color:var(--muted);line-height:1.45}
+  .gs-add-btn{
+    flex-shrink:0;width:32px;height:32px;border-radius:50%;
+    border:1.5px solid var(--acc);background:transparent;color:var(--acc);
+    font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;align-self:center;-webkit-tap-highlight-color:transparent;
+  }
+  .gs-add-btn:active{background:var(--acc);color:#fff}
 
-/* ── AI FAB ── */
-#gsAiFab{
-  position:fixed;bottom:calc(var(--bh) + 72px);right:16px;
-  width:52px;height:52px;border-radius:50%;
-  background:#1c1c3e;border:1.5px solid #3d3d7a;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.3);
-  transition:transform .15s;z-index:150;
-}
-#gsAiFab:active{transform:scale(.9)}
-/* ── DÜŞÜNCELER FAB (bottom left) ── */
-#gsDushuncelerFab{
-  position:fixed;bottom:calc(var(--bh) + 14px);left:16px;
-  width:48px;height:48px;border-radius:50%;
-  background:#27AE60;border:none;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 3px 12px rgba(39,174,96,.45);
-  transition:transform .15s;z-index:150;
-}
-#gsDushuncelerFab:active{transform:scale(.9)}
+  /* ── FIX CARD ── */
+  .gs-fix-grid{display:flex;flex-direction:column;gap:12px}
+  .gs-fix-card{
+    background:linear-gradient(135deg,#FFFDF5,#FFF9ED);
+    border:1.5px solid var(--gold);border-radius:14px;
+    padding:16px 16px 54px;position:relative;overflow:hidden;
+    box-shadow:0 2px 10px rgba(212,137,10,.1);
+  }
+  .fix-badge{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:9px;font-weight:800;letter-spacing:.14em;padding:3px 8px;
+    border-radius:4px;margin-bottom:10px;text-transform:uppercase;
+  }
+  .fix-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--txt);margin-bottom:5px}
+  .fix-price{font-size:24px;font-weight:800;color:var(--gold);margin-bottom:8px}
+  .fix-desc{font-size:12px;color:var(--muted);line-height:1.55}
+  .gs-fix-card .gs-add-btn{position:absolute;bottom:14px;right:14px;border-color:var(--gold);color:var(--gold)}
 
-/* ── TOAST ── */
-#gsToast{
-  position:fixed;bottom:calc(var(--bh) + 148px);left:50%;
-  transform:translateX(-50%) translateY(20px);
-  background:#2C1810;color:#FDF6EC;
-  padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
-  white-space:nowrap;opacity:0;transition:opacity .25s,transform .25s;
-  z-index:400;pointer-events:none;
-}
-#gsToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* ── RAKI CARD ── */
+  .gs-raki-grid{display:flex;flex-direction:column;gap:10px}
+  .gs-raki-card{background:var(--card);border:1px solid var(--cb);border-radius:10px;padding:12px 14px}
+  .raki-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--txt);margin-bottom:9px}
+  .raki-prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px 7px}
+  .rp-btn{
+    display:flex;flex-direction:column;align-items:center;
+    background:#FFF3E8;border:1px solid rgba(212,137,10,.3);border-radius:6px;
+    padding:6px 5px;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent;
+  }
+  .rp-btn.rp-added{background:var(--gold);border-color:var(--gold)}
+  .rp-btn.rp-added .rp-size,.rp-btn.rp-added .rp-price{color:#fff}
+  .rp-size{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase}
+  .rp-price{font-size:12px;font-weight:700;color:var(--txt)}
 
-/* ── CART DRAWER ── */
-#gsCartBg{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
-#gsCartBg.open{opacity:1;pointer-events:auto}
-#gsCartDrawer{
-  position:fixed;top:0;right:0;bottom:0;width:min(340px,92vw);
-  background:#FFFFFF;border-left:1px solid var(--card-b);
-  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:301;display:flex;flex-direction:column;
-  box-shadow:-4px 0 20px rgba(44,24,16,.1);
-}
-#gsCartDrawer.open{transform:translateX(0)}
-.gc-head{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;border-bottom:1px solid var(--card-b)}
-.gc-head h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--primary)}
-.gc-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
-.gc-items{flex:1;overflow-y:auto;padding:12px 16px}
-.gc-empty{color:var(--muted);font-size:14px;text-align:center;margin-top:30px}
-.gc-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F0E8D8}
-.gc-item-name{font-size:13px;color:var(--text);flex:1;padding-right:6px;line-height:1.35}
-.gc-item-price{font-size:13px;font-weight:700;color:var(--gold);margin:0 8px;white-space:nowrap}
-.gc-item-qty{display:flex;align-items:center;gap:5px}
-.gc-qty-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--accent);background:none;color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.gc-qty-btn:active{background:var(--accent);color:#fff}
-.gc-qty-num{font-size:14px;font-weight:700;color:var(--text);min-width:16px;text-align:center}
-.gc-footer{padding:14px 16px;border-top:1px solid var(--card-b)}
-.gc-total-row{display:flex;justify-content:space-between;margin-bottom:12px}
-.gc-total-label{font-size:14px;color:var(--muted)}
-.gc-total-price{font-size:18px;font-weight:800;color:var(--gold)}
-.gc-order-btn{width:100%;padding:14px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}
-.gc-order-btn:active{opacity:.82}
-.gc-order-btn:disabled{background:#D4B8A8;color:#fff;cursor:default}
+  /* ── BOTTOM BAR ── */
+  #bar{
+    position:fixed;bottom:0;left:0;right:0;height:var(--bh);
+    background:#fff;border-top:1px solid var(--cb);
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));
+    z-index:200;box-shadow:0 -2px 10px rgba(44,24,16,.07);
+  }
+  .bar-btn{
+    border-radius:10px;border:none;color:#fff;
+    font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;
+  }
+  .bar-btn:active{opacity:.8}
+  #garsonBtn{background:var(--blue)}
+  #hesapBtn{background:var(--pri)}
 
-/* ── AI CHAT DRAWER ── */
-#ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999}
-#ai-overlay.open{display:block}
-#ai-drawer{
-  position:fixed;left:0;right:0;bottom:0;z-index:1000;
-  background:#fff;border-radius:16px 16px 0 0;
-  display:flex;flex-direction:column;
-  height:50vh;width:100%;
-  box-sizing:border-box;overflow:hidden;
-  transform:translateY(100%);transition:transform .3s ease;
-}
-#ai-drawer.open{transform:translateY(0)}
-#ai-header{
-  flex-shrink:0;padding:12px 16px;border-bottom:1px solid #eee;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.ai-head-left{display:flex;align-items:center;gap:10px}
-.ai-head-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.ai-head-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--primary)}
-.ai-head-sub{font-size:11px;color:var(--muted)}
-.ai-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
-#ai-messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
-.ai-bubble-wrap{display:flex;gap:8px;align-items:flex-end}
-.ai-bubble-wrap.user{flex-direction:row-reverse}
-.ai-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:14px}
-.ai-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:15px;line-height:1.5;color:var(--text)}
-.ai-bubble.assistant{background:#F3E8FF;border-bottom-left-radius:4px}
-.ai-bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
-.ai-bubble.loading::after{content:'...';animation:dots 1s infinite}
-@keyframes dots{0%{content:'·'}33%{content:'··'}66%{content:'···'}100%{content:'·'}}
-#ai-input-row{
-  position:sticky;bottom:0;flex-shrink:0;
-  display:flex;flex-direction:row;align-items:center;
-  gap:8px;padding:10px 12px;border-top:1px solid #eee;
-  background:#fff;box-sizing:border-box;width:100%;z-index:10;
-}
-#ai-input{
-  flex:1;min-width:0;padding:10px 12px;border:1px solid #ddd;
-  border-radius:20px;font-size:15px;outline:none;box-sizing:border-box;
-  font-family:'Nunito',sans-serif;color:var(--text);resize:none;max-height:80px;overflow-y:auto;
-}
-#ai-input:focus{border-color:var(--blue)}
-#ai-send{
-  flex-shrink:0;width:44px;height:44px;border-radius:50%;
-  background:#E86B2E;border:none;color:#fff;font-size:18px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-}
+  /* ── FABS ── */
+  #cartFab{
+    position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
+    width:50px;height:50px;border-radius:50%;
+    background:var(--acc);border:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 3px 12px rgba(232,107,46,.45);z-index:150;
+    -webkit-tap-highlight-color:transparent;
+  }
+  #cartBadge{font-size:20px;line-height:1;pointer-events:none;user-select:none}
+  #aiFab{
+    position:fixed;bottom:calc(var(--bh) + 74px);right:16px;
+    width:52px;height:52px;border-radius:50%;
+    background:#1c1c3e;border:1.5px solid #3d3d7a;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.3);z-index:150;
+    font-size:10px;font-weight:800;color:#fff;line-height:1.2;text-align:center;
+    gap:1px;-webkit-tap-highlight-color:transparent;
+  }
 
-/* ── MASA SHEET ── */
-#gsMasaBg{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
-#gsMasaBg.open{opacity:1;pointer-events:auto}
-#gsMasaSheet{
-  position:fixed;bottom:0;left:0;right:0;background:#FFFFFF;
-  border-top:1px solid var(--card-b);border-radius:16px 16px 0 0;
-  padding:16px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:301;max-height:70vh;overflow-y:auto;
-  box-shadow:0 -2px 16px rgba(44,24,16,.08);
-}
-#gsMasaSheet.open{transform:translateY(0)}
-.gs-masa-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.gs-masa-head h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--primary)}
-.gs-masa-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
-.gs-masa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.gs-masa-btn{
-  padding:12px 0;border-radius:8px;border:1px solid var(--card-b);
-  background:#FFF8F0;color:var(--text);font-family:'Nunito',sans-serif;
-  font-size:15px;font-weight:600;cursor:pointer;transition:all .15s
-}
-.gs-masa-btn.selected{background:var(--primary);border-color:var(--primary);color:#fff}
-.gs-masa-btn:active{background:var(--primary);color:#fff}
+  /* ── TOAST ── */
+  #toast{
+    position:fixed;bottom:calc(var(--bh) + 142px);left:50%;
+    transform:translateX(-50%) translateY(16px);
+    background:#2C1810;color:#FDF6EC;
+    padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
+    white-space:nowrap;opacity:0;transition:opacity .25s,transform .25s;
+    z-index:400;pointer-events:none;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* ── INSTAGRAM ICON ── */
-#gsInstaLink{
-  position:absolute;top:50%;left:14px;transform:translateY(-50%);
-  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
-  text-decoration:none;border-radius:8px;transition:opacity .15s;
-}
-#gsInstaLink:active{opacity:.7}
-#gsInstaLink svg{display:block;width:28px;height:28px}
+  /* ── OVERLAYS ── */
+  #cartOverlay,#aiOverlay,#ratingOverlay,#feedbackOverlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.45);
+    opacity:0;pointer-events:none;transition:opacity .25s;z-index:300;
+  }
+  #cartOverlay.v,#aiOverlay.v,#ratingOverlay.v,#feedbackOverlay.v{opacity:1;pointer-events:auto}
 
-/* ── GS MODALS ── */
-.gs-modal-bg{
-  position:fixed;inset:0;background:rgba(0,0,0,.55);
-  opacity:0;pointer-events:none;transition:opacity .25s;z-index:500;
-}
-.gs-modal-bg.open{opacity:1;pointer-events:auto}
-.gs-modal-sheet{
-  position:fixed;bottom:0;left:0;right:0;
-  background:#FFFFFF;border-radius:20px 20px 0 0;
-  border-top:2px solid var(--card-b);
-  transform:translateY(100%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);
-  padding-bottom:max(20px,env(safe-area-inset-bottom));
-  max-height:90vh;overflow-y:auto;z-index:501;
-}
-.gs-modal-sheet.open{transform:translateY(0)}
-.gs-modal-head{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 18px 14px;border-bottom:1px solid var(--card-b);
-  position:sticky;top:0;background:#fff;z-index:1;
-}
-.gs-modal-head h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--primary)}
-.gs-modal-close{
-  background:#F5EFE8;border:none;color:var(--muted);
-  font-size:15px;width:30px;height:30px;border-radius:50%;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-}
-.gs-modal-close:active{background:#E8D5B7}
-.gs-modal-body{padding:16px 18px 0}
-.gs-field{margin-bottom:12px}
-.gs-field label{
-  display:block;font-size:11px;font-weight:700;
-  color:var(--muted);letter-spacing:.08em;
-  text-transform:uppercase;margin-bottom:5px;
-}
-.gs-field input,.gs-field textarea{
-  width:100%;background:#FFF8F0;border:1.5px solid var(--card-b);
-  border-radius:10px;color:var(--text);
-  font-family:'Nunito',sans-serif;font-size:15px;padding:11px 13px;
-  outline:none;transition:border-color .15s;box-sizing:border-box;
-}
-.gs-field input:focus,.gs-field textarea:focus{border-color:var(--blue)}
-.gs-field textarea{resize:none;height:88px;line-height:1.45}
-.gs-submit-btn{
-  width:100%;height:46px;border-radius:12px;
-  background:var(--primary);border:none;color:#fff;
-  font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;
-  cursor:pointer;margin-top:4px;transition:opacity .15s;
-}
-.gs-submit-btn:active{opacity:.85}
-.gs-submit-btn:disabled{opacity:.35;cursor:not-allowed}
-/* ── BİZİ PUANLAYIN BUTTON ── */
-#gsBiziPuanlayin{margin:0 0 20px;text-align:center}
-#gsBiziBtn{
-  display:inline-flex;flex-direction:column;align-items:center;gap:4px;
-  margin:0 auto;padding:10px 24px;
-  background:#FFFDF5;border:1.5px solid var(--gold);
-  border-radius:12px;
-  cursor:pointer;transition:background .15s;
-}
-#gsBiziBtn:active{background:#FFF3D0}
-.bizi-hint{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.04em}
-.bizi-stars{font-size:22px;line-height:1;letter-spacing:3px;color:var(--gold)}
-/* ── STAR RATING IN MODAL ── */
-.gs-star-row{display:flex;justify-content:center;gap:6px;padding:20px 0 8px}
-.gs-star-btn{
-  background:none;border:none;font-size:40px;cursor:pointer;
-  color:#D4B8A8;transition:color .12s,transform .1s;
-  line-height:1;padding:4px;-webkit-tap-highlight-color:transparent;
-}
-.gs-star-btn.lit{color:#F0A500}
-.gs-star-btn:active{transform:scale(.82)}
-.gs-rating-hint{
-  text-align:center;font-size:13px;color:var(--muted);
-  min-height:20px;margin-bottom:16px;padding:0 18px;
-}
-.gs-gmaps-msg{
-  text-align:center;font-size:13.5px;color:var(--text);
-  padding:0 18px 12px;line-height:1.55;display:none;
-}
-.gs-gmaps-msg.show{display:block}
-.gs-rating-actions{display:flex;gap:10px;padding:0 18px 8px;display:none}
-.gs-rating-actions.show{display:flex}
-.gs-rating-action-btn{
-  flex:1;height:44px;border-radius:11px;
-  border:1.5px solid var(--card-b);background:#FFF8F0;
-  color:var(--text);font-family:'Nunito',sans-serif;
-  font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;
-}
-.gs-rating-action-btn.primary{background:#4285F4;border-color:#4285F4;color:#fff}
-.gs-rating-action-btn:active{opacity:.8}
-</style>
-</head>
-<body>
+  /* ── CART DRAWER ── */
+  #cartDrawer{
+    position:fixed;top:0;right:0;bottom:0;width:min(340px,92vw);
+    background:#fff;border-left:1px solid var(--cb);
+    transform:translateX(110%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+    z-index:310;display:flex;flex-direction:column;
+    box-shadow:-4px 0 20px rgba(44,24,16,.1);
+  }
+  #cartDrawer.open{transform:translateX(0)}
+  .cd-head{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--cb)}
+  .cd-head h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--pri)}
+  #cartClose{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:2px 6px;line-height:1}
+  #cartItems{flex:1;overflow-y:auto;padding:10px 16px}
+  .c-empty{color:var(--muted);font-size:14px;text-align:center;margin-top:28px}
+  .c-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #F0E8D8;gap:6px}
+  .c-name{font-size:13px;color:var(--txt);flex:1}
+  .c-price{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap}
+  .c-qty{display:flex;align-items:center;gap:4px}
+  .c-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--acc);background:none;color:var(--acc);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .cd-foot{padding:14px 16px;border-top:1px solid var(--cb)}
+  .cd-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:14px;color:var(--muted)}
+  #cartTotal{font-size:18px;font-weight:800;color:var(--gold)}
+  #orderBtn{
+    width:100%;height:46px;border-radius:10px;
+    background:var(--pri);border:none;color:#fff;
+    font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;
+    transition:opacity .15s;-webkit-tap-highlight-color:transparent;
+  }
+  #orderBtn:disabled{background:#D4B8A8;cursor:default}
 
-<!-- ═══ HEADER ═══ -->
-<header id="gsHdr">
-  <a id="gsInstaLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram'da takip edin">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="28" height="28" style="border-radius:8px;display:block;">
-  </a>
-  <img id="gsLogoImg" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası Logo" onerror="this.style.display='none'">
-  <div class="gs-brand" id="gsBrand" style="display:none">
-    <div class="gs-brand-name">Güneşin Sofrası</div>
-    <div class="gs-brand-sub">Meyhane</div>
-  </div>
-</header>
+  /* ── AI DRAWER ── */
+  #aiDrawer{
+    position:fixed;left:0;right:0;bottom:0;
+    background:#fff;border-radius:16px 16px 0 0;
+    display:flex;flex-direction:column;height:62vh;overflow:hidden;
+    transform:translateY(110%);transition:transform .3s ease;z-index:310;
+  }
+  #aiDrawer.open{transform:translateY(0)}
+  .ai-head{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee}
+  .ai-head-l{display:flex;align-items:center;gap:10px}
+  .ai-av-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .ai-n{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri)}
+  .ai-s{font-size:11px;color:var(--muted)}
+  #aiClose{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:2px 6px;line-height:1}
+  #aiMessages{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+  .ai-msg{display:flex;gap:8px;align-items:flex-end}
+  .ai-msg.user{flex-direction:row-reverse}
+  .ai-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:14px}
+  .ai-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:14px;line-height:1.5;color:var(--txt)}
+  .ai-bubble.bot{background:#F3E8FF;border-bottom-left-radius:4px}
+  .ai-bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+  #aiInputRow{flex-shrink:0;display:flex;gap:8px;padding:10px 12px;border-top:1px solid #eee;background:#fff}
+  #aiInput{
+    flex:1;padding:10px 12px;border:1px solid #ddd;border-radius:20px;
+    font-size:14px;outline:none;font-family:'Nunito',sans-serif;resize:none;max-height:80px;overflow-y:auto;
+  }
+  #aiSend{
+    flex-shrink:0;width:44px;height:44px;border-radius:50%;
+    background:var(--acc);border:none;color:#fff;font-size:18px;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    -webkit-tap-highlight-color:transparent;
+  }
 
-<!-- ═══ CATEGORY NAV ═══ -->
-<nav id="gsCatNav" aria-label="Kategoriler">${navPills}</nav>
+  /* ── RATING MODAL ── */
+  #ratingModal{
+    position:fixed;bottom:0;left:0;right:0;
+    background:#fff;border-radius:20px 20px 0 0;border-top:2px solid var(--cb);
+    padding:0 0 max(20px,env(safe-area-inset-bottom));
+    transform:translateY(110%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);z-index:310;
+  }
+  #ratingModal.open{transform:translateY(0)}
+  .rm-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 14px;border-bottom:1px solid var(--cb)}
+  .rm-head h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--pri)}
+  #ratingClose{background:#F5EFE8;border:none;color:var(--muted);font-size:14px;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .star-row{display:flex;justify-content:center;gap:6px;padding:18px 0 6px}
+  .gs-star{background:none;border:none;font-size:40px;cursor:pointer;color:#D4B8A8;transition:color .12s;line-height:1;padding:4px;-webkit-tap-highlight-color:transparent}
+  .gs-star.lit{color:#F0A500}
+  #ratingHint{text-align:center;font-size:13px;color:var(--muted);min-height:20px;margin-bottom:14px;padding:0 18px}
+  #ratingGmaps{text-align:center;font-size:13.5px;color:var(--txt);padding:0 18px 12px;line-height:1.55;display:none}
+  #ratingActions{gap:10px;padding:0 18px 6px;display:none}
+  .ra-btn{
+    flex:1;height:44px;border-radius:11px;border:1.5px solid var(--cb);background:#FFF8F0;
+    color:var(--txt);font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;
+    cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .ra-btn.primary{background:#4285F4;border-color:#4285F4;color:#fff}
 
-<!-- ═══ MENU CONTENT ═══ -->
-<main id="gsContent">
+  /* ── FEEDBACK MODAL ── */
+  #feedbackModal{
+    position:fixed;bottom:0;left:0;right:0;
+    background:#fff;border-radius:20px 20px 0 0;border-top:2px solid var(--cb);
+    max-height:90vh;overflow-y:auto;
+    transform:translateY(110%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);z-index:310;
+    padding-bottom:max(20px,env(safe-area-inset-bottom));
+  }
+  #feedbackModal.open{transform:translateY(0)}
+  .fm-head{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 14px;border-bottom:1px solid var(--cb);position:sticky;top:0;background:#fff;z-index:1}
+  .fm-head h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--pri)}
+  #feedbackClose{background:#F5EFE8;border:none;color:var(--muted);font-size:14px;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .fm-body{padding:16px 18px 0}
+  .fm-field{margin-bottom:12px}
+  .fm-field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+  .fm-field input,.fm-field textarea{
+    width:100%;background:#FFF8F0;border:1.5px solid var(--cb);border-radius:10px;
+    color:var(--txt);font-family:'Nunito',sans-serif;font-size:15px;padding:11px 13px;
+    outline:none;transition:border-color .15s;
+  }
+  .fm-field input:focus,.fm-field textarea:focus{border-color:var(--acc)}
+  .fm-field textarea{resize:none;height:88px;line-height:1.45}
+  #feedbackSubmit{
+    width:100%;height:46px;border-radius:12px;
+    background:var(--pri);border:none;color:#fff;
+    font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;
+    cursor:pointer;margin-top:4px;-webkit-tap-highlight-color:transparent;
+  }
+  #feedbackSubmit:disabled{opacity:.35;cursor:not-allowed}
+  </style>
+  </head>
+  <body>
 
-<!-- BİZİ PUANLAYIN -->
-<div id="gsBiziPuanlayin">
-  <button id="gsBiziBtn">
-    <span class="bizi-hint">Deneyiminizi paylaşın</span>
-    <span class="bizi-stars">★★★★★</span>
+  <!-- HEADER -->
+  <header id="hdr">
+    <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
+    </a>
+    <img id="gsLogo" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası" loading="eager">
+    <div id="gsBrand">
+      <div class="gs-brand-name">Güneşin Sofrası</div>
+      <div class="gs-brand-sub">Meyhane</div>
+    </div>
+  </header>
+
+  <!-- CATEGORY NAV -->
+  <nav id="catNav" aria-label="Menü kategorileri">
+    ${navPills}
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main id="menuContent">
+    <div id="ratingWrap">
+      <button id="ratingBtn">
+        <span class="rt-hint">Deneyiminizi paylaşın</span>
+        <span class="rt-stars">★★★★★</span>
+      </button>
+    </div>
+    ${menuSections}
+  </main>
+
+  <!-- TOAST -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- CART FAB -->
+  <button id="cartFab" aria-label="Sepeti Aç">
+    <span id="cartBadge">🍽️</span>
   </button>
-</div>
 
-${menuSections}
-</main>
+  <!-- AI FAB -->
+  <button id="aiFab" aria-label="AI Gurme">
+    <span>AI</span><span>Gurme</span>
+  </button>
 
-<!-- ═══ TOAST ═══ -->
-<div id="gsToast" role="status" aria-live="polite"></div>
-
-<!-- ═══ CART FAB ═══ -->
-<button id="gsCartFab" aria-label="Masayı aç">
-  <span class="gs-cart-inner" id="gsCartIcon">🍽️</span>
-</button>
-
-<!-- ═══ AI FAB ═══ -->
-<button id="gsAiFab" aria-label="GurmeAI'yi aç">
-  <span style="font-size:11px;font-weight:bold;color:white;line-height:1.2;text-align:center;">AI<br>Gurme</span>
-</button>
-
-<!-- ═══ DÜŞÜNCELER FAB ═══ -->
-<button id="gsDushuncelerFab" aria-label="Düşünceleriniz">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="white" aria-hidden="true"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
-</button>
-
-<!-- ═══ BOTTOM ACTION BAR ═══ -->
-<div id="gsBar">
-  <button class="gs-bar-btn" id="gsGarsonBtn">🖐️&nbsp;Garson Çağırın</button>
-  <button class="gs-bar-btn" id="gsHesapBtn">🧾&nbsp;Hesap İste</button>
-</div>
-
-<!-- ═══ CART DRAWER ═══ -->
-<div id="gsCartBg"></div>
-<aside id="gsCartDrawer">
-  <div class="gc-head">
-    <h2>🍽️&nbsp;Sipariş</h2>
-    <button class="gc-close" id="gcCloseBtn">✕</button>
+  <!-- BOTTOM BAR -->
+  <div id="bar">
+    <button id="garsonBtn" class="bar-btn">🖐️ Garson Çağır</button>
+    <button id="hesapBtn"  class="bar-btn">🧾 Hesap İste</button>
   </div>
-  <div class="gc-items" id="gcItemsList"><p class="gc-empty">Henüz ürün eklenmedi.</p></div>
-  <div class="gc-footer">
-    <div class="gc-total-row"><span class="gc-total-label">Toplam</span><span class="gc-total-price" id="gcTotal">0 ₺</span></div>
-    <button class="gc-order-btn" id="gcOrderBtn" disabled>Siparişi Ver</button>
-  </div>
-</aside>
 
-<!-- ═══ AI CHAT DRAWER ═══ -->
-<div id="ai-overlay"></div>
-<div id="ai-drawer">
-  <div id="ai-header">
-    <div class="ai-head-left">
-      <div class="ai-head-icon">👨‍🍳</div>
-      <div>
-        <div class="ai-head-name">GurmeAI</div>
-        <div class="ai-head-sub">Güneşin Sofrası Yapay Zeka Asistanı</div>
+  <!-- CART OVERLAY + DRAWER -->
+  <div id="cartOverlay"></div>
+  <aside id="cartDrawer" role="dialog" aria-label="Sepet">
+    <div class="cd-head">
+      <h2>🍽️ Sipariş</h2>
+      <button id="cartClose" aria-label="Kapat">✕</button>
+    </div>
+    <div id="cartItems"><p class="c-empty">Henüz ürün eklenmedi.</p></div>
+    <div class="cd-foot">
+      <div class="cd-total"><span>Toplam</span><span id="cartTotal">0 ₺</span></div>
+      <button id="orderBtn" disabled>Siparişi Ver</button>
+    </div>
+  </aside>
+
+  <!-- AI OVERLAY + DRAWER -->
+  <div id="aiOverlay"></div>
+  <div id="aiDrawer" role="dialog" aria-label="GurmeAI">
+    <div class="ai-head">
+      <div class="ai-head-l">
+        <div class="ai-av-icon">👨‍🍳</div>
+        <div>
+          <div class="ai-n">GurmeAI</div>
+          <div class="ai-s">Güneşin Sofrası Asistanı</div>
+        </div>
       </div>
+      <button id="aiClose" aria-label="Kapat">✕</button>
     </div>
-    <button class="ai-close" id="aiCloseBtn">✕</button>
-  </div>
-  <div id="ai-messages"></div>
-  <div id="ai-input-row">
-    <textarea id="ai-input" placeholder="Menü hakkında soru sorun..." rows="1"></textarea>
-    <button id="ai-send" aria-label="Gönder">➤</button>
-  </div>
-</div>
-
-<!-- ═══ MASA SELECTOR ═══ -->
-<div id="gsMasaBg"></div>
-<div id="gsMasaSheet">
-  <div class="gs-masa-head"><h3>Masanı Seç</h3><button class="gs-masa-close" id="gsMasaCloseBtn">✕</button></div>
-  <div class="gs-masa-grid">${masaGrid}</div>
-</div>
-
-<!-- ═══ DÜŞÜNCELERİNİZ MODAL ═══ -->
-<div class="gs-modal-bg" id="gsDushBg"></div>
-<div class="gs-modal-sheet" id="gsDushSheet">
-  <div class="gs-modal-head">
-    <h3>Düşünceleriniz</h3>
-    <button class="gs-modal-close" id="gsDushClose">✕</button>
-  </div>
-  <div class="gs-modal-body">
-    <div class="gs-field">
-      <label for="dushName">Ad Soyad *</label>
-      <input id="dushName" type="text" placeholder="Adınız ve soyadınız" autocomplete="name">
+    <div id="aiMessages"></div>
+    <div id="aiInputRow">
+      <textarea id="aiInput" placeholder="Menü hakkında soru sorun…" rows="1"></textarea>
+      <button id="aiSend" aria-label="Gönder">➤</button>
     </div>
-    <div class="gs-field">
-      <label for="dushPhone">Cep Numarası</label>
-      <input id="dushPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel">
+  </div>
+
+  <!-- RATING OVERLAY + MODAL -->
+  <div id="ratingOverlay"></div>
+  <div id="ratingModal" role="dialog" aria-label="Bizi Puanlayın">
+    <div class="rm-head">
+      <h3>Bizi Puanlayın</h3>
+      <button id="ratingClose" aria-label="Kapat">✕</button>
     </div>
-    <div class="gs-field">
-      <label for="dushMsg">Mesajınız</label>
-      <textarea id="dushMsg" placeholder="Görüş ve önerilerinizi yazın..."></textarea>
+    <div class="star-row">
+      <button class="gs-star" data-v="1" aria-label="1 yıldız">★</button>
+      <button class="gs-star" data-v="2" aria-label="2 yıldız">★</button>
+      <button class="gs-star" data-v="3" aria-label="3 yıldız">★</button>
+      <button class="gs-star" data-v="4" aria-label="4 yıldız">★</button>
+      <button class="gs-star" data-v="5" aria-label="5 yıldız">★</button>
     </div>
-    <button class="gs-submit-btn" id="dushSubmit">İlet</button>
-    <div style="height:16px"></div>
+    <p id="ratingHint">Deneyiminizi değerlendirin</p>
+    <p id="ratingGmaps">Harika! Google profilimizde değerlendirme yapmak ister misiniz?</p>
+    <div id="ratingActions">
+      <button id="ratingNo" class="ra-btn">Hayır</button>
+      <a id="ratingYes" class="ra-btn primary" href="https://share.google/tvnoLJvxZcTGn60vK" target="_blank" rel="noopener noreferrer">Evet, Değerlendir</a>
+    </div>
   </div>
-</div>
 
-<!-- ═══ PUANLAMA MODAL ═══ -->
-<div class="gs-modal-bg" id="gsRatingBg"></div>
-<div class="gs-modal-sheet" id="gsRatingSheet">
-  <div class="gs-modal-head">
-    <h3>Bizi Puanlayın</h3>
-    <button class="gs-modal-close" id="gsRatingClose">✕</button>
+  <!-- FEEDBACK OVERLAY + MODAL -->
+  <div id="feedbackOverlay"></div>
+  <div id="feedbackModal" role="dialog" aria-label="Düşünceleriniz">
+    <div class="fm-head">
+      <h3>Düşünceleriniz</h3>
+      <button id="feedbackClose" aria-label="Kapat">✕</button>
+    </div>
+    <div class="fm-body">
+      <div class="fm-field">
+        <label for="feedbackName">Ad Soyad *</label>
+        <input id="feedbackName" type="text" placeholder="Adınız ve soyadınız" autocomplete="name">
+      </div>
+      <div class="fm-field">
+        <label for="feedbackPhone">Cep Numarası</label>
+        <input id="feedbackPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel">
+      </div>
+      <div class="fm-field">
+        <label for="feedbackMsg">Mesajınız</label>
+        <textarea id="feedbackMsg" placeholder="Görüş ve önerilerinizi yazın…"></textarea>
+      </div>
+      <button id="feedbackSubmit">İlet</button>
+    </div>
   </div>
-  <div class="gs-star-row" id="gsStarRow">
-    <button class="gs-star-btn" data-v="1" aria-label="1 yıldız">★</button>
-    <button class="gs-star-btn" data-v="2" aria-label="2 yıldız">★</button>
-    <button class="gs-star-btn" data-v="3" aria-label="3 yıldız">★</button>
-    <button class="gs-star-btn" data-v="4" aria-label="4 yıldız">★</button>
-    <button class="gs-star-btn" data-v="5" aria-label="5 yıldız">★</button>
-  </div>
-  <div class="gs-rating-hint" id="gsRatingHint">Deneyiminizi değerlendirin</div>
-  <p class="gs-gmaps-msg" id="gsGmapsMsg">Harika! Google profilimizde değerlendirme yapmak ister misiniz?</p>
-  <div class="gs-rating-actions" id="gsRatingActions">
-    <button class="gs-rating-action-btn" id="gsRatingNo">Hayır</button>
-    <a class="gs-rating-action-btn primary" href="https://share.google/tvnoLJvxZcTGn60vK" target="_blank" rel="noopener noreferrer" id="gsRatingYes" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Evet, Değerlendir</a>
-  </div>
-  <div style="height:8px"></div>
-</div>
 
-<script>window.GS_INIT_ID = ${JSON.stringify(displayMasaId)};</script>
-<script src="/assets/gunesin-menu.js?v=20260419h" defer></script>
-</body>
-</html>`;
-}
+  <script>window.GS_TABLE = ${JSON.stringify(displayN)};</script>
+  <script src="/assets/gunesin-menu.js?v=20260419j" defer></script>
+  </body>
+  </html>`;
+  }
+  
+  router.get("/:masaId", (req: Request, res: Response) => {
+    const { masaId } = req.params;
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store");
+    res.send(masaId.startsWith("gunesin-") ? renderGunesinPage(masaId) : renderPage(masaId));
+  });
 
-router.get("/:masaId", (req: Request, res: Response) => {
-  const { masaId } = req.params;
-  res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "no-store");
-  res.send(masaId.startsWith("gunesin-") ? renderGunesinPage(masaId) : renderPage(masaId));
-});
-
-export default router;
+  export default router;
+  
