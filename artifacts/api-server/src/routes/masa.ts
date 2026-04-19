@@ -2234,22 +2234,8 @@ textarea.fb-form-field{resize:vertical;min-height:80px}
 
 <!-- ═══ HEADER ═══ -->
 <header id="gsHdr">
-  <a id="gsInstaLink" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram'da takip edin">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="ig-grad" cx="30%" cy="107%" r="150%">
-          <stop offset="0%" stop-color="#fdf497"/>
-          <stop offset="5%" stop-color="#fdf497"/>
-          <stop offset="45%" stop-color="#fd5949"/>
-          <stop offset="60%" stop-color="#d6249f"/>
-          <stop offset="90%" stop-color="#285AEB"/>
-        </radialGradient>
-      </defs>
-      <rect width="24" height="24" rx="5.5" fill="url(#ig-grad)"/>
-      <circle cx="12" cy="12" r="4.2" fill="none" stroke="#fff" stroke-width="1.7"/>
-      <circle cx="17.3" cy="6.7" r="1.1" fill="#fff"/>
-      <rect x="2.5" y="2.5" width="19" height="19" rx="5" fill="none" stroke="#fff" stroke-width="1.4" stroke-opacity=".3"/>
-    </svg>
+  <a id="gsInstaLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram'da takip edin">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="28" height="28" style="border-radius:8px;display:block;">
   </a>
   <img id="gsLogoImg" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası Logo" onerror="this.style.display='none'">
   <div class="gs-brand" id="gsBrand" style="display:none">
@@ -2277,7 +2263,7 @@ textarea.fb-form-field{resize:vertical;min-height:80px}
   </div>
   <div class="fb-high" id="fbHigh">
     <p class="fb-high-msg">Harika! Google'da değerlendirme yapmak ister misiniz?</p>
-    <a class="fb-gmaps-btn" href="#" target="_blank" rel="noopener noreferrer" id="fbGmapsBtn">
+    <a class="fb-gmaps-btn" href="https://share.google/cam4YI0t26psrgOFA" target="_blank" rel="noopener noreferrer" id="fbGmapsBtn">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#fff"/></svg>
       Google'da Değerlendir
     </a>
