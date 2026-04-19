@@ -2063,26 +2063,6 @@ body{padding-bottom:var(--bh)}
   transition:transform .15s;z-index:150;
 }
 #gsAiFab:active{transform:scale(.9)}
-/* ── GARSON FAB (above AI) ── */
-#gsGarsonFab{
-  position:fixed;bottom:calc(var(--bh) + 134px);right:16px;
-  width:48px;height:48px;border-radius:50%;
-  background:#2980B9;border:none;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 3px 12px rgba(41,128,185,.45);
-  transition:transform .15s;z-index:150;
-}
-#gsGarsonFab:active{transform:scale(.9)}
-/* ── HESAP FAB (above Garson) ── */
-#gsHesapFab{
-  position:fixed;bottom:calc(var(--bh) + 192px);right:16px;
-  width:48px;height:48px;border-radius:50%;
-  background:#C0392B;border:none;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 3px 12px rgba(192,57,43,.45);
-  transition:transform .15s;z-index:150;
-}
-#gsHesapFab:active{transform:scale(.9)}
 /* ── DÜŞÜNCELER FAB (bottom left) ── */
 #gsDushuncelerFab{
   position:fixed;bottom:calc(var(--bh) + 14px);left:16px;
@@ -2453,7 +2433,7 @@ ${menuSections}
 </div>
 
 <script>window.GS_INIT_ID = ${JSON.stringify(displayMasaId)};</script>
-<script src="/assets/gunesin-menu.js?v=20260419g" defer></script>
+<script src="/assets/gunesin-menu.js?v=20260419h" defer></script>
 </body>
 </html>`;
 }
