@@ -1902,7 +1902,7 @@ function renderPage(masaId: string): string {
     --bg:#FDF6EC;--card:#fff;--cb:#E8D5B7;
     --pri:#C0392B;--acc:#E86B2E;--gold:#D4890A;--blue:#2980B9;
     --txt:#2C1810;--muted:#8B6347;
-    --hh:220px;--nh:50px;--bh:76px;
+    --hh:255px;--nh:50px;--bh:76px;
   }
   html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow-x:hidden}
 
@@ -1910,22 +1910,25 @@ function renderPage(masaId: string): string {
   #hdr{
     position:fixed;top:0;left:0;right:0;height:var(--hh);
     background:#fff;border-bottom:1px solid var(--cb);
-    display:flex;align-items:center;justify-content:center;
-    padding:4px 52px;z-index:200;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:10px 0;z-index:200;
     box-shadow:0 1px 8px rgba(44,24,16,.07);
   }
-  #gsLogo{height:192px;width:192px;max-width:calc(100vw - 120px);max-height:192px;object-fit:contain;display:block}
-  #gsBrand{display:none;flex-direction:column;align-items:center;gap:3px}
+  #hdrLeft{}
+  #hdrCenter{display:flex;flex-direction:column;align-items:center;gap:6px}
+  #hdrRight{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-right:14px}
+  #gsLogo{height:192px;width:192px;max-width:calc(100vw - 160px);max-height:192px;object-fit:contain;display:block}
+  #gsBrand{display:flex;flex-direction:column;align-items:center;gap:3px}
   .gs-brand-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--pri);letter-spacing:.04em}
   .gs-brand-sub{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
   #igBtn{
-    position:absolute;top:50%;left:14px;transform:translateY(-50%);
-    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    display:flex;align-items:center;gap:6px;
     text-decoration:none;border-radius:10px;-webkit-tap-highlight-color:transparent;
-    transition:opacity .15s;
+    transition:opacity .15s;padding:4px 8px;
   }
   #igBtn:active{opacity:.65}
-  #igBtn img{width:30px;height:30px;border-radius:8px;display:block}
+  #igBtn img{width:26px;height:26px;border-radius:7px;display:block;flex-shrink:0}
+  #igBtn span{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.03em}
 
   /* ── CAT NAV ── */
   #catNav{
@@ -1958,15 +1961,14 @@ function renderPage(masaId: string): string {
   }
 
   /* ── RATING BUTTON ── */
-  #ratingWrap{margin:0 0 20px;text-align:center}
   #ratingBtn{
-    display:inline-flex;flex-direction:column;align-items:center;gap:4px;
-    padding:10px 28px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:12px;
-    cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;
+    display:inline-flex;flex-direction:column;align-items:center;gap:3px;
+    padding:7px 14px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:12px;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;width:max-content;
   }
   #ratingBtn:active{background:#FFF3D0}
   .rt-hint{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-  .rt-stars{font-size:22px;letter-spacing:3px;color:var(--gold);line-height:1}
+  .rt-stars{font-size:18px;letter-spacing:2px;color:var(--gold);line-height:1}
 
   /* ── STANDARD CARD ── */
   .gs-std-grid{display:flex;flex-direction:column;gap:9px}
@@ -2200,13 +2202,23 @@ function renderPage(masaId: string): string {
 
   <!-- HEADER -->
   <header id="hdr">
-    <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
-    </a>
-    <img id="gsLogo" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası" loading="eager">
-    <div id="gsBrand">
-      <div class="gs-brand-name">Güneşin Sofrası</div>
-      <div class="gs-brand-sub">Meyhane</div>
+    <div id="hdrLeft"></div>
+    <div id="hdrCenter">
+      <img id="gsLogo" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası" loading="eager">
+      <div id="gsBrand">
+        <div class="gs-brand-name">Güneşin Sofrası</div>
+        <div class="gs-brand-sub">Meyhane</div>
+      </div>
+    </div>
+    <div id="hdrRight">
+      <button id="ratingBtn">
+        <span class="rt-hint">Deneyimi Paylaş</span>
+        <span class="rt-stars">★★★★★</span>
+      </button>
+      <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
+        <span>Instagram</span>
+      </a>
     </div>
   </header>
 
@@ -2217,12 +2229,6 @@ function renderPage(masaId: string): string {
 
   <!-- MAIN CONTENT -->
   <main id="menuContent">
-    <div id="ratingWrap">
-      <button id="ratingBtn">
-        <span class="rt-hint">Deneyiminizi paylaşın</span>
-        <span class="rt-stars">★★★★★</span>
-      </button>
-    </div>
     ${menuSections}
   </main>
 
