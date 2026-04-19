@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { menus, restaurants } from "../lib/store.js";
+import { menus, restaurants, type Dish } from "../lib/store.js";
 
 const router: IRouter = Router();
 
@@ -1792,11 +1792,554 @@ function renderPage(masaId: string): string {
 </html>`;
 }
 
+/* ════════════════════════════════════════════════════════════════
+   GÜNEŞIN SOFRASI MEYHANE — Custom Page Renderer
+   ════════════════════════════════════════════════════════════════ */
+
+function gsEsc(s: string): string {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function gsCatSlug(cat: string): string {
+  return cat.toLowerCase()
+    .replace(/ç/g,"c").replace(/ş/g,"s").replace(/ğ/g,"g").replace(/ü/g,"u")
+    .replace(/ö/g,"o").replace(/ı/g,"i").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+}
+
+function parseRakiPrices(desc: string): string {
+  return desc.split(" · ").map(p => {
+    const sp = p.trim().lastIndexOf(" ");
+    const size  = sp < 0 ? p : p.slice(0, sp);
+    const price = sp < 0 ? "" : p.slice(sp + 1);
+    return `<div class="rp-item"><span class="rp-size">${gsEsc(size)}</span><span class="rp-price">${gsEsc(price)}</span></div>`;
+  }).join("");
+}
+
+function renderGsDish(dish: Dish, catType: "fix" | "raki" | "standard"): string {
+  if (catType === "fix") {
+    return `
+<div class="gs-fix-card">
+  <div class="fix-badge">FIX MENÜ</div>
+  <div class="fix-name">${gsEsc(dish.name)}</div>
+  <div class="fix-price">${dish.price > 0 ? dish.price.toLocaleString("tr-TR") + " ₺" : "Fiyat için görüşünüz"}</div>
+  <div class="fix-desc">${gsEsc(dish.description)}</div>
+  ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}" aria-label="Ekle">+</button>` : ""}
+</div>`;
+  }
+  if (catType === "raki") {
+    return `
+<div class="gs-raki-card">
+  <div class="raki-name">${gsEsc(dish.name)}</div>
+  <div class="raki-prices">${parseRakiPrices(dish.description)}</div>
+</div>`;
+  }
+  return `
+<div class="gs-std-card">
+  <div class="std-body">
+    <div class="std-name">${gsEsc(dish.name)}</div>
+    ${dish.price > 0 ? `<div class="std-price">${dish.price.toLocaleString("tr-TR")} ₺</div>` : `<div class="std-price-na">Fiyat için garsonla görüşünüz</div>`}
+    ${dish.description ? `<div class="std-desc">${gsEsc(dish.description)}</div>` : ""}
+    ${dish.spiceLevel ? `<span class="spice-badge">🌶️</span>` : ""}
+  </div>
+  ${dish.price > 0 ? `<button class="gs-add-btn" data-id="${gsEsc(dish.id)}" data-name="${gsEsc(dish.name)}" data-price="${dish.price}" aria-label="Sepete ekle">+</button>` : ""}
+</div>`;
+}
+
+function renderGunesinPage(masaId: string): string {
+  const restaurant = restaurants.get("gunesin-sofrasi")!;
+  const menu       = menus.get("gunesin-sofrasi")!;
+  const masaCount  = restaurant.masaCount;
+  const displayMasaId = masaId.replace(/^gunesin-/i, "");
+
+  const GS_CAT_ORDER = [
+    "Fix Menü","Soğuk Mezeler","Deniz Mezeleri","Günün Mezeleri",
+    "Ara Sıcaklar","Ana Yemekler (Deniz)","Ana Yemekler (Et)",
+    "Salatalar","Tatlı & Meyve","Rakı",
+    "Şarap (Kırmızı)","Şarap (Beyaz)","Şarap (Rosé)","İçecekler",
+  ];
+
+  const byCategory: Record<string, Dish[]> = {};
+  for (const dish of menu.dishes) {
+    if (dish.available === false) continue;
+    (byCategory[dish.category] ??= []).push(dish);
+  }
+  const orderedCats = [
+    ...GS_CAT_ORDER.filter(c => byCategory[c]),
+    ...Object.keys(byCategory).filter(c => !GS_CAT_ORDER.includes(c)),
+  ];
+
+  const navPills = orderedCats.map(c =>
+    `<button class="gs-pill" data-cat="${gsCatSlug(c)}">${gsEsc(c)}</button>`
+  ).join("");
+
+  const menuSections = orderedCats.map(c => {
+    const dishes = byCategory[c];
+    const isRaki = c === "Rakı";
+    const isFix  = c === "Fix Menü";
+    const cards  = dishes.map(d => renderGsDish(d, isFix ? "fix" : isRaki ? "raki" : "standard")).join("");
+    return `
+<section class="gs-section" id="${gsCatSlug(c)}">
+  <h2 class="gs-cat-title">${gsEsc(c)}</h2>
+  <div class="${isFix ? "gs-fix-grid" : isRaki ? "gs-raki-grid" : "gs-cards-grid"}">${cards}</div>
+</section>`;
+  }).join("");
+
+  const masaGrid = Array.from({ length: masaCount }, (_, i) => i + 1)
+    .map(n => `<button class="gs-masa-btn" data-num="${n}">${n}</button>`).join("");
+
+  return `<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#1A0F0A">
+<title>Güneşin Sofrası · Masa ${gsEsc(displayMasaId)}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1A0F0A;--card:#261810;--card-b:#3D2415;
+  --primary:#C0392B;--accent:#E86B2E;--gold:#F0A500;--green:#4A7C3F;
+  --text:#F5ECD7;--muted:#9A8878;
+  --hh:88px;--nh:50px;--bh:76px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden}
+body{padding-bottom:var(--bh)}
+
+/* ── HEADER ── */
+#gsHdr{
+  position:fixed;top:0;left:0;right:0;height:var(--hh);
+  background:linear-gradient(180deg,#0D0705 0%,var(--bg) 100%);
+  border-bottom:1px solid rgba(192,57,43,.3);
+  display:flex;align-items:center;justify-content:center;
+  padding:10px 48px;z-index:200;
+}
+#gsLogoImg{height:52px;width:auto;max-width:170px;object-fit:contain;display:block}
+#gsLogoImg.hidden{display:none}
+.gs-brand{display:flex;flex-direction:column;align-items:center;gap:1px}
+.gs-brand-name{
+  font-family:'Playfair Display',serif;font-size:19px;font-weight:700;
+  color:var(--gold);letter-spacing:.06em;line-height:1.2
+}
+.gs-brand-sub{font-size:10px;font-weight:800;color:var(--primary);letter-spacing:.28em;text-transform:uppercase}
+#gsMasaBadge{
+  position:absolute;top:50%;right:14px;transform:translateY(-50%);
+  font-size:11px;font-weight:700;color:var(--muted);background:none;border:none;
+  cursor:pointer;line-height:1.4;text-align:right
+}
+
+/* ── CAT NAV ── */
+#gsCatNav{
+  position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
+  background:#130A06;border-bottom:1px solid rgba(192,57,43,.2);
+  overflow-x:auto;overflow-y:hidden;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;padding:0 12px;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;z-index:100
+}
+#gsCatNav::-webkit-scrollbar{display:none}
+.gs-pill{
+  flex-shrink:0;padding:5px 13px;border-radius:20px;
+  border:1px solid rgba(192,57,43,.35);background:transparent;
+  color:var(--muted);font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all .2s
+}
+.gs-pill.active{background:var(--primary);border-color:var(--primary);color:#fff}
+
+/* ── CONTENT ── */
+#gsContent{
+  margin-top:calc(var(--hh) + var(--nh));
+  padding:16px 12px 24px;overflow-y:auto;
+  height:calc(100dvh - var(--hh) - var(--nh) - var(--bh));
+}
+.gs-section{margin-bottom:28px}
+.gs-cat-title{
+  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;
+  color:var(--gold);margin-bottom:12px;padding-bottom:7px;
+  border-bottom:1px solid rgba(240,165,0,.25);letter-spacing:.02em
+}
+
+/* ── STANDARD CARD ── */
+.gs-cards-grid{display:flex;flex-direction:column;gap:9px}
+.gs-std-card{
+  background:var(--card);border:1px solid var(--card-b);border-radius:10px;
+  padding:12px 14px;display:flex;justify-content:space-between;
+  align-items:flex-start;gap:10px;transition:border-color .2s
+}
+.gs-std-card:active{border-color:var(--accent)}
+.std-body{flex:1;min-width:0}
+.std-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.3}
+.std-price{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:4px}
+.std-price-na{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px}
+.std-desc{font-size:12px;color:var(--muted);line-height:1.45}
+.spice-badge{font-size:11px;display:inline-block;margin-top:3px}
+.gs-add-btn{
+  flex-shrink:0;width:32px;height:32px;border-radius:50%;
+  border:1.5px solid var(--accent);background:transparent;color:var(--accent);
+  font-size:22px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .15s;align-self:center;line-height:1
+}
+.gs-add-btn:active{background:var(--accent);color:#fff;transform:scale(.88)}
+
+/* ── FIX MENÜ CARD ── */
+.gs-fix-grid{display:flex;flex-direction:column;gap:12px}
+.gs-fix-card{
+  background:linear-gradient(135deg,#2A1208 0%,#1E0E07 100%);
+  border:1.5px solid var(--gold);border-radius:14px;
+  padding:16px 16px 52px;position:relative;overflow:hidden
+}
+.gs-fix-card::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:90px;height:90px;pointer-events:none;
+  background:radial-gradient(circle,rgba(240,165,0,.15) 0%,transparent 70%)
+}
+.fix-badge{
+  display:inline-block;background:var(--gold);color:#1A0F0A;
+  font-size:9px;font-weight:800;letter-spacing:.14em;padding:3px 8px;
+  border-radius:4px;margin-bottom:10px;text-transform:uppercase
+}
+.fix-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:5px}
+.fix-price{font-size:24px;font-weight:800;color:var(--gold);margin-bottom:8px}
+.fix-desc{font-size:12px;color:var(--muted);line-height:1.55}
+.gs-fix-card .gs-add-btn{
+  position:absolute;bottom:14px;right:14px;
+  border-color:var(--gold);color:var(--gold)
+}
+.gs-fix-card .gs-add-btn:active{background:var(--gold);color:#1A0F0A}
+
+/* ── RAKI CARD ── */
+.gs-raki-grid{display:flex;flex-direction:column;gap:10px}
+.gs-raki-card{
+  background:var(--card);border:1px solid rgba(192,57,43,.4);
+  border-radius:10px;padding:12px 14px
+}
+.raki-name{
+  font-family:'Playfair Display',serif;font-size:15px;font-weight:600;
+  color:var(--text);margin-bottom:9px
+}
+.raki-prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px 7px}
+.rp-item{
+  display:flex;flex-direction:column;align-items:center;
+  background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.25);
+  border-radius:6px;padding:4px 5px
+}
+.rp-size{font-size:10px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.03em}
+.rp-price{font-size:12px;font-weight:700;color:var(--text)}
+
+/* ── BOTTOM BAR ── */
+#gsBar{
+  position:fixed;bottom:0;left:0;right:0;height:var(--bh);
+  background:#0D0705;border-top:1px solid rgba(192,57,43,.3);
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));z-index:200
+}
+.gs-bar-btn{
+  border-radius:10px;border:1.5px solid rgba(192,57,43,.5);
+  background:rgba(192,57,43,.08);color:var(--text);
+  font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .15s
+}
+.gs-bar-btn:active{background:var(--primary);border-color:var(--primary)}
+
+/* ── CART FAB ── */
+#gsCartFab{
+  position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
+  width:52px;height:52px;border-radius:50%;background:var(--primary);
+  border:none;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,.5);
+  transition:transform .15s;z-index:150
+}
+#gsCartFab:active{transform:scale(.92)}
+.gs-cart-badge{
+  position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;
+  background:var(--gold);color:#1A0F0A;border-radius:9px;
+  font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px
+}
+.gs-cart-badge.on{display:flex}
+
+/* ── TOAST ── */
+#gsToast{
+  position:fixed;bottom:calc(var(--bh) + 68px);left:50%;
+  transform:translateX(-50%) translateY(20px);
+  background:#261810;border:1px solid var(--accent);color:var(--text);
+  padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
+  white-space:nowrap;opacity:0;transition:opacity .25s,transform .25s;
+  z-index:400;pointer-events:none
+}
+#gsToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── CART DRAWER ── */
+#gsCartBg{position:fixed;inset:0;background:rgba(0,0,0,.72);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
+#gsCartBg.open{opacity:1;pointer-events:auto}
+#gsCartDrawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(340px,92vw);
+  background:#1E0E07;border-left:1px solid rgba(192,57,43,.3);
+  transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:301;display:flex;flex-direction:column
+}
+#gsCartDrawer.open{transform:translateX(0)}
+.gc-head{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;border-bottom:1px solid rgba(192,57,43,.2)}
+.gc-head h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)}
+.gc-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
+.gc-items{flex:1;overflow-y:auto;padding:12px 16px}
+.gc-empty{color:var(--muted);font-size:14px;text-align:center;margin-top:30px}
+.gc-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.gc-item-name{font-size:13px;color:var(--text);flex:1;padding-right:6px;line-height:1.35}
+.gc-item-price{font-size:13px;font-weight:700;color:var(--gold);margin:0 8px;white-space:nowrap}
+.gc-item-qty{display:flex;align-items:center;gap:5px}
+.gc-qty-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--accent);background:none;color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.gc-qty-btn:active{background:var(--accent);color:#fff}
+.gc-qty-num{font-size:14px;font-weight:700;color:var(--text);min-width:16px;text-align:center}
+.gc-footer{padding:14px 16px;border-top:1px solid rgba(192,57,43,.2)}
+.gc-total-row{display:flex;justify-content:space-between;margin-bottom:12px}
+.gc-total-label{font-size:14px;color:var(--muted)}
+.gc-total-price{font-size:18px;font-weight:800;color:var(--gold)}
+.gc-order-btn{width:100%;padding:14px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+.gc-order-btn:active{background:#a93226}
+.gc-order-btn:disabled{background:#5a1e1e;color:#8a5a5a;cursor:default}
+
+/* ── MASA SHEET ── */
+#gsMasaBg{position:fixed;inset:0;background:rgba(0,0,0,.75);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
+#gsMasaBg.open{opacity:1;pointer-events:auto}
+#gsMasaSheet{
+  position:fixed;bottom:0;left:0;right:0;background:#1E0E07;
+  border-top:1px solid rgba(192,57,43,.3);border-radius:16px 16px 0 0;
+  padding:16px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:301;max-height:70vh;overflow-y:auto
+}
+#gsMasaSheet.open{transform:translateY(0)}
+.gs-masa-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.gs-masa-head h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold)}
+.gs-masa-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+.gs-masa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.gs-masa-btn{
+  padding:12px 0;border-radius:8px;border:1px solid rgba(192,57,43,.3);
+  background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:15px;font-weight:600;cursor:pointer;transition:all .15s
+}
+.gs-masa-btn.selected{background:var(--primary);border-color:var(--primary);color:#fff}
+.gs-masa-btn:active{background:var(--primary)}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header id="gsHdr">
+  <!-- LOGO: replace data-src with your base64 PNG when ready -->
+  <img id="gsLogoImg" class="hidden" data-src="" alt="Güneşin Sofrası Logo">
+  <div class="gs-brand" id="gsBrand">
+    <div class="gs-brand-name">Güneşin Sofrası</div>
+    <div class="gs-brand-sub">Meyhane</div>
+  </div>
+  <button id="gsMasaBadge">Masa&nbsp;<span id="gsMasaNum">${gsEsc(displayMasaId)}</span></button>
+</header>
+
+<!-- ═══ CATEGORY NAV ═══ -->
+<nav id="gsCatNav" aria-label="Kategoriler">${navPills}</nav>
+
+<!-- ═══ MENU CONTENT ═══ -->
+<main id="gsContent">${menuSections}</main>
+
+<!-- ═══ TOAST ═══ -->
+<div id="gsToast" role="status" aria-live="polite"></div>
+
+<!-- ═══ CART FAB ═══ -->
+<button id="gsCartFab" aria-label="Sepeti aç">
+  🛒<span class="gs-cart-badge" id="gsBadge"></span>
+</button>
+
+<!-- ═══ BOTTOM ACTION BAR ═══ -->
+<div id="gsBar">
+  <button class="gs-bar-btn" id="gsGarsonBtn">🖐️&nbsp;Garson Çağırın</button>
+  <button class="gs-bar-btn" id="gsHesapBtn">🧾&nbsp;Hesap İste</button>
+</div>
+
+<!-- ═══ CART DRAWER ═══ -->
+<div id="gsCartBg"></div>
+<aside id="gsCartDrawer">
+  <div class="gc-head">
+    <h2>🛒&nbsp;Sipariş</h2>
+    <button class="gc-close" id="gcCloseBtn">✕</button>
+  </div>
+  <div class="gc-items" id="gcItemsList"><p class="gc-empty">Henüz ürün eklenmedi.</p></div>
+  <div class="gc-footer">
+    <div class="gc-total-row"><span class="gc-total-label">Toplam</span><span class="gc-total-price" id="gcTotal">0 ₺</span></div>
+    <button class="gc-order-btn" id="gcOrderBtn" disabled>Siparişi Ver</button>
+  </div>
+</aside>
+
+<!-- ═══ MASA SELECTOR ═══ -->
+<div id="gsMasaBg"></div>
+<div id="gsMasaSheet">
+  <div class="gs-masa-head"><h3>Masanı Seç</h3><button class="gs-masa-close" id="gsMasaCloseBtn">✕</button></div>
+  <div class="gs-masa-grid">${masaGrid}</div>
+</div>
+
+<script>
+(function() {
+  /* ── LOGO ── */
+  const logoImg = document.getElementById('gsLogoImg');
+  const brand   = document.getElementById('gsBrand');
+  const logoDat = logoImg.dataset.src || '';
+  if (logoDat && logoDat.startsWith('data:')) {
+    logoImg.src = logoDat;
+    logoImg.onload  = () => { brand.style.display = 'none'; logoImg.classList.remove('hidden'); };
+    logoImg.onerror = () => { logoImg.classList.add('hidden'); };
+  }
+
+  /* ── MASA ── */
+  const SESSION_KEY = 'gunesin_masa';
+  const INIT_ID = ${JSON.stringify(displayMasaId)};
+  let _masaId = sessionStorage.getItem(SESSION_KEY) || INIT_ID;
+  document.getElementById('gsMasaNum').textContent = _masaId;
+
+  const masaBg    = document.getElementById('gsMasaBg');
+  const masaSheet = document.getElementById('gsMasaSheet');
+  function openMasa()  { masaBg.classList.add('open');    masaSheet.classList.add('open'); }
+  function closeMasa() { masaBg.classList.remove('open'); masaSheet.classList.remove('open'); }
+  document.getElementById('gsMasaBadge').addEventListener('click', openMasa);
+  masaBg.addEventListener('click', closeMasa);
+  document.getElementById('gsMasaCloseBtn').addEventListener('click', closeMasa);
+  document.querySelectorAll('.gs-masa-btn').forEach(btn => {
+    btn.classList.toggle('selected', btn.dataset.num === String(_masaId));
+    btn.addEventListener('click', () => {
+      _masaId = btn.dataset.num;
+      sessionStorage.setItem(SESSION_KEY, _masaId);
+      document.getElementById('gsMasaNum').textContent = _masaId;
+      document.querySelectorAll('.gs-masa-btn').forEach(b =>
+        b.classList.toggle('selected', b.dataset.num === String(_masaId)));
+      closeMasa();
+      showToast('Masa ' + _masaId + ' seçildi ✓');
+    });
+  });
+
+  /* ── TOAST ── */
+  const toastEl = document.getElementById('gsToast');
+  let _toastTmr = null;
+  function showToast(msg) {
+    clearTimeout(_toastTmr);
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    _toastTmr = setTimeout(() => toastEl.classList.remove('show'), 2800);
+  }
+
+  /* ── CART ── */
+  const cart = new Map();
+  function updateCartUI() {
+    const items  = Array.from(cart.values());
+    const total  = items.reduce((s, i) => s + i.price * i.qty, 0);
+    const count  = items.reduce((s, i) => s + i.qty, 0);
+    const badge  = document.getElementById('gsBadge');
+    badge.textContent = count;
+    badge.classList.toggle('on', count > 0);
+    document.getElementById('gcTotal').textContent = total.toLocaleString('tr-TR') + ' ₺';
+    document.getElementById('gcOrderBtn').disabled = count === 0;
+    const listEl = document.getElementById('gcItemsList');
+    if (!items.length) { listEl.innerHTML = '<p class="gc-empty">Henüz ürün eklenmedi.</p>'; return; }
+    listEl.innerHTML = items.map(item => \`
+      <div class="gc-item">
+        <span class="gc-item-name">\${item.name}</span>
+        <span class="gc-item-price">\${(item.price*item.qty).toLocaleString('tr-TR')} ₺</span>
+        <div class="gc-item-qty">
+          <button class="gc-qty-btn" data-action="dec" data-id="\${item.id}">−</button>
+          <span class="gc-qty-num">\${item.qty}</span>
+          <button class="gc-qty-btn" data-action="inc" data-id="\${item.id}">+</button>
+        </div>
+      </div>\`).join('');
+    listEl.querySelectorAll('.gc-qty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        if (btn.dataset.action === 'inc') { cart.get(id).qty++; }
+        else { const it = cart.get(id); if (--it.qty <= 0) cart.delete(id); }
+        updateCartUI();
+      });
+    });
+  }
+
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.gs-add-btn');
+    if (!btn) return;
+    const { id, name, price } = btn.dataset;
+    const p = parseInt(price, 10);
+    if (!p) return;
+    if (cart.has(id)) cart.get(id).qty++;
+    else cart.set(id, { id, name, price: p, qty: 1 });
+    updateCartUI();
+    showToast(name + ' sepete eklendi ✓');
+  });
+
+  const cartBg     = document.getElementById('gsCartBg');
+  const cartDrawer = document.getElementById('gsCartDrawer');
+  function openCart()  { cartBg.classList.add('open');    cartDrawer.classList.add('open'); }
+  function closeCart() { cartBg.classList.remove('open'); cartDrawer.classList.remove('open'); }
+  document.getElementById('gsCartFab').addEventListener('click', openCart);
+  document.getElementById('gcCloseBtn').addEventListener('click', closeCart);
+  cartBg.addEventListener('click', closeCart);
+
+  document.getElementById('gcOrderBtn').addEventListener('click', () => {
+    const items = Array.from(cart.values());
+    const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+    console.log('[Güneşin Sofrası] 🍽 YENİ SİPARİŞ', {
+      masa: _masaId,
+      items: items.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+      total: total + ' ₺',
+      zaman: new Date().toLocaleTimeString('tr-TR'),
+    });
+    cart.clear(); updateCartUI(); closeCart();
+    showToast('Siparişiniz iletildi ✓');
+  });
+
+  /* ── GARSON / HESAP ── */
+  document.getElementById('gsGarsonBtn').addEventListener('click', () => {
+    console.log('[Güneşin Sofrası] 🖐 GARSON ÇAĞRISI — Masa:', _masaId, new Date().toLocaleTimeString('tr-TR'));
+    showToast('Garson çağrıldı ✓');
+  });
+  document.getElementById('gsHesapBtn').addEventListener('click', () => {
+    console.log('[Güneşin Sofrası] 🧾 HESAP TALEBİ — Masa:', _masaId, new Date().toLocaleTimeString('tr-TR'));
+    showToast('Hesap talebi iletildi ✓');
+  });
+
+  /* ── CATEGORY NAV ── */
+  const navEl   = document.getElementById('gsCatNav');
+  const content = document.getElementById('gsContent');
+  const pills   = Array.from(navEl.querySelectorAll('.gs-pill'));
+  const sects   = Array.from(document.querySelectorAll('.gs-section[id]'));
+
+  navEl.addEventListener('click', e => {
+    const pill = e.target.closest('.gs-pill');
+    if (!pill) return;
+    const sec = document.getElementById(pill.dataset.cat);
+    if (sec) content.scrollTo({ top: sec.offsetTop - 12, behavior: 'smooth' });
+    pills.forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    pill.scrollIntoView({ inline: 'center', behavior: 'smooth' });
+  });
+
+  function setActivePill(id) {
+    pills.forEach(p => p.classList.toggle('active', p.dataset.cat === id));
+    const ap = pills.find(p => p.dataset.cat === id);
+    if (ap) ap.scrollIntoView({ inline: 'nearest', behavior: 'smooth' });
+  }
+  if (sects.length && window.IntersectionObserver) {
+    const io = new IntersectionObserver(
+      es => { const v = es.filter(e => e.isIntersecting); if (v.length) setActivePill(v[0].target.id); },
+      { root: content, rootMargin: '-10% 0px -60% 0px', threshold: 0 }
+    );
+    sects.forEach(s => io.observe(s));
+  }
+})();
+</script>
+</body>
+</html>`;
+}
+
 router.get("/:masaId", (req: Request, res: Response) => {
   const { masaId } = req.params;
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "no-store");
-  res.send(renderPage(masaId));
+  res.send(masaId.startsWith("gunesin-") ? renderGunesinPage(masaId) : renderPage(masaId));
 });
 
 export default router;
