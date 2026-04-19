@@ -128,17 +128,16 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   /* ── GURMEAI CHAT ── */
-  const aiBg     = document.getElementById('gsAiBg');
-  const aiDrawer = document.getElementById('gsAiDrawer');
-  const aiMsgs   = document.getElementById('aiMsgs');
-  const aiInput  = document.getElementById('aiInput');
-  let _aiOpened      = false;
-  let _aiLoading     = false;
-  let _firstReply    = false;
+  const aiBg     = document.getElementById('ai-overlay');
+  const aiDrawer = document.getElementById('ai-drawer');
+  const aiMsgs   = document.getElementById('ai-messages');
+  const aiInput  = document.getElementById('ai-input');
+  let _aiOpened   = false;
+  let _aiLoading  = false;
+  let _firstReply = false;
 
   function openAi() {
     document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflowX = 'hidden';
     aiBg.classList.add('open'); aiDrawer.classList.add('open');
     if (!_aiOpened) {
       _aiOpened = true;
@@ -148,8 +147,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   function closeAi() {
     document.body.style.overflow = '';
-    document.documentElement.style.overflowX = '';
     aiDrawer.style.height = '';
+    aiDrawer.style.maxHeight = '';
     aiDrawer.style.bottom = '0';
     aiBg.classList.remove('open'); aiDrawer.classList.remove('open');
   }
@@ -217,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('gsAiFab').addEventListener('click', openAi);
   document.getElementById('aiCloseBtn').addEventListener('click', closeAi);
   aiBg.addEventListener('click', closeAi);
-  document.getElementById('aiSendBtn').addEventListener('click', sendAiMsg);
+  document.getElementById('ai-send').addEventListener('click', sendAiMsg);
   aiInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAiMsg(); }
   });
@@ -331,15 +330,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── AI DRAWER: keep drawer above keyboard on mobile ── */
   if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
+    function _syncDrawer() {
       if (!aiDrawer || !aiDrawer.classList.contains('open')) return;
-      const vvHeight    = window.visualViewport.height;
-      const vvOffsetTop = window.visualViewport.offsetTop;
-      const newBottom   = window.innerHeight - vvHeight - vvOffsetTop;
-      const newHeight   = Math.round(vvHeight * 0.75);
-      aiDrawer.style.bottom = newBottom > 0 ? `${newBottom}px` : '0';
-      aiDrawer.style.height  = `${newHeight}px`;
-    });
+      const vh  = window.visualViewport.height;
+      const off = window.visualViewport.offsetTop;
+      const h   = Math.min(vh * 0.75, vh - 60);
+      aiDrawer.style.height    = h + 'px';
+      aiDrawer.style.maxHeight = h + 'px';
+      aiDrawer.style.bottom    = off + 'px';
+    }
+    window.visualViewport.addEventListener('resize', _syncDrawer);
+    window.visualViewport.addEventListener('scroll', _syncDrawer);
   }
 
 });

@@ -2113,25 +2113,27 @@ body{padding-bottom:var(--bh)}
 .gc-order-btn:disabled{background:#D4B8A8;color:#fff;cursor:default}
 
 /* ── AI CHAT DRAWER ── */
-#gsAiBg{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
-#gsAiBg.open{opacity:1;pointer-events:auto}
-#gsAiDrawer{
-  position:fixed;bottom:0;left:0;right:0;
-  height:min(75vh,580px);background:#FFFFFF;
-  border-top:1px solid var(--card-b);border-radius:16px 16px 0 0;
-  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:301;display:flex;flex-direction:column;
-  box-shadow:0 -4px 20px rgba(44,24,16,.1);
-  max-width:100%;overflow:hidden;
+#ai-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999}
+#ai-overlay.open{display:block}
+#ai-drawer{
+  position:fixed;left:0;right:0;bottom:0;z-index:1000;
+  background:#fff;border-radius:16px 16px 0 0;
+  display:flex;flex-direction:column;
+  height:55vh;max-height:55vh;width:100%;max-width:100vw;
+  overflow:hidden;transform:translateY(100%);
+  transition:transform .3s ease;box-sizing:border-box;
 }
-#gsAiDrawer.open{transform:translateY(0)}
-.ai-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--card-b);flex-shrink:0}
+#ai-drawer.open{transform:translateY(0)}
+#ai-header{
+  flex-shrink:0;padding:12px 16px;border-bottom:1px solid #eee;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ai-head-left{display:flex;align-items:center;gap:10px}
 .ai-head-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.ai-head-info{flex:1}
 .ai-head-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--primary)}
 .ai-head-sub{font-size:11px;color:var(--muted)}
 .ai-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
-.ai-msgs{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px}
+#ai-messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
 .ai-bubble-wrap{display:flex;gap:8px;align-items:flex-end}
 .ai-bubble-wrap.user{flex-direction:row-reverse}
 .ai-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:14px}
@@ -2140,11 +2142,22 @@ body{padding-bottom:var(--bh)}
 .ai-bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
 .ai-bubble.loading::after{content:'...';animation:dots 1s infinite}
 @keyframes dots{0%{content:'·'}33%{content:'··'}66%{content:'···'}100%{content:'·'}}
-.ai-input-row{display:flex;flex-wrap:nowrap;gap:8px;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--card-b);flex-shrink:0;background:#FAFAF8;align-items:flex-end;position:sticky;bottom:0}
-#aiInput{flex:1;border:1.5px solid var(--card-b);border-radius:22px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:#fff;outline:none;resize:none;transition:border-color .2s;max-height:80px;overflow-y:auto}
-#aiInput:focus{border-color:var(--blue)}
-#aiSendBtn{width:40px;height:40px;border-radius:50%;background:var(--blue);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s;align-self:flex-end}
-#aiSendBtn:active{opacity:.8}
+#ai-input-row{
+  flex-shrink:0;display:flex;flex-direction:row;align-items:center;
+  gap:8px;padding:10px 12px;border-top:1px solid #eee;
+  background:#fff;box-sizing:border-box;width:100%;
+}
+#ai-input{
+  flex:1;min-width:0;padding:10px 12px;border:1px solid #ddd;
+  border-radius:20px;font-size:15px;outline:none;box-sizing:border-box;
+  font-family:'Nunito',sans-serif;color:var(--text);resize:none;max-height:80px;overflow-y:auto;
+}
+#ai-input:focus{border-color:var(--blue)}
+#ai-send{
+  flex-shrink:0;width:44px;height:44px;border-radius:50%;
+  background:#E86B2E;border:none;color:#fff;font-size:18px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
 
 /* ── MASA SHEET ── */
 #gsMasaBg{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
@@ -2312,20 +2325,22 @@ ${menuSections}
 </aside>
 
 <!-- ═══ AI CHAT DRAWER ═══ -->
-<div id="gsAiBg"></div>
-<div id="gsAiDrawer">
-  <div class="ai-head">
-    <div class="ai-head-icon">👨‍🍳</div>
-    <div class="ai-head-info">
-      <div class="ai-head-name">GurmeAI</div>
-      <div class="ai-head-sub">Güneşin Sofrası Yapay Zeka Asistanı</div>
+<div id="ai-overlay"></div>
+<div id="ai-drawer">
+  <div id="ai-header">
+    <div class="ai-head-left">
+      <div class="ai-head-icon">👨‍🍳</div>
+      <div>
+        <div class="ai-head-name">GurmeAI</div>
+        <div class="ai-head-sub">Güneşin Sofrası Yapay Zeka Asistanı</div>
+      </div>
     </div>
     <button class="ai-close" id="aiCloseBtn">✕</button>
   </div>
-  <div class="ai-msgs" id="aiMsgs"></div>
-  <div class="ai-input-row">
-    <textarea id="aiInput" placeholder="Menü hakkında soru sorun..." rows="1"></textarea>
-    <button id="aiSendBtn" aria-label="Gönder">➤</button>
+  <div id="ai-messages"></div>
+  <div id="ai-input-row">
+    <textarea id="ai-input" placeholder="Menü hakkında soru sorun..." rows="1"></textarea>
+    <button id="ai-send" aria-label="Gönder">➤</button>
   </div>
 </div>
 
