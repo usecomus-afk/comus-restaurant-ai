@@ -2267,16 +2267,17 @@ body{padding-bottom:var(--bh)}
 .gs-submit-btn:active{opacity:.85}
 .gs-submit-btn:disabled{opacity:.35;cursor:not-allowed}
 /* ── BİZİ PUANLAYIN BUTTON ── */
-#gsBiziPuanlayin{margin:0 0 20px}
+#gsBiziPuanlayin{margin:0 0 20px;text-align:center}
 #gsBiziBtn{
-  width:100%;padding:13px 16px;
+  display:inline-flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 24px;
   background:#FFFDF5;border:1.5px solid var(--gold);
-  border-radius:12px;color:var(--gold);
-  font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  gap:7px;transition:background .15s;
+  border-radius:12px;
+  cursor:pointer;transition:background .15s;
 }
 #gsBiziBtn:active{background:#FFF3D0}
+.bizi-hint{font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.bizi-stars{font-size:22px;line-height:1;letter-spacing:3px;color:var(--gold)}
 /* ── STAR RATING IN MODAL ── */
 .gs-star-row{display:flex;justify-content:center;gap:6px;padding:20px 0 8px}
 .gs-star-btn{
@@ -2330,8 +2331,8 @@ body{padding-bottom:var(--bh)}
 <!-- BİZİ PUANLAYIN -->
 <div id="gsBiziPuanlayin">
   <button id="gsBiziBtn">
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="#D4890A" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-    Bizi Puanlayın
+    <span class="bizi-hint">Deneyiminizi paylaşın</span>
+    <span class="bizi-stars">★★★★★</span>
   </button>
 </div>
 
@@ -2348,15 +2349,7 @@ ${menuSections}
 
 <!-- ═══ AI FAB ═══ -->
 <button id="gsAiFab" aria-label="GurmeAI'yi aç">
-  <svg viewBox="0 0 24 24" width="24" height="24" fill="white" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-</button>
-
-<!-- ═══ GARSON / HESAP FABs ═══ -->
-<button id="gsGarsonFab" aria-label="Garson Çağır">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="white" aria-hidden="true"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-</button>
-<button id="gsHesapFab" aria-label="Hesap İste">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="white" aria-hidden="true"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+  <span style="font-size:11px;font-weight:700;color:#fff;line-height:1.25;text-align:center;pointer-events:none">AI<br>Gurme</span>
 </button>
 
 <!-- ═══ DÜŞÜNCELER FAB ═══ -->
