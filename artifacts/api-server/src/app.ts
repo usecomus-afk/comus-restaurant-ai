@@ -43,6 +43,7 @@ app.get("/admin", (_req, res) => {
   res.sendFile(join(publicDir, "admin.html"));
 });
 app.use("/admin", express.static(publicDir, { index: "admin.html" }));
+app.use("/assets", express.static(publicDir, { maxAge: "7d" }));
 
 app.get("/kvkk", (_req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");

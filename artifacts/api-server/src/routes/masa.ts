@@ -2127,9 +2127,8 @@ body{padding-bottom:var(--bh)}
 
 <!-- ═══ HEADER ═══ -->
 <header id="gsHdr">
-  <!-- LOGO: replace data-src with your base64 PNG when ready -->
-  <img id="gsLogoImg" class="hidden" data-src="" alt="Güneşin Sofrası Logo">
-  <div class="gs-brand" id="gsBrand">
+  <img id="gsLogoImg" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası Logo" onerror="this.style.display='none'">
+  <div class="gs-brand" id="gsBrand" style="display:none">
     <div class="gs-brand-name">Güneşin Sofrası</div>
     <div class="gs-brand-sub">Meyhane</div>
   </div>
@@ -2182,11 +2181,11 @@ body{padding-bottom:var(--bh)}
   /* ── LOGO ── */
   const logoImg = document.getElementById('gsLogoImg');
   const brand   = document.getElementById('gsBrand');
-  const logoDat = logoImg.dataset.src || '';
-  if (logoDat && logoDat.startsWith('data:')) {
-    logoImg.src = logoDat;
-    logoImg.onload  = () => { brand.style.display = 'none'; logoImg.classList.remove('hidden'); };
-    logoImg.onerror = () => { logoImg.classList.add('hidden'); };
+  if (logoImg) {
+    logoImg.onload  = () => { brand.style.display = 'none'; };
+    logoImg.onerror = () => { logoImg.style.display = 'none'; brand.style.display = 'flex'; };
+    if (logoImg.complete && logoImg.naturalWidth > 0) { brand.style.display = 'none'; }
+    else if (logoImg.complete) { logoImg.style.display = 'none'; brand.style.display = 'flex'; }
   }
 
   /* ── MASA ── */
