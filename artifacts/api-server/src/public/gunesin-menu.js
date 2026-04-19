@@ -128,8 +128,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   document.getElementById('gsGarsonBtn').addEventListener('click',  () => sendNotify('garson'));
   document.getElementById('gsHesapBtn').addEventListener('click',   () => sendNotify('hesap'));
-  document.getElementById('gsGarsonFab').addEventListener('click',  () => sendNotify('garson'));
-  document.getElementById('gsHesapFab').addEventListener('click',   () => sendNotify('hesap'));
 
   /* ── GURMEAI CHAT ── */
   const aiBg     = document.getElementById('ai-overlay');
