@@ -166,6 +166,43 @@ router.post("/", async (req: Request, res: Response) => {
   });
 });
 
+router.post("/form", async (req: Request, res: Response) => {
+  const { masaId, name, phone, message } = req.body as {
+    masaId?: string;
+    name?: string;
+    phone?: string;
+    message?: string;
+  };
+
+  if (!name?.trim()) {
+    res.status(400).json({ success: false, error: "name is required" });
+    return;
+  }
+
+  const token  = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (token && chatId) {
+    const time = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
+    const text =
+      `📝 *MÜŞTERİ GERİ BİLDİRİMİ*\n\n` +
+      `👤 ${name.trim()}\n` +
+      `📱 ${phone?.trim() || "—"}\n` +
+      `💬 ${message?.trim() || "—"}\n` +
+      `📍 Masa: ${masaId ?? "?"}\n` +
+      `⏰ ${time}`;
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ chat_id: chatId, text, parse_mode: "Markdown" }),
+    }).catch(() => {});
+  }
+
+  req.log.info({ masaId, name }, "feedback-form received");
+  res.status(201).json({ success: true });
+});
+
 router.get("/", (req: Request, res: Response) => {
   const { restaurantId, minRating, maxRating, crisis } = req.query as {
     restaurantId?: string;
