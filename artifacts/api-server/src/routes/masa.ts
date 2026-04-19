@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { menus } from "../lib/store.js";
+import { menus, restaurants } from "../lib/store.js";
 
 const router: IRouter = Router();
 
@@ -106,9 +106,14 @@ function renderDishCard(d: any): string {
 }
 
 function renderPage(masaId: string): string {
-  const menu = menus.get("default")!;
+  const isGunesin   = masaId.startsWith("gunesin-");
+  const restKey     = isGunesin ? "gunesin-sofrasi" : "rebel";
+  const restaurant  = restaurants.get(restKey)!;
+  const menu        = menus.get(restaurant.menuKey)!;
+  const masaPrefix  = restaurant.masaUrlPrefix;
+  const masaCount   = restaurant.masaCount;
 
-  const displayMasaId = masaId.replace(/^masa-/i, "");
+  const displayMasaId = masaId.replace(new RegExp(`^${masaPrefix}-`, "i"), "");
 
   const byCategory: Record<string, typeof menu.dishes> = {};
   for (const dish of menu.dishes) {
@@ -161,7 +166,7 @@ function renderPage(masaId: string): string {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0f0f0f">
-<title>Rebel · Masa ${escapeHtml(masaId)}</title>
+<title>${escapeHtml(restaurant.name)} · Masa ${escapeHtml(displayMasaId)}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍺</text></svg>">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1073,8 +1078,10 @@ function renderPage(masaId: string): string {
     <span class="hdr-btn-label">Adisyon</span>
   </button>
   <div class="brand-center">
-    <div class="brand-name">rebel<span class="brand-accent">.</span></div>
-    <div class="brand-sub">Bar &amp; Bistro</div>
+    ${isGunesin
+      ? `<div class="brand-name" style="font-size:15px;letter-spacing:.01em">Güneşin Sofrası</div><div class="brand-sub">Meyhane</div>`
+      : `<div class="brand-name">rebel<span class="brand-accent">.</span></div><div class="brand-sub">Bar &amp; Bistro</div>`
+    }
   </div>
   <button id="rateBtn" class="hdr-btn" aria-label="Bizi değerlendirin">
     <span class="hdr-btn-label">Bizi Değerlendirin</span>
@@ -1120,7 +1127,7 @@ function renderPage(masaId: string): string {
     <button id="masaCloseBtn" aria-label="Kapat">✕</button>
   </div>
   <div id="masaGrid">
-    ${Array.from({ length: 30 }, (_, i) => i + 1)
+    ${Array.from({ length: masaCount }, (_, i) => i + 1)
       .map(n => `<button class="masa-num-btn" data-num="${n}">${n}</button>`)
       .join("")}
   </div>
@@ -1540,8 +1547,12 @@ function renderPage(masaId: string): string {
     window.visualViewport.addEventListener('scroll', onVpChange);
   }
 
-  const MASA_ID = ${JSON.stringify(masaId)}; // server-injected URL value
-  let _masaId = sessionStorage.getItem('rebel_masa') || MASA_ID.replace(/^masa-/i, '');
+  const MASA_ID        = ${JSON.stringify(masaId)};        // server-injected
+  const RESTAURANT_ID  = ${JSON.stringify(restKey)};       // server-injected
+  const MASA_PREFIX    = ${JSON.stringify(masaPrefix)};    // server-injected
+  const SESSION_KEY    = RESTAURANT_ID + '_masa';
+  let _masaId = sessionStorage.getItem(SESSION_KEY) ||
+                MASA_ID.replace(new RegExp('^' + MASA_PREFIX + '-', 'i'), '');
 
   /* ── TOAST ────────────────────────────────────────────── */
   let _toastTimer = null;
@@ -1577,7 +1588,7 @@ function renderPage(masaId: string): string {
   document.querySelectorAll('.masa-num-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       _masaId = btn.dataset.num;
-      sessionStorage.setItem('rebel_masa', _masaId);
+      sessionStorage.setItem(SESSION_KEY, _masaId);
       closeMasaSheet();
       showToast('Masa ' + _masaId + ' seçildi ✓');
     });

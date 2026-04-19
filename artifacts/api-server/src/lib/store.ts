@@ -737,6 +737,72 @@ const DEFAULT_MENU: Menu = {
   updatedAt: new Date().toISOString(),
 };
 
+/* ══════════════════════════════════════════════════════════
+   RESTAURANT CONFIG REGISTRY
+   ══════════════════════════════════════════════════════════ */
+export interface RestaurantConfig {
+  restaurantId: string;
+  name: string;
+  masaCount: number;
+  telegramGroupId: string;
+  botToken: string;
+  menuKey: string;
+  masaUrlPrefix: string;
+}
+
+const GUNESIN_DISHES: Dish[] = [
+  // ── SOĞUK MEZELER ─────────────────────────────────────────
+  { id: "g001", name: "Haydari", description: "Süzme yoğurt, sarımsak, nane, dereotu", category: "Soğuk Mezeler", price: 180, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g002", name: "Cacık", description: "Yoğurt, salatalık, sarımsak, nane", category: "Soğuk Mezeler", price: 160, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g003", name: "Patlıcan Ezmesi", description: "Közlenmiş patlıcan, sarımsak, limon, zeytinyağı", category: "Soğuk Mezeler", price: 190, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g004", name: "Humus", description: "Nohut ezmesi, tahin, zeytinyağı, paprika", category: "Soğuk Mezeler", price: 200, allergens: ["sesame"], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g005", name: "Tarama", description: "Balık yumurtası, ekmek, zeytinyağı, limon", category: "Soğuk Mezeler", price: 240, allergens: ["fish", "gluten"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g006", name: "Közlenmiş Biber Salatası", description: "Közlenmiş kırmızı biber, domates, sarımsak, zeytinyağı", category: "Soğuk Mezeler", price: 175, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  // ── SICAK MEZELER ─────────────────────────────────────────
+  { id: "g010", name: "Arnavut Ciğeri", description: "Dana ciğer kavurma, soğan, pul biber, kekik", category: "Sıcak Mezeler", price: 320, allergens: [], vegetarian: false, vegan: false, glutenFree: true, spiceLevel: 1 },
+  { id: "g011", name: "Midye Tava", description: "Taze karadeniz midyesi, çıtır hamur, tartar sos", category: "Sıcak Mezeler", price: 380, allergens: ["gluten", "shellfish", "eggs"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g012", name: "Karides Güveç", description: "Kral karides, domates, sarımsak, biber, tereyağ", category: "Sıcak Mezeler", price: 480, allergens: ["shellfish", "dairy"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g013", name: "Fırın Hellim", description: "Kıbrıs hellimi, nane yağı, bal, ceviz", category: "Sıcak Mezeler", price: 290, allergens: ["dairy", "nuts"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g014", name: "Sigara Böreği", description: "İnce yufka, beyaz peynir, maydanoz", category: "Sıcak Mezeler", price: 220, allergens: ["gluten", "dairy"], vegetarian: true, vegan: false, glutenFree: false },
+  // ── BALIK ─────────────────────────────────────────────────
+  { id: "g020", name: "Levrek Izgara", description: "Taze levrek fileto, zeytinyağı, limon, kaçamak eşliğinde", category: "Balık", price: 680, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g021", name: "Çipura Izgara", description: "Taze çipura fileto, sarımsak, limon, salata eşliğinde", category: "Balık", price: 640, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g022", name: "Uskumru Tava", description: "Taze uskumru, mısır unu, soğan halkası, limon", category: "Balık", price: 520, allergens: ["fish", "gluten"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g023", name: "Hamsi Tava", description: "Taze hamsi, mısır unu, soğan, limon", category: "Balık", price: 460, allergens: ["fish", "gluten"], vegetarian: false, vegan: false, glutenFree: false },
+  // ── ET YEMEKLERİ ──────────────────────────────────────────
+  { id: "g030", name: "Kuzu Şiş", description: "Marine edilmiş kuzu kuşbaşı, közlenmiş sebze, lavaş, cacık", category: "Et Yemekleri", price: 720, allergens: ["gluten", "dairy"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g031", name: "Dana Antrikot", description: "200gr dana antrikot, kekik tereyağ, ızgara sebze, baby patates", category: "Et Yemekleri", price: 880, allergens: ["dairy"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g032", name: "Kuzu Pirzola", description: "3 adet kuzu pirzola, patlıcan ezmesi, közlenmiş biber", category: "Et Yemekleri", price: 960, allergens: [], vegetarian: false, vegan: false, glutenFree: true },
+  // ── SALATALAR ─────────────────────────────────────────────
+  { id: "g040", name: "Çoban Salata", description: "Domates, salatalık, soğan, maydanoz, zeytinyağı, limon", category: "Salatalar", price: 180, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g041", name: "Roka Parmesan Salata", description: "Roka, kiraz domates, parmesan, limon, zeytinyağı", category: "Salatalar", price: 230, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  // ── RAKI ──────────────────────────────────────────────────
+  { id: "g050", name: "Tekirdağ Rakısı 35cl", description: "Tekirdağ altın seri rakı, 35cl", category: "Rakı", price: 420, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g051", name: "Yeni Rakı 35cl", description: "Klasik Yeni Rakı, 35cl", category: "Rakı", price: 380, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g052", name: "Efe Rakısı 35cl", description: "Ege'nin vazgeçilmezi Efe Rakısı, 35cl", category: "Rakı", price: 350, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  // ── ŞARAP ─────────────────────────────────────────────────
+  { id: "g060", name: "Beyaz Şarap (Kadeh)", description: "Günün beyaz şarabı, 150ml", category: "Şarap", price: 280, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g061", name: "Kırmızı Şarap (Kadeh)", description: "Günün kırmızı şarabı, 150ml", category: "Şarap", price: 280, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g062", name: "Beyaz Şarap (Şişe)", description: "Kavaklidere Çankaya 75cl", category: "Şarap", price: 950, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g063", name: "Kırmızı Şarap (Şişe)", description: "Kavaklidere Yakut 75cl", category: "Şarap", price: 950, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  // ── İÇECEKLER ─────────────────────────────────────────────
+  { id: "g070", name: "Efes Bira 50cl", description: "Soğuk Efes fıçı bira, 50cl", category: "İçecekler", price: 130, allergens: ["gluten"], vegetarian: true, vegan: true, glutenFree: false },
+  { id: "g071", name: "Su", description: "Doğal kaynak suyu", category: "İçecekler", price: 55, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g072", name: "Ayran", description: "Ev yapımı ayran", category: "İçecekler", price: 80, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g073", name: "Şalgam", description: "Siyah havuç şalgam suyu", category: "İçecekler", price: 90, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g074", name: "Maden Suyu", description: "Soğuk maden suyu", category: "İçecekler", price: 70, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g075", name: "Gazlı İçecek", description: "Coca-Cola / Sprite / Fanta", category: "İçecekler", price: 100, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+];
+
+const GUNESIN_MENU: Menu = {
+  restaurantId: "gunesin-sofrasi",
+  restaurantName: "Güneşin Sofrası Meyhane",
+  cuisine: "Türk Meyhane",
+  currency: "TRY",
+  dishes: GUNESIN_DISHES,
+  updatedAt: new Date().toISOString(),
+};
+
 export interface Feedback {
   feedbackId: string;
   restaurantId: string;
@@ -768,7 +834,31 @@ export const customers = new Map<string, Customer>();
 export const notifications: Notification[] = [];
 export const reservations = new Map<string, Reservation>();
 export const stock = new Map<string, StockItem>();
-export const menus = new Map<string, Menu>([["default", DEFAULT_MENU]]);
+export const menus = new Map<string, Menu>([
+  ["default", DEFAULT_MENU],
+  ["gunesin-sofrasi", GUNESIN_MENU],
+]);
+
+export const restaurants = new Map<string, RestaurantConfig>([
+  ["rebel", {
+    restaurantId: "rebel",
+    name: "Rebel Bar & Bistro",
+    masaCount: 30,
+    telegramGroupId: process.env.TELEGRAM_CHAT_ID ?? "",
+    botToken: process.env.TELEGRAM_BOT_TOKEN ?? "",
+    menuKey: "default",
+    masaUrlPrefix: "masa",
+  }],
+  ["gunesin-sofrasi", {
+    restaurantId: "gunesin-sofrasi",
+    name: "Güneşin Sofrası Meyhane",
+    masaCount: 15,
+    telegramGroupId: "BEKLIYOR",
+    botToken: "BEKLIYOR",
+    menuKey: "gunesin-sofrasi",
+    masaUrlPrefix: "gunesin",
+  }],
+]);
 export const feedbacks = new Map<string, Feedback>();
 export const chatLog: ChatLogEntry[] = [];
 
