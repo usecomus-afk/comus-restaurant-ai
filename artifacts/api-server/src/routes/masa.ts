@@ -1916,7 +1916,7 @@ function renderPage(masaId: string): string {
   }
   #hdrLeft{}
   #hdrCenter{display:flex;flex-direction:column;align-items:center;gap:6px}
-  #hdrRight{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-right:14px}
+  #hdrRight{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:10px;padding-right:14px}
   #gsLogo{height:192px;width:192px;max-width:calc(100vw - 160px);max-height:192px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:center;gap:3px}
   .gs-brand-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--pri);letter-spacing:.04em}
@@ -1962,13 +1962,18 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
-    display:inline-flex;flex-direction:column;align-items:center;gap:3px;
-    padding:7px 14px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:12px;
+    display:inline-flex;flex-direction:row;align-items:center;gap:5px;
+    padding:6px 12px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:20px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;width:max-content;
   }
   #ratingBtn:active{background:#FFF3D0}
-  .rt-hint{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
-  .rt-stars{font-size:18px;letter-spacing:2px;color:var(--gold);line-height:1}
+  .rt-icon{font-size:14px;line-height:1}
+  .rt-hint{font-size:10px;font-weight:700;color:var(--acc);letter-spacing:.03em;text-transform:uppercase}
+  @media(max-width:380px){
+    .rt-hint{display:none}
+    #igBtn span{display:none}
+    #hdrRight{padding-right:8px;gap:8px}
+  }
 
   /* ── STANDARD CARD ── */
   .gs-std-grid{display:flex;flex-direction:column;gap:9px}
@@ -2212,8 +2217,8 @@ function renderPage(masaId: string): string {
     </div>
     <div id="hdrRight">
       <button id="ratingBtn">
-        <span class="rt-hint">Deneyimi Paylaş</span>
-        <span class="rt-stars">★★★★★</span>
+        <span class="rt-icon">⭐</span>
+        <span class="rt-hint">Deneyiminizi paylaşın</span>
       </button>
       <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
         <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
