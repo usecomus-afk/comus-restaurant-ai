@@ -751,47 +751,145 @@ export interface RestaurantConfig {
 }
 
 const GUNESIN_DISHES: Dish[] = [
-  // ── SOĞUK MEZELER ─────────────────────────────────────────
-  { id: "g001", name: "Haydari", description: "Süzme yoğurt, sarımsak, nane, dereotu", category: "Soğuk Mezeler", price: 180, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
-  { id: "g002", name: "Cacık", description: "Yoğurt, salatalık, sarımsak, nane", category: "Soğuk Mezeler", price: 160, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
-  { id: "g003", name: "Patlıcan Ezmesi", description: "Közlenmiş patlıcan, sarımsak, limon, zeytinyağı", category: "Soğuk Mezeler", price: 190, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g004", name: "Humus", description: "Nohut ezmesi, tahin, zeytinyağı, paprika", category: "Soğuk Mezeler", price: 200, allergens: ["sesame"], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g005", name: "Tarama", description: "Balık yumurtası, ekmek, zeytinyağı, limon", category: "Soğuk Mezeler", price: 240, allergens: ["fish", "gluten"], vegetarian: false, vegan: false, glutenFree: false },
-  { id: "g006", name: "Közlenmiş Biber Salatası", description: "Közlenmiş kırmızı biber, domates, sarımsak, zeytinyağı", category: "Soğuk Mezeler", price: 175, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  // ── SICAK MEZELER ─────────────────────────────────────────
-  { id: "g010", name: "Arnavut Ciğeri", description: "Dana ciğer kavurma, soğan, pul biber, kekik", category: "Sıcak Mezeler", price: 320, allergens: [], vegetarian: false, vegan: false, glutenFree: true, spiceLevel: 1 },
-  { id: "g011", name: "Midye Tava", description: "Taze karadeniz midyesi, çıtır hamur, tartar sos", category: "Sıcak Mezeler", price: 380, allergens: ["gluten", "shellfish", "eggs"], vegetarian: false, vegan: false, glutenFree: false },
-  { id: "g012", name: "Karides Güveç", description: "Kral karides, domates, sarımsak, biber, tereyağ", category: "Sıcak Mezeler", price: 480, allergens: ["shellfish", "dairy"], vegetarian: false, vegan: false, glutenFree: true },
-  { id: "g013", name: "Fırın Hellim", description: "Kıbrıs hellimi, nane yağı, bal, ceviz", category: "Sıcak Mezeler", price: 290, allergens: ["dairy", "nuts"], vegetarian: true, vegan: false, glutenFree: true },
-  { id: "g014", name: "Sigara Böreği", description: "İnce yufka, beyaz peynir, maydanoz", category: "Sıcak Mezeler", price: 220, allergens: ["gluten", "dairy"], vegetarian: true, vegan: false, glutenFree: false },
-  // ── BALIK ─────────────────────────────────────────────────
-  { id: "g020", name: "Levrek Izgara", description: "Taze levrek fileto, zeytinyağı, limon, kaçamak eşliğinde", category: "Balık", price: 680, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
-  { id: "g021", name: "Çipura Izgara", description: "Taze çipura fileto, sarımsak, limon, salata eşliğinde", category: "Balık", price: 640, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
-  { id: "g022", name: "Uskumru Tava", description: "Taze uskumru, mısır unu, soğan halkası, limon", category: "Balık", price: 520, allergens: ["fish", "gluten"], vegetarian: false, vegan: false, glutenFree: false },
-  { id: "g023", name: "Hamsi Tava", description: "Taze hamsi, mısır unu, soğan, limon", category: "Balık", price: 460, allergens: ["fish", "gluten"], vegetarian: false, vegan: false, glutenFree: false },
-  // ── ET YEMEKLERİ ──────────────────────────────────────────
-  { id: "g030", name: "Kuzu Şiş", description: "Marine edilmiş kuzu kuşbaşı, közlenmiş sebze, lavaş, cacık", category: "Et Yemekleri", price: 720, allergens: ["gluten", "dairy"], vegetarian: false, vegan: false, glutenFree: false },
-  { id: "g031", name: "Dana Antrikot", description: "200gr dana antrikot, kekik tereyağ, ızgara sebze, baby patates", category: "Et Yemekleri", price: 880, allergens: ["dairy"], vegetarian: false, vegan: false, glutenFree: true },
-  { id: "g032", name: "Kuzu Pirzola", description: "3 adet kuzu pirzola, patlıcan ezmesi, közlenmiş biber", category: "Et Yemekleri", price: 960, allergens: [], vegetarian: false, vegan: false, glutenFree: true },
+  // ── FIX MENÜ ──────────────────────────────────────────────
+  { id: "g001", name: "Limitli Alkollü Fix Menü", description: "Kişi başı — Her 4 kişi için: 10 çeşit meze, 2 ara sıcak (Ciğer + Güneş Böreği), ana yemek (Köfte veya Asma Yaprağında Levrek), salata ve meyve. 4 kişiye 1 adet 70cl Rakı · 2 kişiye 1 adet 75cl Şarap · 1 kişiye 2 adet 50cl Bira.", category: "Fix Menü", price: 2250, allergens: [], vegetarian: false, vegan: false, glutenFree: false, isSpecial: true },
+  { id: "g002", name: "Ana Yemeksiz Fix Menü", description: "Kişi başı — Meze seçkisi, ara sıcaklar, salata ve meyve. Alkol dahil değildir.", category: "Fix Menü", price: 1850, allergens: [], vegetarian: false, vegan: false, glutenFree: false },
+
+  // ── SOĞUK MEZELER — Meyhane Klasikleri ────────────────────
+  { id: "g010", name: "Beyaz Peynir", description: "Meyhane usulü beyaz peynir", category: "Soğuk Mezeler", price: 180, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g011", name: "Atom", description: "Acılı ezme, sarımsak, ceviz", category: "Soğuk Mezeler", price: 260, allergens: ["nuts"], vegetarian: true, vegan: true, glutenFree: true, spiceLevel: 2 },
+  { id: "g012", name: "Muhammara", description: "Kırmızı biber ezmesi, ceviz, zeytinyağı", category: "Soğuk Mezeler", price: 260, allergens: ["nuts"], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g013", name: "Köpoğlu", description: "Közlenmiş patlıcan, yoğurt, sarımsak, domates", category: "Soğuk Mezeler", price: 280, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g014", name: "Fava", description: "Bakla ezmesi, zeytinyağı, dereotu", category: "Soğuk Mezeler", price: 250, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g015", name: "Şakşuka", description: "Patlıcan, domates, biber, sarımsak, zeytinyağı", category: "Soğuk Mezeler", price: 260, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g016", name: "Haydari", description: "Süzme yoğurt, sarımsak, nane", category: "Soğuk Mezeler", price: 260, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g017", name: "Humus", description: "Nohut ezmesi, tahin, zeytinyağı, paprika", category: "Soğuk Mezeler", price: 240, allergens: ["sesame"], vegetarian: true, vegan: true, glutenFree: true },
+
+  // ── SOĞUK MEZELER — Denizden ──────────────────────────────
+  { id: "g020", name: "Levrek Marin", description: "Taze levrek marin, limon, zeytinyağı", category: "Deniz Mezeleri", price: 490, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g021", name: "Lakerda", description: "Bir dilim tuzlanmış palamut", category: "Deniz Mezeleri", price: 390, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g022", name: "Füme Uskumru", description: "Soğuk füme uskumru", category: "Deniz Mezeleri", price: 450, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g023", name: "Deniz Mahsulleri Salatası", description: "Mevsim deniz ürünleri salatası", category: "Deniz Mezeleri", price: 550, allergens: ["fish", "shellfish"], vegetarian: false, vegan: false, glutenFree: true },
+
+  // ── SOĞUK MEZELER — Günün Mezeleri ───────────────────────
+  { id: "g030", name: "Girit Ezme", description: "Girit usulü peynir ezmesi, zeytinyağı", category: "Günün Mezeleri", price: 290, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g031", name: "Yoğurtlu Kabak Şayan", description: "Kabak, yoğurt, sarımsak, nane", category: "Günün Mezeleri", price: 270, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g032", name: "Pilaki", description: "Fasulye veya balık pilakisi, zeytinyağı", category: "Günün Mezeleri", price: 240, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g033", name: "Acılı Ezme", description: "Közlenmiş biber, domates, soğan ezmesi", category: "Günün Mezeleri", price: 240, allergens: [], vegetarian: true, vegan: true, glutenFree: true, spiceLevel: 2 },
+  { id: "g034", name: "Zahter Salatası", description: "Taze zahter otu salatası, zeytinyağı, limon", category: "Günün Mezeleri", price: 260, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g035", name: "Köz Patlıcan", description: "Közlenmiş patlıcan, zeytinyağı, sarımsak", category: "Günün Mezeleri", price: 260, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g036", name: "Enginar Kalbi", description: "Zeytinyağlı enginar kalbi", category: "Günün Mezeleri", price: 390, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g037", name: "Kaya Koruğu", description: "Taze kaya koruğu, zeytinyağı, limon", category: "Günün Mezeleri", price: 240, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g038", name: "Topik", description: "Nohut ezmeli Ermeni mezesi, soğan, çam fıstığı", category: "Günün Mezeleri", price: 300, allergens: ["nuts"], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g039", name: "Kuru Cacık", description: "Süzme yoğurt, sarımsak, salatalık, nane", category: "Günün Mezeleri", price: 240, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g040", name: "Pazı Kavurma", description: "Zeytinyağlı pazı kavurma", category: "Günün Mezeleri", price: 290, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g041", name: "Kuru Domates Mezesi", description: "Kuru domates, zeytinyağı, baharatlar", category: "Günün Mezeleri", price: 250, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g042", name: "Kıska Soğan", description: "Çıtır kızartılmış soğan", category: "Günün Mezeleri", price: 260, allergens: ["gluten"], vegetarian: true, vegan: true, glutenFree: false },
+
+  // ── ARA SICAKLAR ──────────────────────────────────────────
+  { id: "g050", name: "Yaprak Ciğer", description: "İnce dilim kuzuciğer kavurma", category: "Ara Sıcaklar", price: 680, allergens: [], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g051", name: "Enginar Kalbi Izgara", description: "Izgara enginar kalbi, zeytinyağı", category: "Ara Sıcaklar", price: 450, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g052", name: "Paçanga", description: "Pastırmalı ve kaşarlı börek", category: "Ara Sıcaklar", price: 350, allergens: ["gluten", "dairy"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g053", name: "Kalamar Tava", description: "Çıtır kalamar tava, tartar sos", category: "Ara Sıcaklar", price: 690, allergens: ["gluten", "shellfish"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g054", name: "Karides Güveç", description: "Güveçte karides, domates, sarımsak, tereyağ", category: "Ara Sıcaklar", price: 650, allergens: ["shellfish", "dairy"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g055", name: "Kiremitte Peynirli Mantar", description: "Kiremit üstünde peynirli mantar", category: "Ara Sıcaklar", price: 390, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g056", name: "Kalamar Izgara", description: "Izgara kalamar, zeytinyağı, limon", category: "Ara Sıcaklar", price: 720, allergens: ["shellfish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g057", name: "Dil Izgara", description: "Izgara dana dil", category: "Ara Sıcaklar", price: 750, allergens: [], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g058", name: "Sıcak Ot", description: "Mevsim otları sıcak meze", category: "Ara Sıcaklar", price: 330, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g059", name: "Tereyağlı Karides", description: "Tereyağlı sote karides", category: "Ara Sıcaklar", price: 680, allergens: ["shellfish", "dairy"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g060", name: "Pastırmalı Humus", description: "Sıcak humus, pastırma, tereyağ", category: "Ara Sıcaklar", price: 480, allergens: ["sesame"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g061", name: "Güneş Böreği", description: "Güneşin Sofrası'na özel börek", category: "Ara Sıcaklar", price: 320, allergens: ["gluten", "dairy"], vegetarian: true, vegan: false, glutenFree: false },
+  { id: "g062", name: "Biralı Çıtır Kabak", description: "Bira hamurunda kabak kızartması", category: "Ara Sıcaklar", price: 390, allergens: ["gluten"], vegetarian: true, vegan: true, glutenFree: false },
+  { id: "g063", name: "Ahtapot Izgara", description: "Izgara ahtapot, zeytinyağı, limon, kekik", category: "Ara Sıcaklar", price: 1350, allergens: ["shellfish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g064", name: "Balık Kokoreç", description: "Balık iç organlarıyla hazırlanan kokoreç", category: "Ara Sıcaklar", price: 620, allergens: ["gluten"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g065", name: "Balık Köftesi", description: "2 adet balık köftesi", category: "Ara Sıcaklar", price: 650, allergens: ["gluten", "fish", "eggs"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g066", name: "Kuzu Kokoreç", description: "Geleneksel kuzu kokoreç", category: "Ara Sıcaklar", price: 650, allergens: ["gluten"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g067", name: "Patlıcan Kumpir", description: "Mevsiminde — Patlıcan kumpir", category: "Ara Sıcaklar", price: 475, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+
+  // ── ANA YEMEKLER — Deniz ──────────────────────────────────
+  { id: "g070", name: "Asma Yaprağında Levrek", description: "Taze levrek, asma yaprağında pişmiş", category: "Ana Yemekler (Deniz)", price: 950, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g071", name: "Güveçte Balık Kavurma", description: "Güveçte taze balık kavurma", category: "Ana Yemekler (Deniz)", price: 850, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g072", name: "Çupra Izgara", description: "Taze çupra ızgara", category: "Ana Yemekler (Deniz)", price: 850, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g073", name: "Levrek Izgara", description: "Taze levrek ızgara", category: "Ana Yemekler (Deniz)", price: 850, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g074", name: "Mevsim Balıkları", description: "Günlük fiyat için lütfen garson ile görüşünüz", category: "Ana Yemekler (Deniz)", price: 0, allergens: ["fish"], vegetarian: false, vegan: false, glutenFree: true },
+
+  // ── ANA YEMEKLER — Kırmızı Et ─────────────────────────────
+  { id: "g080", name: "Güveçte Çoban Kavurma", description: "180 gr antrikot, güveçte çoban kavurma", category: "Ana Yemekler (Et)", price: 980, allergens: [], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g081", name: "Köfte", description: "180 gr ızgara köfte", category: "Ana Yemekler (Et)", price: 700, allergens: ["gluten"], vegetarian: false, vegan: false, glutenFree: false },
+  { id: "g082", name: "Kuzu Pirzola", description: "250 gr kuzu pirzola ızgara", category: "Ana Yemekler (Et)", price: 1250, allergens: [], vegetarian: false, vegan: false, glutenFree: true },
+  { id: "g083", name: "Karışık Izgara", description: "360 gr — 2 köfte + 2 kalem pirzola + 2 kuzu şiş", category: "Ana Yemekler (Et)", price: 1700, allergens: ["gluten"], vegetarian: false, vegan: false, glutenFree: false },
+
   // ── SALATALAR ─────────────────────────────────────────────
-  { id: "g040", name: "Çoban Salata", description: "Domates, salatalık, soğan, maydanoz, zeytinyağı, limon", category: "Salatalar", price: 180, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g041", name: "Roka Parmesan Salata", description: "Roka, kiraz domates, parmesan, limon, zeytinyağı", category: "Salatalar", price: 230, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g090", name: "Yeşil Salata (Orta)", description: "Taze yeşil salata — Orta boy", category: "Salatalar", price: 250, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g091", name: "Yeşil Salata (Büyük)", description: "Taze yeşil salata — Büyük boy", category: "Salatalar", price: 300, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g092", name: "Roka Salata (Orta)", description: "Roka, zeytinyağı, limon — Orta boy", category: "Salatalar", price: 280, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g093", name: "Roka Salata (Büyük)", description: "Roka, zeytinyağı, limon — Büyük boy", category: "Salatalar", price: 340, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g094", name: "P. Roka Salatası (Orta)", description: "Parmesan rokası — Orta boy", category: "Salatalar", price: 325, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g095", name: "P. Roka Salatası (Büyük)", description: "Parmesan rokası — Büyük boy", category: "Salatalar", price: 380, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g096", name: "Çoban Salatası (Orta)", description: "Domates, salatalık, soğan, maydanoz — Orta boy", category: "Salatalar", price: 300, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g097", name: "Çoban Salatası (Büyük)", description: "Domates, salatalık, soğan, maydanoz — Büyük boy", category: "Salatalar", price: 360, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g098", name: "Gavurdağı Salatası (Orta)", description: "Domates, biber, ceviz, nar ekşisi — Orta boy", category: "Salatalar", price: 350, allergens: ["nuts"], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g099", name: "Gavurdağı Salatası (Büyük)", description: "Domates, biber, ceviz, nar ekşisi — Büyük boy", category: "Salatalar", price: 420, allergens: ["nuts"], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g100", name: "İstanbul Salatası (Orta)", description: "Mevsim yeşillikleri — Orta boy", category: "Salatalar", price: 300, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g101", name: "İstanbul Salatası (Büyük)", description: "Mevsim yeşillikleri — Büyük boy", category: "Salatalar", price: 350, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+
+  // ── TATLI & MEYVE ─────────────────────────────────────────
+  { id: "g110", name: "Fırında Portakallı Helva", description: "Portakal aromalı fırın helvası", category: "Tatlı & Meyve", price: 330, allergens: ["nuts", "gluten"], vegetarian: true, vegan: true, glutenFree: false },
+  { id: "g111", name: "Dondurmalı İrmik Helvası", description: "İrmik helvası, dondurma ile servis", category: "Tatlı & Meyve", price: 375, allergens: ["dairy", "nuts", "gluten"], vegetarian: true, vegan: false, glutenFree: false },
+  { id: "g112", name: "Antakya Kabak Tatlısı", description: "Geleneksel kabak tatlısı, kaymak ile", category: "Tatlı & Meyve", price: 375, allergens: ["dairy", "nuts"], vegetarian: true, vegan: false, glutenFree: true },
+  { id: "g113", name: "Meyve Tabağı", description: "2 kişilik mevsim meyveleri tabağı", category: "Tatlı & Meyve", price: 310, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+
   // ── RAKI ──────────────────────────────────────────────────
-  { id: "g050", name: "Tekirdağ Rakısı 35cl", description: "Tekirdağ altın seri rakı, 35cl", category: "Rakı", price: 420, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g051", name: "Yeni Rakı 35cl", description: "Klasik Yeni Rakı, 35cl", category: "Rakı", price: 380, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g052", name: "Efe Rakısı 35cl", description: "Ege'nin vazgeçilmezi Efe Rakısı, 35cl", category: "Rakı", price: 350, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  // ── ŞARAP ─────────────────────────────────────────────────
-  { id: "g060", name: "Beyaz Şarap (Kadeh)", description: "Günün beyaz şarabı, 150ml", category: "Şarap", price: 280, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g061", name: "Kırmızı Şarap (Kadeh)", description: "Günün kırmızı şarabı, 150ml", category: "Şarap", price: 280, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g062", name: "Beyaz Şarap (Şişe)", description: "Kavaklidere Çankaya 75cl", category: "Şarap", price: 950, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g063", name: "Kırmızı Şarap (Şişe)", description: "Kavaklidere Yakut 75cl", category: "Şarap", price: 950, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  // ── İÇECEKLER ─────────────────────────────────────────────
-  { id: "g070", name: "Efes Bira 50cl", description: "Soğuk Efes fıçı bira, 50cl", category: "İçecekler", price: 130, allergens: ["gluten"], vegetarian: true, vegan: true, glutenFree: false },
-  { id: "g071", name: "Su", description: "Doğal kaynak suyu", category: "İçecekler", price: 55, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g072", name: "Ayran", description: "Ev yapımı ayran", category: "İçecekler", price: 80, allergens: ["dairy"], vegetarian: true, vegan: false, glutenFree: true },
-  { id: "g073", name: "Şalgam", description: "Siyah havuç şalgam suyu", category: "İçecekler", price: 90, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g074", name: "Maden Suyu", description: "Soğuk maden suyu", category: "İçecekler", price: 70, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
-  { id: "g075", name: "Gazlı İçecek", description: "Coca-Cola / Sprite / Fanta", category: "İçecekler", price: 100, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g120", name: "Yeni Rakı", description: "Tek 300₺ · Duble 450₺ · 20cl 950₺ · 35cl 1.470₺ · 50cl 1.950₺ · 70cl 2.500₺ · 100cl 3.300₺", category: "Rakı", price: 300, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g121", name: "Yeni Seri", description: "20cl 1.050₺ · 35cl 1.690₺ · 50cl 2.200₺ · 70cl 2.750₺ · 100cl 3.650₺", category: "Rakı", price: 1050, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g122", name: "Alâ", description: "35cl 2.050₺ · 70cl 3.600₺", category: "Rakı", price: 2050, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g123", name: "Tekirdağ", description: "35cl 1.550₺ · 50cl 2.100₺ · 70cl 2.650₺ · 100cl 3.600₺", category: "Rakı", price: 1550, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g124", name: "Altın Seri", description: "20cl 1.200₺ · 35cl 1.800₺ · 50cl 2.450₺ · 70cl 3.100₺ · 100cl 3.950₺", category: "Rakı", price: 1200, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g125", name: "Rezerv", description: "35cl 2.100₺ · 70cl 3.650₺", category: "Rakı", price: 2100, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g126", name: "Göbek", description: "20cl 1.350₺ · 35cl 2.150₺ · 50cl 3.000₺ · 70cl 3.800₺ · 100cl 4.700₺", category: "Rakı", price: 1350, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g127", name: "Efe Rakı (Yeşil)", description: "20cl 1.090₺ · 35cl 1.650₺ · 50cl 2.250₺ · 70cl 2.850₺ · 100cl 3.700₺", category: "Rakı", price: 1090, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g128", name: "Efe Gold", description: "20cl 1.250₺ · 35cl 1.850₺ · 50cl 2.550₺ · 70cl 3.200₺ · 100cl 4.000₺", category: "Rakı", price: 1250, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g129", name: "Efe Göbek", description: "20cl 1.290₺ · 35cl 2.150₺ · 50cl 2.980₺ · 70cl 3.750₺ · 100cl 5.100₺", category: "Rakı", price: 1290, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g130", name: "Sarı Zeybek 3 Meşe", description: "20cl 1.350₺ · 35cl 2.350₺ · 50cl 2.950₺ · 70cl 3.800₺ · 100cl 5.200₺", category: "Rakı", price: 1350, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g131", name: "Beylerbeyi Göbek", description: "35cl 2.250₺ · 70cl 4.100₺", category: "Rakı", price: 2250, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g132", name: "Kulüp", description: "35cl 1.950₺ · 70cl 3.250₺", category: "Rakı", price: 1950, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g133", name: "Kulüp Delux", description: "35cl 1.900₺ · 70cl 3.150₺", category: "Rakı", price: 1900, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g134", name: "Yeni Rakı Giz", description: "50cl 6.300₺", category: "Rakı", price: 6300, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g135", name: "Yeni Rakı Pus", description: "50cl 5.500₺", category: "Rakı", price: 5500, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+
+  // ── ŞARAP — Kırmızı ───────────────────────────────────────
+  { id: "g140", name: "Turasan Libra", description: "Kırmızı şarap — 75cl", category: "Şarap (Kırmızı)", price: 1650, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g141", name: "T. Cab. Sauvignon", description: "Turasan Cabernet Sauvignon — 75cl", category: "Şarap (Kırmızı)", price: 1850, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g142", name: "Turasan Merlot", description: "75cl", category: "Şarap (Kırmızı)", price: 1850, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g143", name: "T. Seneler Ökg-Bğz", description: "Turasan Seneler Öküzgözü-Boğazkere — 75cl", category: "Şarap (Kırmızı)", price: 2800, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g144", name: "Terra Ökg-Bğz", description: "Terra Öküzgözü-Boğazkere — 75cl", category: "Şarap (Kırmızı)", price: 1600, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g145", name: "Terra Shiraz", description: "75cl", category: "Şarap (Kırmızı)", price: 1600, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g146", name: "Kayra Vintage Ökg", description: "Kayra Vintage Öküzgözü — 75cl", category: "Şarap (Kırmızı)", price: 2900, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+
+  // ── ŞARAP — Beyaz ─────────────────────────────────────────
+  { id: "g150", name: "Turasan Libra Beyaz", description: "75cl", category: "Şarap (Beyaz)", price: 1650, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g151", name: "Turasan Narince", description: "75cl", category: "Şarap (Beyaz)", price: 1850, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g152", name: "Turasan Emir", description: "75cl", category: "Şarap (Beyaz)", price: 1850, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g153", name: "T. Seneler Char.", description: "Turasan Seneler Chardonnay — 75cl", category: "Şarap (Beyaz)", price: 2800, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g154", name: "Leona Nar-Cha.", description: "Leona Narince-Chardonnay — 75cl", category: "Şarap (Beyaz)", price: 1650, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g155", name: "Terra Narince", description: "75cl", category: "Şarap (Beyaz)", price: 1650, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g156", name: "K. Vintage Narince", description: "Kayra Vintage Narince — 75cl", category: "Şarap (Beyaz)", price: 2900, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+
+  // ── ŞARAP — Rosé & Diğer ──────────────────────────────────
+  { id: "g160", name: "Leona Blush", description: "Rosé — 75cl", category: "Şarap (Rosé)", price: 1650, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g161", name: "Kadeh Şarap", description: "Günün şarabı — kadeh", category: "Şarap (Rosé)", price: 390, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g162", name: "Kadeh Rosé", description: "Günün roséi — kadeh", category: "Şarap (Rosé)", price: 390, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g163", name: "Şişe Bira", description: "50cl şişe bira", category: "Şarap (Rosé)", price: 290, allergens: ["gluten"], vegetarian: true, vegan: true, glutenFree: false },
+
+  // ── SOFT İÇECEKLER ────────────────────────────────────────
+  { id: "g170", name: "Büyük Su", description: "Büyük boy kaynak suyu", category: "İçecekler", price: 90, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g171", name: "Soda", description: "Maden suyu / soda", category: "İçecekler", price: 110, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g172", name: "Churchill", description: "Soğuk Churchill", category: "İçecekler", price: 140, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g173", name: "Uludağ Gazoz", description: "Klasik Uludağ gazoz", category: "İçecekler", price: 160, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g174", name: "Ice Tea", description: "Limon veya şeftali", category: "İçecekler", price: 160, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g175", name: "Büyük Şalgam", description: "Büyük boy şalgam suyu", category: "İçecekler", price: 180, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g176", name: "Küçük Şalgam", description: "Küçük boy şalgam suyu", category: "İçecekler", price: 100, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
+  { id: "g177", name: "Türk Kahvesi", description: "Geleneksel Türk kahvesi", category: "İçecekler", price: 120, allergens: [], vegetarian: true, vegan: true, glutenFree: true },
 ];
 
 const GUNESIN_MENU: Menu = {
