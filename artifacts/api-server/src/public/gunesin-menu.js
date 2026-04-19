@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
     aiBg.classList.add('open'); aiDrawer.classList.add('open');
     if (!_aiOpened) {
       _aiOpened = true;
-      appendAiMsg('assistant', 'Hoş geldiniz efendim. Bu akşam içecek olarak ne tercih edersiniz?');
+      appendAiMsg('assistant', 'Hoş geldiniz efendim. İçecek tercihiniz ne olur?');
     }
     setTimeout(() => aiInput.focus(), 350);
   }
