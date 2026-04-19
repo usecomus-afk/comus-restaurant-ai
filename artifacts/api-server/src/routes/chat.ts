@@ -3,6 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { randomUUID } from "crypto";
 import { customers, stock, menus, chatLog } from "../lib/store.js";
 import { sendCriticalAlert } from "../lib/emailSender.js";
+import { dbLogConversation } from "../lib/supabaseDb.js";
 
 const router: IRouter = Router();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -178,6 +179,8 @@ router.post("/", async (req: Request, res: Response) => {
         language: language ?? undefined,
         timestamp: new Date().toISOString(),
       });
+      dbLogConversation(restaurantId, tableNumber ?? "?", "user", lastMessage);
+      dbLogConversation(restaurantId, tableNumber ?? "?", "assistant", reply);
     }
 
     req.log.info(
