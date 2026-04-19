@@ -2,6 +2,7 @@ import { Router, type IRouter, type Request, type Response } from "express";
 import Anthropic from "@anthropic-ai/sdk";
 import { randomUUID } from "crypto";
 import { customers, stock, menus, chatLog } from "../lib/store.js";
+import { sendCriticalAlert } from "../lib/emailSender.js";
 
 const router: IRouter = Router();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -216,6 +217,7 @@ router.post("/", async (req: Request, res: Response) => {
     const errBody = (err as Record<string, unknown>)?.error ?? null;
     console.error("[Anthropic chat error]", { status: errStatus, message: errMsg, body: errBody });
     req.log.error({ err, errStatus, errMsg }, "Anthropic chat error");
+    sendCriticalAlert(`Claude API hatası — restoran: ${restaurantId ?? "?"}, masa: ${tableNumber ?? "?"}`, err).catch(() => {});
     res.status(502).json({
       success: false,
       error: `AI error: ${errMsg}`,

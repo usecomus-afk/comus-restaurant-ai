@@ -6,6 +6,7 @@ import { dirname, join } from "path";
 import router from "./routes";
 import masaRouter from "./routes/masa.js";
 import { logger } from "./lib/logger";
+import { startScheduler } from "./lib/scheduler.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -209,5 +210,7 @@ app.get("/kvkk", (_req, res) => {
 </body>
 </html>`);
 });
+
+startScheduler();
 
 export default app;
