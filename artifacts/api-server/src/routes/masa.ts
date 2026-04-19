@@ -1902,7 +1902,7 @@ function renderPage(masaId: string): string {
     --bg:#FDF6EC;--card:#fff;--cb:#E8D5B7;
     --pri:#C0392B;--acc:#E86B2E;--gold:#D4890A;--blue:#2980B9;
     --txt:#2C1810;--muted:#8B6347;
-    --hh:160px;--nh:50px;--bh:76px;
+    --hh:120px;--nh:50px;--bh:122px;
   }
   html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow-x:hidden}
 
@@ -1910,24 +1910,16 @@ function renderPage(masaId: string): string {
   #hdr{
     position:fixed;top:0;left:0;right:0;height:var(--hh);
     background:#fff;border-bottom:1px solid var(--cb);
-    display:grid;grid-template-columns:auto 1fr auto;align-items:center;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
     padding:6px 0;z-index:200;
     box-shadow:0 1px 8px rgba(44,24,16,.07);
   }
-  #hdrLeft{width:48px}
+  #hdrLeft,#hdrRight{min-height:1px}
   #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-  #hdrRight{display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px;padding-right:14px}
-  #gsLogo{height:150px;width:150px;max-width:150px;max-height:150px;object-fit:contain;display:block}
+  #gsLogo{height:100px;width:100px;max-width:100px;max-height:100px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
   .gs-brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
   .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
-  #igBtn{
-    display:flex;align-items:center;
-    text-decoration:none;border-radius:50%;border:none;-webkit-tap-highlight-color:transparent;
-    transition:opacity .15s;padding:4px;
-  }
-  #igBtn:active{opacity:.65}
-  #igBtn img{width:28px;height:28px;border-radius:8px;display:block}
 
   /* ── CAT NAV ── */
   #catNav{
@@ -1961,18 +1953,14 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
-    display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-    padding:4px 10px;background:#FFFDF5;border:1.5px solid var(--gold);border-radius:20px;
-    cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;width:max-content;
-    line-height:1.1;min-width:auto;
+    width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px;background:transparent;border:2px solid #D4890A;border-radius:24px;
+    color:#D4890A;font-weight:700;letter-spacing:1px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s;
   }
-  #ratingBtn:active{background:#FFF3D0}
-  .rt-stars{font-size:10px;letter-spacing:.5px;color:#f5b700;line-height:1}
-  .rt-hint{font-size:8px;font-weight:700;color:var(--acc);letter-spacing:.3px;text-transform:uppercase;white-space:nowrap}
-  @media(max-width:380px){
-    .rt-hint{display:none}
-    #hdrRight{padding-right:8px;gap:6px}
-  }
+  #ratingBtn:active{background:#FFF3D0;opacity:.9}
+  .rt-stars{font-size:14px;letter-spacing:1px;color:#f5b700;line-height:1}
+  .rt-hint{font-size:11px;font-weight:700;color:#D4890A;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 
   /* ── STANDARD CARD ── */
   .gs-std-grid{display:flex;flex-direction:column;gap:9px}
@@ -2031,14 +2019,16 @@ function renderPage(masaId: string): string {
   #bar{
     position:fixed;bottom:0;left:0;right:0;height:var(--bh);
     background:#fff;border-top:1px solid var(--cb);
-    display:grid;grid-template-columns:1fr 1fr;gap:10px;
-    padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;gap:8px;
+    padding:8px 14px;padding-bottom:max(8px,env(safe-area-inset-bottom));
     z-index:200;box-shadow:0 -2px 10px rgba(44,24,16,.07);
   }
+  #barRatingRow{width:100%}
+  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
   .bar-btn{
     border-radius:10px;border:none;color:#fff;
     font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
-    display:flex;align-items:center;justify-content:center;gap:6px;
+    height:44px;display:flex;align-items:center;justify-content:center;gap:6px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s;
   }
   .bar-btn:active{opacity:.8}
@@ -2216,15 +2206,7 @@ function renderPage(masaId: string): string {
         <div class="gs-brand-sub">Meyhane</div>
       </div>
     </div>
-    <div id="hdrRight">
-      <a id="igBtn" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" loading="lazy">
-      </a>
-      <button id="ratingBtn">
-        <span class="rt-stars">★★★★★</span>
-        <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
-      </button>
-    </div>
+    <div id="hdrRight"></div>
   </header>
 
   <!-- CATEGORY NAV -->
@@ -2252,8 +2234,16 @@ function renderPage(masaId: string): string {
 
   <!-- BOTTOM BAR -->
   <div id="bar">
-    <button id="garsonBtn" class="bar-btn">🖐️ Garson Çağır</button>
-    <button id="hesapBtn"  class="bar-btn">🧾 Hesap İste</button>
+    <div id="barRatingRow">
+      <button id="ratingBtn">
+        <span class="rt-stars">★★★★★</span>
+        <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
+      </button>
+    </div>
+    <div id="barActions">
+      <button id="garsonBtn" class="bar-btn">🖐️ Garson Çağır</button>
+      <button id="hesapBtn"  class="bar-btn">🧾 Hesap İste</button>
+    </div>
   </div>
 
   <!-- CART OVERLAY + DRAWER -->
