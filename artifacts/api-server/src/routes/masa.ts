@@ -1892,7 +1892,7 @@ function renderGunesinPage(masaId: string): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<meta name="theme-color" content="#1A0F0A">
+<meta name="theme-color" content="#FDF6EC">
 <title>Güneşin Sofrası · Masa ${gsEsc(displayMasaId)}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1901,10 +1901,10 @@ function renderGunesinPage(masaId: string): string {
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#1A0F0A;--card:#261810;--card-b:#3D2415;
-  --primary:#C0392B;--accent:#E86B2E;--gold:#F0A500;--green:#4A7C3F;
-  --text:#F5ECD7;--muted:#9A8878;
-  --hh:88px;--nh:50px;--bh:76px;
+  --bg:#FDF6EC;--card:#FFFFFF;--card-b:#E8D5B7;
+  --primary:#C0392B;--accent:#E86B2E;--gold:#D4890A;--blue:#2980B9;
+  --text:#2C1810;--muted:#8B6347;--muted2:#B8956A;
+  --hh:110px;--nh:50px;--bh:76px;
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden}
 body{padding-bottom:var(--bh)}
@@ -1912,29 +1912,25 @@ body{padding-bottom:var(--bh)}
 /* ── HEADER ── */
 #gsHdr{
   position:fixed;top:0;left:0;right:0;height:var(--hh);
-  background:linear-gradient(180deg,#0D0705 0%,var(--bg) 100%);
-  border-bottom:1px solid rgba(192,57,43,.3);
+  background:#FFFFFF;border-bottom:1px solid var(--card-b);
   display:flex;align-items:center;justify-content:center;
-  padding:10px 48px;z-index:200;
+  padding:8px 52px;z-index:200;
+  box-shadow:0 1px 8px rgba(44,24,16,.07);
 }
-#gsLogoImg{height:52px;width:auto;max-width:170px;object-fit:contain;display:block}
-#gsLogoImg.hidden{display:none}
-.gs-brand{display:flex;flex-direction:column;align-items:center;gap:1px}
-.gs-brand-name{
-  font-family:'Playfair Display',serif;font-size:19px;font-weight:700;
-  color:var(--gold);letter-spacing:.06em;line-height:1.2
-}
-.gs-brand-sub{font-size:10px;font-weight:800;color:var(--primary);letter-spacing:.28em;text-transform:uppercase}
+#gsLogoImg{height:120px;width:120px;object-fit:contain;display:block}
+.gs-brand{display:flex;flex-direction:column;align-items:center;gap:2px}
+.gs-brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--primary);letter-spacing:.04em}
+.gs-brand-sub{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
 #gsMasaBadge{
   position:absolute;top:50%;right:14px;transform:translateY(-50%);
   font-size:11px;font-weight:700;color:var(--muted);background:none;border:none;
-  cursor:pointer;line-height:1.4;text-align:right
+  cursor:pointer;line-height:1.5;text-align:right
 }
 
 /* ── CAT NAV ── */
 #gsCatNav{
   position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
-  background:#130A06;border-bottom:1px solid rgba(192,57,43,.2);
+  background:#FFF8F0;border-bottom:1px solid var(--card-b);
   overflow-x:auto;overflow-y:hidden;white-space:nowrap;
   display:flex;align-items:center;gap:7px;padding:0 12px;
   scrollbar-width:none;-webkit-overflow-scrolling:touch;z-index:100
@@ -1942,7 +1938,7 @@ body{padding-bottom:var(--bh)}
 #gsCatNav::-webkit-scrollbar{display:none}
 .gs-pill{
   flex-shrink:0;padding:5px 13px;border-radius:20px;
-  border:1px solid rgba(192,57,43,.35);background:transparent;
+  border:1px solid var(--card-b);background:#FFFFFF;
   color:var(--muted);font-family:'Nunito',sans-serif;
   font-size:12px;font-weight:600;cursor:pointer;transition:all .2s
 }
@@ -1951,14 +1947,15 @@ body{padding-bottom:var(--bh)}
 /* ── CONTENT ── */
 #gsContent{
   margin-top:calc(var(--hh) + var(--nh));
-  padding:16px 12px 24px;overflow-y:auto;
+  padding:16px 12px 24px;
   height:calc(100dvh - var(--hh) - var(--nh) - var(--bh));
+  overflow-y:auto;
 }
 .gs-section{margin-bottom:28px}
 .gs-cat-title{
   font-family:'Playfair Display',serif;font-size:20px;font-weight:700;
-  color:var(--gold);margin-bottom:12px;padding-bottom:7px;
-  border-bottom:1px solid rgba(240,165,0,.25);letter-spacing:.02em
+  color:var(--primary);margin-bottom:12px;padding-bottom:7px;
+  border-bottom:2px solid rgba(192,57,43,.15);letter-spacing:.02em
 }
 
 /* ── STANDARD CARD ── */
@@ -1966,9 +1963,10 @@ body{padding-bottom:var(--bh)}
 .gs-std-card{
   background:var(--card);border:1px solid var(--card-b);border-radius:10px;
   padding:12px 14px;display:flex;justify-content:space-between;
-  align-items:flex-start;gap:10px;transition:border-color .2s
+  align-items:flex-start;gap:10px;
+  box-shadow:0 1px 4px rgba(44,24,16,.05);transition:border-color .2s,box-shadow .2s;
 }
-.gs-std-card:active{border-color:var(--accent)}
+.gs-std-card:active{border-color:var(--accent);box-shadow:0 2px 8px rgba(232,107,46,.12)}
 .std-body{flex:1;min-width:0}
 .std-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:3px;line-height:1.3}
 .std-price{font-size:15px;font-weight:700;color:var(--gold);margin-bottom:4px}
@@ -1986,141 +1984,183 @@ body{padding-bottom:var(--bh)}
 /* ── FIX MENÜ CARD ── */
 .gs-fix-grid{display:flex;flex-direction:column;gap:12px}
 .gs-fix-card{
-  background:linear-gradient(135deg,#2A1208 0%,#1E0E07 100%);
+  background:linear-gradient(135deg,#FFFDF5 0%,#FFF9ED 100%);
   border:1.5px solid var(--gold);border-radius:14px;
-  padding:16px 16px 52px;position:relative;overflow:hidden
+  padding:16px 16px 52px;position:relative;overflow:hidden;
+  box-shadow:0 2px 10px rgba(212,137,10,.1);
 }
 .gs-fix-card::before{
   content:'';position:absolute;top:-20px;right:-20px;
   width:90px;height:90px;pointer-events:none;
-  background:radial-gradient(circle,rgba(240,165,0,.15) 0%,transparent 70%)
+  background:radial-gradient(circle,rgba(212,137,10,.1) 0%,transparent 70%)
 }
 .fix-badge{
-  display:inline-block;background:var(--gold);color:#1A0F0A;
+  display:inline-block;background:var(--gold);color:#fff;
   font-size:9px;font-weight:800;letter-spacing:.14em;padding:3px 8px;
   border-radius:4px;margin-bottom:10px;text-transform:uppercase
 }
 .fix-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:5px}
 .fix-price{font-size:24px;font-weight:800;color:var(--gold);margin-bottom:8px}
 .fix-desc{font-size:12px;color:var(--muted);line-height:1.55}
-.gs-fix-card .gs-add-btn{
-  position:absolute;bottom:14px;right:14px;
-  border-color:var(--gold);color:var(--gold)
-}
-.gs-fix-card .gs-add-btn:active{background:var(--gold);color:#1A0F0A}
+.gs-fix-card .gs-add-btn{position:absolute;bottom:14px;right:14px;border-color:var(--gold);color:var(--gold)}
+.gs-fix-card .gs-add-btn:active{background:var(--gold);color:#fff}
 
 /* ── RAKI CARD ── */
 .gs-raki-grid{display:flex;flex-direction:column;gap:10px}
 .gs-raki-card{
-  background:var(--card);border:1px solid rgba(192,57,43,.4);
-  border-radius:10px;padding:12px 14px
+  background:var(--card);border:1px solid var(--card-b);
+  border-radius:10px;padding:12px 14px;
+  box-shadow:0 1px 4px rgba(44,24,16,.05);
 }
-.raki-name{
-  font-family:'Playfair Display',serif;font-size:15px;font-weight:600;
-  color:var(--text);margin-bottom:9px
-}
+.raki-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);margin-bottom:9px}
 .raki-prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px 7px}
 .rp-item{
   display:flex;flex-direction:column;align-items:center;
-  background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.25);
+  background:#FFF3E8;border:1px solid rgba(212,137,10,.3);
   border-radius:6px;padding:4px 5px
 }
-.rp-size{font-size:10px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.03em}
+.rp-size{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.03em}
 .rp-price{font-size:12px;font-weight:700;color:var(--text)}
 
 /* ── BOTTOM BAR ── */
 #gsBar{
   position:fixed;bottom:0;left:0;right:0;height:var(--bh);
-  background:#0D0705;border-top:1px solid rgba(192,57,43,.3);
+  background:#FFFFFF;border-top:1px solid var(--card-b);
   display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));z-index:200
+  padding:10px 14px;padding-bottom:max(10px,env(safe-area-inset-bottom));z-index:200;
+  box-shadow:0 -2px 10px rgba(44,24,16,.07);
 }
 .gs-bar-btn{
-  border-radius:10px;border:1.5px solid rgba(192,57,43,.5);
-  background:rgba(192,57,43,.08);color:var(--text);
+  border-radius:10px;border:none;color:#fff;
   font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;transition:all .15s
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  cursor:pointer;transition:opacity .15s;
 }
-.gs-bar-btn:active{background:var(--primary);border-color:var(--primary)}
+.gs-bar-btn:active{opacity:.8}
+#gsGarsonBtn{background:var(--blue)}
+#gsHesapBtn{background:var(--primary)}
 
 /* ── CART FAB ── */
 #gsCartFab{
-  position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
-  width:52px;height:52px;border-radius:50%;background:var(--primary);
-  border:none;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 4px 16px rgba(192,57,43,.5);
-  transition:transform .15s;z-index:150
+  position:fixed;bottom:calc(var(--bh) + 82px);right:16px;
+  width:48px;height:48px;border-radius:50%;
+  background:var(--accent);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 3px 12px rgba(232,107,46,.45);
+  transition:transform .15s;z-index:150;
 }
-#gsCartFab:active{transform:scale(.92)}
-.gs-cart-badge{
-  position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;
-  background:var(--gold);color:#1A0F0A;border-radius:9px;
-  font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;padding:0 4px
+#gsCartFab:active{transform:scale(.9)}
+.gs-cart-inner{font-size:20px;line-height:1;pointer-events:none}
+
+/* ── AI FAB ── */
+#gsAiFab{
+  position:fixed;bottom:calc(var(--bh) + 22px);right:16px;
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,#9B59B6 0%,#6C3483 100%);
+  border:none;color:#fff;font-size:24px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 3px 14px rgba(108,52,131,.4);
+  transition:transform .15s;z-index:150;
 }
-.gs-cart-badge.on{display:flex}
+#gsAiFab:active{transform:scale(.9)}
 
 /* ── TOAST ── */
 #gsToast{
-  position:fixed;bottom:calc(var(--bh) + 68px);left:50%;
+  position:fixed;bottom:calc(var(--bh) + 148px);left:50%;
   transform:translateX(-50%) translateY(20px);
-  background:#261810;border:1px solid var(--accent);color:var(--text);
+  background:#2C1810;color:#FDF6EC;
   padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
   white-space:nowrap;opacity:0;transition:opacity .25s,transform .25s;
-  z-index:400;pointer-events:none
+  z-index:400;pointer-events:none;
 }
 #gsToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ── CART DRAWER ── */
-#gsCartBg{position:fixed;inset:0;background:rgba(0,0,0,.72);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
+#gsCartBg{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
 #gsCartBg.open{opacity:1;pointer-events:auto}
 #gsCartDrawer{
   position:fixed;top:0;right:0;bottom:0;width:min(340px,92vw);
-  background:#1E0E07;border-left:1px solid rgba(192,57,43,.3);
+  background:#FFFFFF;border-left:1px solid var(--card-b);
   transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:301;display:flex;flex-direction:column
+  z-index:301;display:flex;flex-direction:column;
+  box-shadow:-4px 0 20px rgba(44,24,16,.1);
 }
 #gsCartDrawer.open{transform:translateX(0)}
-.gc-head{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;border-bottom:1px solid rgba(192,57,43,.2)}
-.gc-head h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold)}
+.gc-head{display:flex;align-items:center;justify-content:space-between;padding:18px 16px;border-bottom:1px solid var(--card-b)}
+.gc-head h2{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--primary)}
 .gc-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
 .gc-items{flex:1;overflow-y:auto;padding:12px 16px}
 .gc-empty{color:var(--muted);font-size:14px;text-align:center;margin-top:30px}
-.gc-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.gc-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #F0E8D8}
 .gc-item-name{font-size:13px;color:var(--text);flex:1;padding-right:6px;line-height:1.35}
 .gc-item-price{font-size:13px;font-weight:700;color:var(--gold);margin:0 8px;white-space:nowrap}
 .gc-item-qty{display:flex;align-items:center;gap:5px}
 .gc-qty-btn{width:24px;height:24px;border-radius:50%;border:1px solid var(--accent);background:none;color:var(--accent);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .gc-qty-btn:active{background:var(--accent);color:#fff}
 .gc-qty-num{font-size:14px;font-weight:700;color:var(--text);min-width:16px;text-align:center}
-.gc-footer{padding:14px 16px;border-top:1px solid rgba(192,57,43,.2)}
+.gc-footer{padding:14px 16px;border-top:1px solid var(--card-b)}
 .gc-total-row{display:flex;justify-content:space-between;margin-bottom:12px}
 .gc-total-label{font-size:14px;color:var(--muted)}
 .gc-total-price{font-size:18px;font-weight:800;color:var(--gold)}
-.gc-order-btn{width:100%;padding:14px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
-.gc-order-btn:active{background:#a93226}
-.gc-order-btn:disabled{background:#5a1e1e;color:#8a5a5a;cursor:default}
+.gc-order-btn{width:100%;padding:14px;background:var(--primary);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}
+.gc-order-btn:active{opacity:.82}
+.gc-order-btn:disabled{background:#D4B8A8;color:#fff;cursor:default}
+
+/* ── AI CHAT DRAWER ── */
+#gsAiBg{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
+#gsAiBg.open{opacity:1;pointer-events:auto}
+#gsAiDrawer{
+  position:fixed;bottom:0;left:0;right:0;
+  height:min(75vh,580px);background:#FFFFFF;
+  border-top:1px solid var(--card-b);border-radius:16px 16px 0 0;
+  transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:301;display:flex;flex-direction:column;
+  box-shadow:0 -4px 20px rgba(44,24,16,.1);
+}
+#gsAiDrawer.open{transform:translateY(0)}
+.ai-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--card-b);flex-shrink:0}
+.ai-head-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ai-head-info{flex:1}
+.ai-head-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--primary)}
+.ai-head-sub{font-size:11px;color:var(--muted)}
+.ai-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px}
+.ai-msgs{flex:1;overflow-y:auto;padding:14px 14px 8px;display:flex;flex-direction:column;gap:10px}
+.ai-bubble-wrap{display:flex;gap:8px;align-items:flex-end}
+.ai-bubble-wrap.user{flex-direction:row-reverse}
+.ai-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:14px}
+.ai-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.5;color:var(--text)}
+.ai-bubble.assistant{background:#F3E8FF;border-bottom-left-radius:4px}
+.ai-bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.ai-bubble.loading::after{content:'...';animation:dots 1s infinite}
+@keyframes dots{0%{content:'·'}33%{content:'··'}66%{content:'···'}100%{content:'·'}}
+.ai-input-row{display:flex;gap:8px;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--card-b);flex-shrink:0;background:#FAFAF8}
+#aiInput{flex:1;border:1.5px solid var(--card-b);border-radius:22px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:#fff;outline:none;resize:none;transition:border-color .2s;max-height:80px;overflow-y:auto}
+#aiInput:focus{border-color:var(--blue)}
+#aiSendBtn{width:40px;height:40px;border-radius:50%;background:var(--blue);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s;align-self:flex-end}
+#aiSendBtn:active{opacity:.8}
 
 /* ── MASA SHEET ── */
-#gsMasaBg{position:fixed;inset:0;background:rgba(0,0,0,.75);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
+#gsMasaBg{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .25s;z-index:300}
 #gsMasaBg.open{opacity:1;pointer-events:auto}
 #gsMasaSheet{
-  position:fixed;bottom:0;left:0;right:0;background:#1E0E07;
-  border-top:1px solid rgba(192,57,43,.3);border-radius:16px 16px 0 0;
+  position:fixed;bottom:0;left:0;right:0;background:#FFFFFF;
+  border-top:1px solid var(--card-b);border-radius:16px 16px 0 0;
   padding:16px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-  z-index:301;max-height:70vh;overflow-y:auto
+  z-index:301;max-height:70vh;overflow-y:auto;
+  box-shadow:0 -2px 16px rgba(44,24,16,.08);
 }
 #gsMasaSheet.open{transform:translateY(0)}
 .gs-masa-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.gs-masa-head h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold)}
+.gs-masa-head h3{font-family:'Playfair Display',serif;font-size:17px;color:var(--primary)}
 .gs-masa-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
 .gs-masa-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .gs-masa-btn{
-  padding:12px 0;border-radius:8px;border:1px solid rgba(192,57,43,.3);
-  background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;
+  padding:12px 0;border-radius:8px;border:1px solid var(--card-b);
+  background:#FFF8F0;color:var(--text);font-family:'Nunito',sans-serif;
   font-size:15px;font-weight:600;cursor:pointer;transition:all .15s
 }
 .gs-masa-btn.selected{background:var(--primary);border-color:var(--primary);color:#fff}
-.gs-masa-btn:active{background:var(--primary)}
+.gs-masa-btn:active{background:var(--primary);color:#fff}
 </style>
 </head>
 <body>
@@ -2146,8 +2186,11 @@ body{padding-bottom:var(--bh)}
 
 <!-- ═══ CART FAB ═══ -->
 <button id="gsCartFab" aria-label="Sepeti aç">
-  🛒<span class="gs-cart-badge" id="gsBadge"></span>
+  <span class="gs-cart-inner" id="gsCartIcon">🍽️</span>
 </button>
+
+<!-- ═══ AI FAB ═══ -->
+<button id="gsAiFab" aria-label="GurmeAI'yi aç">👨‍🍳</button>
 
 <!-- ═══ BOTTOM ACTION BAR ═══ -->
 <div id="gsBar">
@@ -2159,7 +2202,7 @@ body{padding-bottom:var(--bh)}
 <div id="gsCartBg"></div>
 <aside id="gsCartDrawer">
   <div class="gc-head">
-    <h2>🛒&nbsp;Sipariş</h2>
+    <h2>🍽️&nbsp;Sipariş</h2>
     <button class="gc-close" id="gcCloseBtn">✕</button>
   </div>
   <div class="gc-items" id="gcItemsList"><p class="gc-empty">Henüz ürün eklenmedi.</p></div>
@@ -2168,6 +2211,24 @@ body{padding-bottom:var(--bh)}
     <button class="gc-order-btn" id="gcOrderBtn" disabled>Siparişi Ver</button>
   </div>
 </aside>
+
+<!-- ═══ AI CHAT DRAWER ═══ -->
+<div id="gsAiBg"></div>
+<div id="gsAiDrawer">
+  <div class="ai-head">
+    <div class="ai-head-icon">👨‍🍳</div>
+    <div class="ai-head-info">
+      <div class="ai-head-name">GurmeAI</div>
+      <div class="ai-head-sub">Güneşin Sofrası Yapay Zeka Asistanı</div>
+    </div>
+    <button class="ai-close" id="aiCloseBtn">✕</button>
+  </div>
+  <div class="ai-msgs" id="aiMsgs"></div>
+  <div class="ai-input-row">
+    <textarea id="aiInput" placeholder="Menü hakkında soru sorun..." rows="1"></textarea>
+    <button id="aiSendBtn" aria-label="Gönder">➤</button>
+  </div>
+</div>
 
 <!-- ═══ MASA SELECTOR ═══ -->
 <div id="gsMasaBg"></div>
@@ -2230,9 +2291,10 @@ body{padding-bottom:var(--bh)}
     const items  = Array.from(cart.values());
     const total  = items.reduce((s, i) => s + i.price * i.qty, 0);
     const count  = items.reduce((s, i) => s + i.qty, 0);
-    const badge  = document.getElementById('gsBadge');
-    badge.textContent = count;
-    badge.classList.toggle('on', count > 0);
+    const icon   = document.getElementById('gsCartIcon');
+    icon.textContent = count > 0 ? String(count) : '🍽️';
+    icon.style.fontSize = count > 0 ? '17px' : '20px';
+    icon.style.fontWeight = count > 0 ? '800' : 'normal';
     document.getElementById('gcTotal').textContent = total.toLocaleString('tr-TR') + ' ₺';
     document.getElementById('gcOrderBtn').disabled = count === 0;
     const listEl = document.getElementById('gcItemsList');
@@ -2298,6 +2360,85 @@ body{padding-bottom:var(--bh)}
   document.getElementById('gsHesapBtn').addEventListener('click', () => {
     console.log('[Güneşin Sofrası] 🧾 HESAP TALEBİ — Masa:', _masaId, new Date().toLocaleTimeString('tr-TR'));
     showToast('Hesap talebi iletildi ✓');
+  });
+
+  /* ── GURMEAI CHAT ── */
+  const aiBg     = document.getElementById('gsAiBg');
+  const aiDrawer = document.getElementById('gsAiDrawer');
+  const aiMsgs   = document.getElementById('aiMsgs');
+  const aiInput  = document.getElementById('aiInput');
+  let _aiOpened  = false;
+  let _aiLoading = false;
+
+  function openAi() {
+    aiBg.classList.add('open'); aiDrawer.classList.add('open');
+    if (!_aiOpened) {
+      _aiOpened = true;
+      appendAiMsg('assistant', 'Merhaba! Ben GurmeAI, Güneşin Sofrası\'nın yapay zeka asistanıyım. Menü hakkında soru sorabilir, öneri isteyebilirsiniz. 🌞');
+    }
+    setTimeout(() => aiInput.focus(), 350);
+  }
+  function closeAi() { aiBg.classList.remove('open'); aiDrawer.classList.remove('open'); }
+
+  function appendAiMsg(role, text) {
+    const wrap = document.createElement('div');
+    wrap.className = \`ai-bubble-wrap \${role}\`;
+    if (role === 'assistant') {
+      wrap.innerHTML = \`<div class="ai-avatar">👨‍🍳</div><div class="ai-bubble assistant"></div>\`;
+      wrap.querySelector('.ai-bubble').textContent = text;
+    } else {
+      wrap.innerHTML = \`<div class="ai-bubble user"></div>\`;
+      wrap.querySelector('.ai-bubble').textContent = text;
+    }
+    aiMsgs.appendChild(wrap);
+    aiMsgs.scrollTop = aiMsgs.scrollHeight;
+    return wrap;
+  }
+
+  function appendAiLoading() {
+    const wrap = document.createElement('div');
+    wrap.className = 'ai-bubble-wrap assistant';
+    wrap.id = 'aiLoadingBubble';
+    wrap.innerHTML = '<div class="ai-avatar">👨‍🍳</div><div class="ai-bubble loading">Yanıt yazılıyor</div>';
+    aiMsgs.appendChild(wrap);
+    aiMsgs.scrollTop = aiMsgs.scrollHeight;
+    return wrap;
+  }
+
+  async function sendAiMsg() {
+    const msg = aiInput.value.trim();
+    if (!msg || _aiLoading) return;
+    aiInput.value = '';
+    aiInput.style.height = 'auto';
+    appendAiMsg('user', msg);
+    _aiLoading = true;
+    const loadingEl = appendAiLoading();
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ restaurantId: 'gunesin-sofrasi', message: msg, tableId: _masaId }),
+      });
+      const data = await res.json();
+      loadingEl.remove();
+      appendAiMsg('assistant', data.reply || 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
+    } catch {
+      loadingEl.remove();
+      appendAiMsg('assistant', 'Bağlantı hatası. Lütfen tekrar deneyin.');
+    }
+    _aiLoading = false;
+  }
+
+  document.getElementById('gsAiFab').addEventListener('click', openAi);
+  document.getElementById('aiCloseBtn').addEventListener('click', closeAi);
+  aiBg.addEventListener('click', closeAi);
+  document.getElementById('aiSendBtn').addEventListener('click', sendAiMsg);
+  aiInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAiMsg(); }
+  });
+  aiInput.addEventListener('input', () => {
+    aiInput.style.height = 'auto';
+    aiInput.style.height = Math.min(aiInput.scrollHeight, 80) + 'px';
   });
 
   /* ── CATEGORY NAV ── */
