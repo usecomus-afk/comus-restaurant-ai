@@ -2122,6 +2122,7 @@ body{padding-bottom:var(--bh)}
   transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
   z-index:301;display:flex;flex-direction:column;
   box-shadow:0 -4px 20px rgba(44,24,16,.1);
+  max-width:100%;overflow:hidden;
 }
 #gsAiDrawer.open{transform:translateY(0)}
 .ai-head{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--card-b);flex-shrink:0}
@@ -2139,7 +2140,7 @@ body{padding-bottom:var(--bh)}
 .ai-bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
 .ai-bubble.loading::after{content:'...';animation:dots 1s infinite}
 @keyframes dots{0%{content:'·'}33%{content:'··'}66%{content:'···'}100%{content:'·'}}
-.ai-input-row{display:flex;gap:8px;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--card-b);flex-shrink:0;background:#FAFAF8}
+.ai-input-row{display:flex;flex-wrap:nowrap;gap:8px;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--card-b);flex-shrink:0;background:#FAFAF8;align-items:flex-end}
 #aiInput{flex:1;border:1.5px solid var(--card-b);border-radius:22px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:#fff;outline:none;resize:none;transition:border-color .2s;max-height:80px;overflow-y:auto}
 #aiInput:focus{border-color:var(--blue)}
 #aiSendBtn{width:40px;height:40px;border-radius:50%;background:var(--blue);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s;align-self:flex-end}
@@ -2297,7 +2298,7 @@ ${menuSections}
 <div id="gsToast" role="status" aria-live="polite"></div>
 
 <!-- ═══ CART FAB ═══ -->
-<button id="gsCartFab" aria-label="Sepeti aç">
+<button id="gsCartFab" aria-label="Masayı aç">
   <span class="gs-cart-inner" id="gsCartIcon">🍽️</span>
 </button>
 

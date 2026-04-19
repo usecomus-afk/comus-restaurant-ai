@@ -136,6 +136,8 @@ document.addEventListener('DOMContentLoaded', function () {
   let _aiLoading = false;
 
   function openAi() {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflowX = 'hidden';
     aiBg.classList.add('open'); aiDrawer.classList.add('open');
     if (!_aiOpened) {
       _aiOpened = true;
@@ -143,7 +145,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     setTimeout(() => aiInput.focus(), 350);
   }
-  function closeAi() { aiBg.classList.remove('open'); aiDrawer.classList.remove('open'); }
+  function closeAi() {
+    document.body.style.overflow = '';
+    document.documentElement.style.overflowX = '';
+    aiDrawer.style.bottom = '0';
+    aiBg.classList.remove('open'); aiDrawer.classList.remove('open');
+  }
 
   function appendAiMsg(role, text) {
     const wrap = document.createElement('div');
@@ -182,12 +189,18 @@ document.addEventListener('DOMContentLoaded', function () {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ restaurantId: 'gunesin-sofrasi', message: msg, tableId: _masaId }),
+        body: JSON.stringify({ restaurantId: 'gunesin-sofrasi', message: msg, tableNumber: _masaId }),
       });
       const data = await res.json();
       loadingEl.remove();
-      appendAiMsg('assistant', data.reply || 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.');
-    } catch {
+      if (!res.ok) {
+        console.error('[GurmeAI] API error:', res.status, data);
+        appendAiMsg('assistant', 'Üzgünüm, şu an yanıt veremiyorum. Lütfen birazdan tekrar deneyin.');
+      } else {
+        appendAiMsg('assistant', data.data?.reply || data.reply || 'Üzgünüm, yanıt alınamadı.');
+      }
+    } catch (err) {
+      console.error('[GurmeAI] fetch error:', err);
       loadingEl.remove();
       appendAiMsg('assistant', 'Bağlantı hatası. Lütfen tekrar deneyin.');
     }
