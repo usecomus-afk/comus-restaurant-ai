@@ -159,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = 'hidden';
     $('aiOverlay').classList.add('v');
     $('aiDrawer').classList.add('open');
-    if (!aiOpened) { aiOpened = true; aiAppend('bot', 'Hoş geldiniz efendim. Bu akşam içecek tercihiniz ne olur?'); }
+    if (!aiOpened) { aiOpened = true; aiAppend('bot', 'Güneşin Sofrası Meyhanesine hoş geldiniz. Size yardımcı olmamı istediğiniz bir konu var mı?'); }
     setTimeout(() => $('aiInput').focus(), 300);
   };
   const closeAi = () => {
