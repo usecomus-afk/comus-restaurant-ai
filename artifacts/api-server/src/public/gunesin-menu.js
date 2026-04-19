@@ -140,7 +140,8 @@ document.addEventListener('DOMContentLoaded', function () {
   let _firstReply = false;
 
   function openAi() {
-    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
     aiBg.classList.add('open'); aiDrawer.classList.add('open');
     if (!_aiOpened) {
       _aiOpened = true;
@@ -149,10 +150,8 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => aiInput.focus(), 350);
   }
   function closeAi() {
-    document.body.style.overflow = '';
-    aiDrawer.style.height = '';
-    aiDrawer.style.maxHeight = '';
-    aiDrawer.style.bottom = '0';
+    document.body.style.position = '';
+    document.body.style.width = '';
     aiBg.classList.remove('open'); aiDrawer.classList.remove('open');
   }
 
@@ -331,19 +330,5 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => btn.classList.remove('rp-added'), 700);
   });
 
-  /* ── AI DRAWER: keep drawer above keyboard on mobile ── */
-  if (window.visualViewport) {
-    function _syncDrawer() {
-      if (!aiDrawer || !aiDrawer.classList.contains('open')) return;
-      const vh  = window.visualViewport.height;
-      const off = window.visualViewport.offsetTop;
-      const h   = Math.min(vh * 0.75, vh - 60);
-      aiDrawer.style.height    = h + 'px';
-      aiDrawer.style.maxHeight = h + 'px';
-      aiDrawer.style.bottom    = off + 'px';
-    }
-    window.visualViewport.addEventListener('resize', _syncDrawer);
-    window.visualViewport.addEventListener('scroll', _syncDrawer);
-  }
 
 });

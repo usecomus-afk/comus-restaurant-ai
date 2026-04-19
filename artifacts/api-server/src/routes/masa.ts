@@ -1894,7 +1894,7 @@ function renderGunesinPage(masaId: string): string {
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-visual">
 <meta name="theme-color" content="#FDF6EC">
 <title>Güneşin Sofrası · Masa ${gsEsc(displayMasaId)}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
@@ -2119,9 +2119,9 @@ body{padding-bottom:var(--bh)}
   position:fixed;left:0;right:0;bottom:0;z-index:1000;
   background:#fff;border-radius:16px 16px 0 0;
   display:flex;flex-direction:column;
-  height:55vh;max-height:55vh;width:100%;max-width:100vw;
-  overflow:hidden;transform:translateY(100%);
-  transition:transform .3s ease;box-sizing:border-box;
+  height:50vh;width:100%;
+  box-sizing:border-box;overflow:hidden;
+  transform:translateY(100%);transition:transform .3s ease;
 }
 #ai-drawer.open{transform:translateY(0)}
 #ai-header{
@@ -2143,9 +2143,10 @@ body{padding-bottom:var(--bh)}
 .ai-bubble.loading::after{content:'...';animation:dots 1s infinite}
 @keyframes dots{0%{content:'·'}33%{content:'··'}66%{content:'···'}100%{content:'·'}}
 #ai-input-row{
-  flex-shrink:0;display:flex;flex-direction:row;align-items:center;
+  position:sticky;bottom:0;flex-shrink:0;
+  display:flex;flex-direction:row;align-items:center;
   gap:8px;padding:10px 12px;border-top:1px solid #eee;
-  background:#fff;box-sizing:border-box;width:100%;
+  background:#fff;box-sizing:border-box;width:100%;z-index:10;
 }
 #ai-input{
   flex:1;min-width:0;padding:10px 12px;border:1px solid #ddd;
@@ -2352,7 +2353,7 @@ ${menuSections}
 </div>
 
 <script>window.GS_INIT_ID = ${JSON.stringify(displayMasaId)};</script>
-<script src="/assets/gunesin-menu.js?v=20260419c" defer></script>
+<script src="/assets/gunesin-menu.js?v=20260419d" defer></script>
 </body>
 </html>`;
 }
