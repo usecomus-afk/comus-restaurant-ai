@@ -1917,18 +1917,13 @@ body{padding-bottom:var(--bh)}
   position:fixed;top:0;left:0;right:0;height:var(--hh);
   background:#FFFFFF;border-bottom:1px solid var(--card-b);
   display:flex;align-items:center;justify-content:center;
-  padding:8px 52px;z-index:200;
+  padding:8px 16px 8px 52px;z-index:200;
   box-shadow:0 1px 8px rgba(44,24,16,.07);
 }
 #gsLogoImg{height:120px;width:120px;object-fit:contain;display:block}
 .gs-brand{display:flex;flex-direction:column;align-items:center;gap:2px}
 .gs-brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--primary);letter-spacing:.04em}
 .gs-brand-sub{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
-#gsMasaBadge{
-  position:absolute;top:50%;right:14px;transform:translateY(-50%);
-  font-size:11px;font-weight:700;color:var(--muted);background:none;border:none;
-  cursor:pointer;line-height:1.5;text-align:right
-}
 
 /* ── CAT NAV ── */
 #gsCatNav{
@@ -2048,7 +2043,7 @@ body{padding-bottom:var(--bh)}
 
 /* ── CART FAB ── */
 #gsCartFab{
-  position:fixed;bottom:calc(var(--bh) + 82px);right:16px;
+  position:fixed;bottom:calc(var(--bh) + 192px);right:16px;
   width:48px;height:48px;border-radius:50%;
   background:var(--accent);border:none;
   display:flex;align-items:center;justify-content:center;
@@ -2060,15 +2055,44 @@ body{padding-bottom:var(--bh)}
 
 /* ── AI FAB ── */
 #gsAiFab{
-  position:fixed;bottom:calc(var(--bh) + 22px);right:16px;
+  position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
   width:52px;height:52px;border-radius:50%;
-  background:linear-gradient(135deg,#9B59B6 0%,#6C3483 100%);
-  border:none;color:#fff;font-size:24px;
+  background:#1c1c3e;border:1.5px solid #3d3d7a;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;box-shadow:0 3px 14px rgba(108,52,131,.4);
+  cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.3);
   transition:transform .15s;z-index:150;
 }
 #gsAiFab:active{transform:scale(.9)}
+/* ── GARSON FAB (above AI) ── */
+#gsGarsonFab{
+  position:fixed;bottom:calc(var(--bh) + 76px);right:16px;
+  width:48px;height:48px;border-radius:50%;
+  background:#2980B9;border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 3px 12px rgba(41,128,185,.45);
+  transition:transform .15s;z-index:150;
+}
+#gsGarsonFab:active{transform:scale(.9)}
+/* ── HESAP FAB (above Garson) ── */
+#gsHesapFab{
+  position:fixed;bottom:calc(var(--bh) + 134px);right:16px;
+  width:48px;height:48px;border-radius:50%;
+  background:#C0392B;border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 3px 12px rgba(192,57,43,.45);
+  transition:transform .15s;z-index:150;
+}
+#gsHesapFab:active{transform:scale(.9)}
+/* ── DÜŞÜNCELER FAB (bottom left) ── */
+#gsDushuncelerFab{
+  position:fixed;bottom:calc(var(--bh) + 14px);left:16px;
+  width:48px;height:48px;border-radius:50%;
+  background:#27AE60;border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;box-shadow:0 3px 12px rgba(39,174,96,.45);
+  transition:transform .15s;z-index:150;
+}
+#gsDushuncelerFab:active{transform:scale(.9)}
 
 /* ── TOAST ── */
 #gsToast{
@@ -2192,56 +2216,95 @@ body{padding-bottom:var(--bh)}
 #gsInstaLink:active{opacity:.7}
 #gsInstaLink svg{display:block;width:28px;height:28px}
 
-/* ── FEEDBACK SECTION ── */
-#gsFeedbackSection{
-  margin:12px 0 20px;
-  background:var(--card);border:1px solid var(--card-b);border-radius:12px;
-  padding:10px 12px;box-shadow:0 1px 4px rgba(44,24,16,.05);
+/* ── GS MODALS ── */
+.gs-modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  opacity:0;pointer-events:none;transition:opacity .25s;z-index:500;
 }
-.fb-title{
-  font-family:'Playfair Display',serif;font-size:16px;font-weight:700;
-  color:var(--primary);margin-bottom:8px;text-align:center;
+.gs-modal-bg.open{opacity:1;pointer-events:auto}
+.gs-modal-sheet{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#FFFFFF;border-radius:20px 20px 0 0;
+  border-top:2px solid var(--card-b);
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.25,.46,.45,.94);
+  padding-bottom:max(20px,env(safe-area-inset-bottom));
+  max-height:90vh;overflow-y:auto;z-index:501;
 }
-.fb-stars{display:flex;justify-content:center;gap:6px;margin-bottom:8px}
-.fb-star{
-  font-size:28px;cursor:pointer;color:#D4B8A8;transition:color .15s,transform .1s;
-  line-height:1;user-select:none;
+.gs-modal-sheet.open{transform:translateY(0)}
+.gs-modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 18px 14px;border-bottom:1px solid var(--card-b);
+  position:sticky;top:0;background:#fff;z-index:1;
 }
-.fb-star.lit{color:#F0A500}
-.fb-star:active{transform:scale(.85)}
-.fb-high{display:none;text-align:center;margin-top:4px}
-.fb-high.show{display:block}
-.fb-high-msg{font-size:14px;color:var(--text);margin-bottom:12px;line-height:1.5}
-.fb-gmaps-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  background:#4285F4;color:#fff;border:none;border-radius:10px;
-  padding:11px 20px;font-family:'Nunito',sans-serif;font-size:14px;
-  font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .15s;
+.gs-modal-head h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--primary)}
+.gs-modal-close{
+  background:#F5EFE8;border:none;color:var(--muted);
+  font-size:15px;width:30px;height:30px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
 }
-.fb-gmaps-btn:active{opacity:.85}
-.fb-low{display:none;margin-top:4px}
-.fb-low.show{display:block}
-.fb-form-field{
-  width:100%;border:1.5px solid var(--card-b);border-radius:9px;
-  padding:10px 12px;font-family:'Nunito',sans-serif;font-size:14px;
-  color:var(--text);background:#fff;outline:none;margin-bottom:10px;
-  transition:border-color .2s;box-sizing:border-box;
+.gs-modal-close:active{background:#E8D5B7}
+.gs-modal-body{padding:16px 18px 0}
+.gs-field{margin-bottom:12px}
+.gs-field label{
+  display:block;font-size:11px;font-weight:700;
+  color:var(--muted);letter-spacing:.08em;
+  text-transform:uppercase;margin-bottom:5px;
 }
-.fb-form-field:focus{border-color:var(--blue)}
-textarea.fb-form-field{resize:vertical;min-height:80px}
-.fb-submit-btn{
-  width:100%;padding:13px;background:var(--primary);border:none;
-  border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;
-  font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s;
+.gs-field input,.gs-field textarea{
+  width:100%;background:#FFF8F0;border:1.5px solid var(--card-b);
+  border-radius:10px;color:var(--text);
+  font-family:'Nunito',sans-serif;font-size:15px;padding:11px 13px;
+  outline:none;transition:border-color .15s;box-sizing:border-box;
 }
-.fb-submit-btn:active{opacity:.82}
-.fb-submit-btn:disabled{background:#D4B8A8;cursor:default}
-.fb-success{
-  display:none;text-align:center;padding:14px;
-  color:#2E7D32;background:#E8F5E9;border-radius:10px;
-  font-size:14px;font-weight:600;margin-top:6px;
+.gs-field input:focus,.gs-field textarea:focus{border-color:var(--blue)}
+.gs-field textarea{resize:none;height:88px;line-height:1.45}
+.gs-submit-btn{
+  width:100%;height:46px;border-radius:12px;
+  background:var(--primary);border:none;color:#fff;
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;margin-top:4px;transition:opacity .15s;
 }
-.fb-success.show{display:block}
+.gs-submit-btn:active{opacity:.85}
+.gs-submit-btn:disabled{opacity:.35;cursor:not-allowed}
+/* ── BİZİ PUANLAYIN BUTTON ── */
+#gsBiziPuanlayin{margin:0 0 20px}
+#gsBiziBtn{
+  width:100%;padding:13px 16px;
+  background:#FFFDF5;border:1.5px solid var(--gold);
+  border-radius:12px;color:var(--gold);
+  font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  gap:7px;transition:background .15s;
+}
+#gsBiziBtn:active{background:#FFF3D0}
+/* ── STAR RATING IN MODAL ── */
+.gs-star-row{display:flex;justify-content:center;gap:6px;padding:20px 0 8px}
+.gs-star-btn{
+  background:none;border:none;font-size:40px;cursor:pointer;
+  color:#D4B8A8;transition:color .12s,transform .1s;
+  line-height:1;padding:4px;-webkit-tap-highlight-color:transparent;
+}
+.gs-star-btn.lit{color:#F0A500}
+.gs-star-btn:active{transform:scale(.82)}
+.gs-rating-hint{
+  text-align:center;font-size:13px;color:var(--muted);
+  min-height:20px;margin-bottom:16px;padding:0 18px;
+}
+.gs-gmaps-msg{
+  text-align:center;font-size:13.5px;color:var(--text);
+  padding:0 18px 12px;line-height:1.55;display:none;
+}
+.gs-gmaps-msg.show{display:block}
+.gs-rating-actions{display:flex;gap:10px;padding:0 18px 8px;display:none}
+.gs-rating-actions.show{display:flex}
+.gs-rating-action-btn{
+  flex:1;height:44px;border-radius:11px;
+  border:1.5px solid var(--card-b);background:#FFF8F0;
+  color:var(--text);font-family:'Nunito',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;transition:background .15s;
+}
+.gs-rating-action-btn.primary{background:#4285F4;border-color:#4285F4;color:#fff}
+.gs-rating-action-btn:active{opacity:.8}
 </style>
 </head>
 <body>
@@ -2256,7 +2319,6 @@ textarea.fb-form-field{resize:vertical;min-height:80px}
     <div class="gs-brand-name">Güneşin Sofrası</div>
     <div class="gs-brand-sub">Meyhane</div>
   </div>
-  <button id="gsMasaBadge">Masa&nbsp;<span id="gsMasaNum">${gsEsc(displayMasaId)}</span></button>
 </header>
 
 <!-- ═══ CATEGORY NAV ═══ -->
@@ -2265,31 +2327,13 @@ textarea.fb-form-field{resize:vertical;min-height:80px}
 <!-- ═══ MENU CONTENT ═══ -->
 <main id="gsContent">
 
-<!-- FEEDBACK — sayfanın üstünde, Fix Menü'den önce -->
-<section id="gsFeedbackSection">
-  <div class="fb-title">Deneyiminizi Değerlendirin</div>
-  <div class="fb-stars" id="fbStars">
-    <span class="fb-star" data-v="1">★</span>
-    <span class="fb-star" data-v="2">★</span>
-    <span class="fb-star" data-v="3">★</span>
-    <span class="fb-star" data-v="4">★</span>
-    <span class="fb-star" data-v="5">★</span>
-  </div>
-  <div class="fb-high" id="fbHigh">
-    <p class="fb-high-msg">Harika! Google'da değerlendirme yapmak ister misiniz?</p>
-    <a class="fb-gmaps-btn" href="https://share.google/tvnoLJvxZcTGn60vK" target="_blank" rel="noopener noreferrer" id="fbGmapsBtn">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#fff"/></svg>
-      Google'da Değerlendir
-    </a>
-  </div>
-  <div class="fb-low" id="fbLow">
-    <input class="fb-form-field" type="text" id="fbName" placeholder="Ad Soyad *">
-    <input class="fb-form-field" type="tel" id="fbPhone" placeholder="Telefon (opsiyonel)">
-    <textarea class="fb-form-field" id="fbMessage" placeholder="Görüşleriniz..."></textarea>
-    <button class="fb-submit-btn" id="fbSubmitBtn">Gönder</button>
-    <div class="fb-success" id="fbSuccess">Geri bildiriminiz iletildi, teşekkürler 🙏</div>
-  </div>
-</section>
+<!-- BİZİ PUANLAYIN -->
+<div id="gsBiziPuanlayin">
+  <button id="gsBiziBtn">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="#D4890A" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+    Bizi Puanlayın
+  </button>
+</div>
 
 ${menuSections}
 </main>
@@ -2303,7 +2347,22 @@ ${menuSections}
 </button>
 
 <!-- ═══ AI FAB ═══ -->
-<button id="gsAiFab" aria-label="GurmeAI'yi aç">👨‍🍳</button>
+<button id="gsAiFab" aria-label="GurmeAI'yi aç">
+  <svg viewBox="0 0 24 24" width="24" height="24" fill="white" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+</button>
+
+<!-- ═══ GARSON / HESAP FABs ═══ -->
+<button id="gsGarsonFab" aria-label="Garson Çağır">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="white" aria-hidden="true"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+</button>
+<button id="gsHesapFab" aria-label="Hesap İste">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="white" aria-hidden="true"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+</button>
+
+<!-- ═══ DÜŞÜNCELER FAB ═══ -->
+<button id="gsDushuncelerFab" aria-label="Düşünceleriniz">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="white" aria-hidden="true"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>
+</button>
 
 <!-- ═══ BOTTOM ACTION BAR ═══ -->
 <div id="gsBar">
@@ -2352,8 +2411,56 @@ ${menuSections}
   <div class="gs-masa-grid">${masaGrid}</div>
 </div>
 
+<!-- ═══ DÜŞÜNCELERİNİZ MODAL ═══ -->
+<div class="gs-modal-bg" id="gsDushBg"></div>
+<div class="gs-modal-sheet" id="gsDushSheet">
+  <div class="gs-modal-head">
+    <h3>Düşünceleriniz</h3>
+    <button class="gs-modal-close" id="gsDushClose">✕</button>
+  </div>
+  <div class="gs-modal-body">
+    <div class="gs-field">
+      <label for="dushName">Ad Soyad *</label>
+      <input id="dushName" type="text" placeholder="Adınız ve soyadınız" autocomplete="name">
+    </div>
+    <div class="gs-field">
+      <label for="dushPhone">Cep Numarası</label>
+      <input id="dushPhone" type="tel" placeholder="05xx xxx xx xx" autocomplete="tel">
+    </div>
+    <div class="gs-field">
+      <label for="dushMsg">Mesajınız</label>
+      <textarea id="dushMsg" placeholder="Görüş ve önerilerinizi yazın..."></textarea>
+    </div>
+    <button class="gs-submit-btn" id="dushSubmit">İlet</button>
+    <div style="height:16px"></div>
+  </div>
+</div>
+
+<!-- ═══ PUANLAMA MODAL ═══ -->
+<div class="gs-modal-bg" id="gsRatingBg"></div>
+<div class="gs-modal-sheet" id="gsRatingSheet">
+  <div class="gs-modal-head">
+    <h3>Bizi Puanlayın</h3>
+    <button class="gs-modal-close" id="gsRatingClose">✕</button>
+  </div>
+  <div class="gs-star-row" id="gsStarRow">
+    <button class="gs-star-btn" data-v="1" aria-label="1 yıldız">★</button>
+    <button class="gs-star-btn" data-v="2" aria-label="2 yıldız">★</button>
+    <button class="gs-star-btn" data-v="3" aria-label="3 yıldız">★</button>
+    <button class="gs-star-btn" data-v="4" aria-label="4 yıldız">★</button>
+    <button class="gs-star-btn" data-v="5" aria-label="5 yıldız">★</button>
+  </div>
+  <div class="gs-rating-hint" id="gsRatingHint">Deneyiminizi değerlendirin</div>
+  <p class="gs-gmaps-msg" id="gsGmapsMsg">Harika! Google profilimizde değerlendirme yapmak ister misiniz?</p>
+  <div class="gs-rating-actions" id="gsRatingActions">
+    <button class="gs-rating-action-btn" id="gsRatingNo">Hayır</button>
+    <a class="gs-rating-action-btn primary" href="https://share.google/tvnoLJvxZcTGn60vK" target="_blank" rel="noopener noreferrer" id="gsRatingYes" style="text-decoration:none;display:flex;align-items:center;justify-content:center">Evet, Değerlendir</a>
+  </div>
+  <div style="height:8px"></div>
+</div>
+
 <script>window.GS_INIT_ID = ${JSON.stringify(displayMasaId)};</script>
-<script src="/assets/gunesin-menu.js?v=20260419f" defer></script>
+<script src="/assets/gunesin-menu.js?v=20260419g" defer></script>
 </body>
 </html>`;
 }
