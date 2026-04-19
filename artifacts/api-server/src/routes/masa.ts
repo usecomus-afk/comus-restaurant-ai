@@ -2270,7 +2270,7 @@ body{padding-bottom:var(--bh)}
 #gsBiziPuanlayin{margin:0 0 20px;text-align:center}
 #gsBiziBtn{
   display:inline-flex;flex-direction:column;align-items:center;gap:4px;
-  padding:10px 24px;
+  margin:0 auto;padding:10px 24px;
   background:#FFFDF5;border:1.5px solid var(--gold);
   border-radius:12px;
   cursor:pointer;transition:background .15s;
@@ -2349,7 +2349,7 @@ ${menuSections}
 
 <!-- ═══ AI FAB ═══ -->
 <button id="gsAiFab" aria-label="GurmeAI'yi aç">
-  <span style="font-size:11px;font-weight:700;color:#fff;line-height:1.25;text-align:center;pointer-events:none">AI<br>Gurme</span>
+  <span style="font-size:11px;font-weight:700;color:#fff;pointer-events:none">AI Gurme</span>
 </button>
 
 <!-- ═══ DÜŞÜNCELER FAB ═══ -->
