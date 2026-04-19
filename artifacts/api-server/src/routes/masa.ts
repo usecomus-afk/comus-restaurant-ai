@@ -1809,13 +1809,19 @@ function renderPage(masaId: string): string {
   }
 
   function parseRakiPrices(desc: string): string {
-    return desc.split(",").map(part => {
-      const [size, price] = part.split(":").map(s => s.trim());
-      if (!size) return "";
-      const p = parseInt(price ?? "0", 10) || 0;
-      return `<button class="rp-btn" data-size="${gsEsc(size)}" data-price="${p}">
+    // Format: "20cl 950₺ · 35cl 1.470₺ · 70cl 2.500₺"
+    return desc.split(/\s*·\s*/).map(part => {
+      part = part.trim();
+      if (!part) return "";
+      const lastSpace = part.lastIndexOf(" ");
+      if (lastSpace < 0) return "";
+      const size      = part.substring(0, lastSpace).trim();
+      const priceRaw  = part.substring(lastSpace + 1).trim();
+      // Parse numeric: remove thousand separators (.) and ₺
+      const numeric   = parseInt(priceRaw.replace(/\./g, "").replace(/[^\d]/g, ""), 10) || 0;
+      return `<button class="rp-btn" data-size="${gsEsc(size)}" data-price="${numeric}">
     <span class="rp-size">${gsEsc(size)}</span>
-    <span class="rp-price">${p > 0 ? p.toLocaleString("tr-TR") + " ₺" : ""}</span>
+    <span class="rp-price">${gsEsc(priceRaw)}</span>
   </button>`;
     }).filter(Boolean).join("");
   }
@@ -2004,16 +2010,16 @@ function renderPage(masaId: string): string {
   .gs-raki-grid{display:flex;flex-direction:column;gap:10px}
   .gs-raki-card{background:var(--card);border:1px solid var(--cb);border-radius:10px;padding:12px 14px}
   .raki-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--txt);margin-bottom:9px}
-  .raki-prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:5px 7px}
+  .raki-prices{display:flex;flex-direction:column;gap:6px}
   .rp-btn{
-    display:flex;flex-direction:column;align-items:center;
-    background:#FFF3E8;border:1px solid rgba(212,137,10,.3);border-radius:6px;
-    padding:6px 5px;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent;
+    display:flex;flex-direction:row;justify-content:space-between;align-items:center;width:100%;
+    background:#FFF3E8;border:1px solid rgba(212,137,10,.3);border-radius:8px;
+    padding:10px 14px;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent;
   }
   .rp-btn.rp-added{background:var(--gold);border-color:var(--gold)}
   .rp-btn.rp-added .rp-size,.rp-btn.rp-added .rp-price{color:#fff}
-  .rp-size{font-size:10px;font-weight:700;color:var(--acc);text-transform:uppercase}
-  .rp-price{font-size:12px;font-weight:700;color:var(--txt)}
+  .rp-size{font-size:13px;font-weight:700;color:var(--acc);text-transform:uppercase}
+  .rp-price{font-size:14px;font-weight:700;color:var(--txt)}
 
   /* ── BOTTOM BAR ── */
   #bar{
