@@ -2135,12 +2135,12 @@ body{padding-bottom:var(--bh)}
 .ai-bubble-wrap{display:flex;gap:8px;align-items:flex-end}
 .ai-bubble-wrap.user{flex-direction:row-reverse}
 .ai-avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#9B59B6,#6C3483);display:flex;align-items:center;justify-content:center;font-size:14px}
-.ai-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:13px;line-height:1.5;color:var(--text)}
+.ai-bubble{max-width:78%;padding:10px 13px;border-radius:14px;font-size:15px;line-height:1.5;color:var(--text)}
 .ai-bubble.assistant{background:#F3E8FF;border-bottom-left-radius:4px}
 .ai-bubble.user{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
 .ai-bubble.loading::after{content:'...';animation:dots 1s infinite}
 @keyframes dots{0%{content:'·'}33%{content:'··'}66%{content:'···'}100%{content:'·'}}
-.ai-input-row{display:flex;flex-wrap:nowrap;gap:8px;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--card-b);flex-shrink:0;background:#FAFAF8;align-items:flex-end}
+.ai-input-row{display:flex;flex-wrap:nowrap;gap:8px;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));border-top:1px solid var(--card-b);flex-shrink:0;background:#FAFAF8;align-items:flex-end;position:sticky;bottom:0}
 #aiInput{flex:1;border:1.5px solid var(--card-b);border-radius:22px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);background:#fff;outline:none;resize:none;transition:border-color .2s;max-height:80px;overflow-y:auto}
 #aiInput:focus{border-color:var(--blue)}
 #aiSendBtn{width:40px;height:40px;border-radius:50%;background:var(--blue);border:none;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s;align-self:flex-end}

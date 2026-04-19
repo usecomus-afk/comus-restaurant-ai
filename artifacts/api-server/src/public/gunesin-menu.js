@@ -132,8 +132,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const aiDrawer = document.getElementById('gsAiDrawer');
   const aiMsgs   = document.getElementById('aiMsgs');
   const aiInput  = document.getElementById('aiInput');
-  let _aiOpened  = false;
-  let _aiLoading = false;
+  let _aiOpened      = false;
+  let _aiLoading     = false;
+  let _firstReply    = false;
 
   function openAi() {
     document.body.style.overflow = 'hidden';
@@ -141,13 +142,14 @@ document.addEventListener('DOMContentLoaded', function () {
     aiBg.classList.add('open'); aiDrawer.classList.add('open');
     if (!_aiOpened) {
       _aiOpened = true;
-      appendAiMsg('assistant', "Merhaba! Ben GurmeAI, Güneşin Sofrası'nın yapay zeka asistanıyım. Menü hakkında soru sorabilir, öneri isteyebilirsiniz. 🌞");
+      appendAiMsg('assistant', "Hoş geldiniz. Güneşin Sofrası'na beklenirsiniz. İçecek olarak ne tercih edersiniz, rakı mı şarap mı?");
     }
     setTimeout(() => aiInput.focus(), 350);
   }
   function closeAi() {
     document.body.style.overflow = '';
     document.documentElement.style.overflowX = '';
+    aiDrawer.style.height = '';
     aiDrawer.style.bottom = '0';
     aiBg.classList.remove('open'); aiDrawer.classList.remove('open');
   }
@@ -197,7 +199,11 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('[GurmeAI] API error:', res.status, json);
         appendAiMsg('assistant', 'Üzgünüm, şu an yanıt veremiyorum. Lütfen birazdan tekrar deneyin.');
       } else {
-        const reply = json?.data?.reply || json?.reply || json?.message || 'Yanıt alınamadı';
+        let reply = json?.data?.reply || json?.reply || json?.message || 'Yanıt alınamadı';
+        if (!_firstReply) {
+          _firstReply = true;
+          reply = reply + '\n\nKaç kişilik sofra kuracağınızı söylerseniz size daha iyi öneri yapabilirim.';
+        }
         appendAiMsg('assistant', reply);
       }
     } catch (err) {
@@ -323,13 +329,16 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => btn.classList.remove('rp-added'), 700);
   });
 
-  /* ── AI DRAWER: prevent keyboard from pushing content up on mobile ── */
+  /* ── AI DRAWER: keep drawer above keyboard on mobile ── */
   if (window.visualViewport) {
-    const aiDrawer = document.getElementById('gsAiDrawer');
     window.visualViewport.addEventListener('resize', () => {
       if (!aiDrawer || !aiDrawer.classList.contains('open')) return;
-      const gap = window.innerHeight - window.visualViewport.height;
-      aiDrawer.style.bottom = gap > 0 ? `${gap}px` : '0';
+      const vvHeight    = window.visualViewport.height;
+      const vvOffsetTop = window.visualViewport.offsetTop;
+      const newBottom   = window.innerHeight - vvHeight - vvOffsetTop;
+      const newHeight   = Math.round(vvHeight * 0.75);
+      aiDrawer.style.bottom = newBottom > 0 ? `${newBottom}px` : '0';
+      aiDrawer.style.height  = `${newHeight}px`;
     });
   }
 
