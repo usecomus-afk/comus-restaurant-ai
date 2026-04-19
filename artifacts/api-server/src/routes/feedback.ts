@@ -8,6 +8,7 @@ import {
   type Feedback,
 } from "../lib/store.js";
 import { broadcast } from "../lib/ws.js";
+import { dbLogFeedback } from "../lib/supabaseDb.js";
 
 const router: IRouter = Router();
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -139,6 +140,7 @@ router.post("/", async (req: Request, res: Response) => {
   };
 
   feedbacks.set(feedback.feedbackId, feedback);
+  dbLogFeedback(feedback);
   broadcast("feedback:new", feedback);
   req.log.info(
     { feedbackId: feedback.feedbackId, restaurantId, rating: resolvedRating },
