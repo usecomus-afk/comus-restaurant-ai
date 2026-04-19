@@ -2349,7 +2349,7 @@ ${menuSections}
 
 <!-- ═══ AI FAB ═══ -->
 <button id="gsAiFab" aria-label="GurmeAI'yi aç">
-  <span style="font-size:11px;font-weight:700;color:#fff;pointer-events:none">AI Gurme</span>
+  <span style="font-size:11px;font-weight:bold;color:white;line-height:1.2;text-align:center;">AI<br>Gurme</span>
 </button>
 
 <!-- ═══ DÜŞÜNCELER FAB ═══ -->
