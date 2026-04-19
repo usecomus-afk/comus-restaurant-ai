@@ -1902,7 +1902,7 @@ function renderPage(masaId: string): string {
     --bg:#FDF6EC;--card:#fff;--cb:#E8D5B7;
     --pri:#C0392B;--acc:#E86B2E;--gold:#D4890A;--blue:#2980B9;
     --txt:#2C1810;--muted:#8B6347;
-    --hh:110px;--nh:50px;--bh:76px;
+    --hh:220px;--nh:50px;--bh:76px;
   }
   html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'Nunito',sans-serif;overflow-x:hidden}
 
@@ -1914,10 +1914,10 @@ function renderPage(masaId: string): string {
     padding:4px 52px;z-index:200;
     box-shadow:0 1px 8px rgba(44,24,16,.07);
   }
-  #gsLogo{height:96px;width:96px;object-fit:contain;display:block}
-  #gsBrand{display:none;flex-direction:column;align-items:center;gap:2px}
-  .gs-brand-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--pri);letter-spacing:.04em}
-  .gs-brand-sub{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
+  #gsLogo{height:192px;width:192px;max-width:calc(100vw - 120px);max-height:192px;object-fit:contain;display:block}
+  #gsBrand{display:none;flex-direction:column;align-items:center;gap:3px}
+  .gs-brand-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--pri);letter-spacing:.04em}
+  .gs-brand-sub{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.22em;text-transform:uppercase}
   #igBtn{
     position:absolute;top:50%;left:14px;transform:translateY(-50%);
     width:36px;height:36px;display:flex;align-items:center;justify-content:center;
