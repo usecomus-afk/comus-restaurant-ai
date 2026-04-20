@@ -1925,10 +1925,7 @@ function renderPage(masaId: string): string {
     backdrop-filter: blur(4px);
   }
   #hdrLeft{min-height:1px}
-  #hdrRight{
-    min-height:1px;display:flex;align-items:flex-end;justify-content:flex-end;
-    padding-top:0;padding-right:12px;padding-bottom:6px;
-  }
+  #hdrRight{min-height:1px}
   #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
   #gsLogoLink{
     display:inline-flex;align-items:center;justify-content:center;
@@ -1975,10 +1972,12 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
+    position:fixed;bottom:70px;right:12px;z-index:250;
     width:auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-    padding:4px 8px;background:transparent;border:1px solid #D4890A;border-radius:16px;
+    padding:4px 10px;background:rgba(255,255,255,.95);border:1.5px solid #D4890A;border-radius:20px;
     color:#D4890A;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;
     -webkit-tap-highlight-color:transparent;transition:background .15s,opacity .15s;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
   }
   #ratingBtn:active{background:#F6ECDE;opacity:.95}
   .rt-stars{font-size:7px;color:#f5b700;line-height:1;letter-spacing:0}
@@ -2039,17 +2038,17 @@ function renderPage(masaId: string): string {
 
   /* ── BOTTOM BAR ── */
   #bar{
-    position:fixed;bottom:0;left:0;right:0;height:var(--bh);
-    background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
-    display:flex;flex-direction:column;gap:8px;
-    padding:4px 8px 0 8px;
+    position:fixed;bottom:0;left:0;right:0;height:56px;
+    background:var(--card);border-top:1px solid rgba(110,65,49,.14);
+    display:flex;flex-direction:column;gap:0;
+    padding:0;margin:0;
     z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
   }
-  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;height:100%}
   .bar-btn{
-    border-radius:8px;border:none;color:#F4EEE6;
+    border-radius:0;border:none;color:#F4EEE6;
     font-family:var(--font-sans);font-size:14px;font-weight:600;
-    height:auto;padding:10px 8px;display:flex;align-items:center;justify-content:center;gap:4px;
+    height:56px;padding:0;margin:0;flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
@@ -2230,12 +2229,7 @@ function renderPage(masaId: string): string {
         <div class="gs-brand-sub">Meyhane</div>
       </div>
     </div>
-    <div id="hdrRight">
-      <button id="ratingBtn">
-        <span class="rt-stars">★★★★★</span>
-        <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
-      </button>
-    </div>
+    <div id="hdrRight"></div>
   </header>
 
   <!-- CATEGORY NAV -->
@@ -2247,6 +2241,11 @@ function renderPage(masaId: string): string {
   <main id="menuContent">
     ${menuSections}
   </main>
+
+  <button id="ratingBtn">
+    <span class="rt-stars">★★★★★</span>
+    <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
+  </button>
 
   <!-- TOAST -->
   <div id="toast" role="status" aria-live="polite"></div>
