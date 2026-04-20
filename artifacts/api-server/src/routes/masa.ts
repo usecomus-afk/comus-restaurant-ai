@@ -1079,7 +1079,7 @@ function renderPage(masaId: string): string {
   </button>
   <div class="brand-center">
     ${isGunesin
-      ? ``
+      ? `<div class="brand-name" style="font-size:15px;letter-spacing:.01em">Güneşin Sofrası</div><div class="brand-sub">Meyhane</div>`
       : `<div class="brand-name">rebel<span class="brand-accent">.</span></div><div class="brand-sub">Bar &amp; Bistro</div>`
     }
   </div>
@@ -1923,10 +1923,11 @@ function renderPage(masaId: string): string {
     align-items: center; padding: 8px 0; z-index: 200;
     box-shadow: 0 1px 8px rgba(44,24,16,.07);
   }
-  #hdrLeft{min-height:1px}
-  #hdrRight{
-    min-height:1px;display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-start;
-    gap:4px;padding-top:8px;padding-right:8px;
+
+  #hdrLeft { visibility: hidden; }
+
+  #hdrCenter {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
 
   #hdrRight {
@@ -2046,11 +2047,11 @@ function renderPage(masaId: string): string {
   #bar{
     position:fixed;bottom:0;left:0;right:0;height:60px;
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
-    display:grid !important;grid-template-rows:1fr 1fr;gap:0;
+    display:flex !important;flex-direction:column;gap:0;
     padding:0;margin:0;
     z-index:99999 !important;box-shadow:0 -6px 18px rgba(43,33,26,.11);
     visibility:visible !important;
-    pointer-events:auto !important;
+    pointer-events:auto;
     opacity:0.999 !important;
     -webkit-backface-visibility:hidden;
     backface-visibility:hidden;
@@ -2059,27 +2060,20 @@ function renderPage(masaId: string): string {
     transform:translate3d(0,0,0);
     isolation:isolate;
   }
-  #barActions{
-    display:grid;grid-template-columns:1fr 1fr;gap:0;
-    width:100%;height:100%;pointer-events:auto !important;
-  }
+  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;height:100%;pointer-events:auto}
   .bar-btn{
     border-radius:0;border:none;color:#F4EEE6;
-    font-family:var(--font-sans);font-size:12px;font-weight:600;
-    height:100%;padding:0 6px;display:flex;align-items:center;justify-content:center;gap:3px;
+    font-family:var(--font-sans);font-size:14px;font-weight:600;
+    height:100%;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:4px;
     cursor:pointer !important;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
     pointer-events:auto !important;position:relative;z-index:10 !important;opacity:1 !important;
     -webkit-transform:translate3d(0,0,0);
     transform:translate3d(0,0,0);
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
-  .bar-icon{font-size:10px;line-height:1}
+  .bar-icon{font-size:11px;line-height:1}
   #garsonBtn{background:linear-gradient(180deg,#384D67,#2F435A)}
   #hesapBtn{background:linear-gradient(180deg,#6F4535,#603A2D)}
-  #barRatingBtn{
-    width:100%;background:linear-gradient(180deg,#C2933E,#AD7F31);
-    letter-spacing:.02em;font-size:11px;
-  }
 
   /* ── FABS ── */
   #cartFab{
@@ -2267,9 +2261,7 @@ function renderPage(masaId: string): string {
   <header id="hdr">
     <div id="hdrLeft"></div>
     <div id="hdrCenter">
-      <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
-        <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
-      </a>
+      <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
     </div>
     <div id="hdrRight">
       <img id="gunesinText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
@@ -2388,14 +2380,13 @@ function renderPage(masaId: string): string {
   </div>
 
   <script>window.GS_TABLE = ${JSON.stringify(displayN)};</script>
-  <script src="/assets/gunesin-menu.js?v=20260420-02" defer></script>
+  <script src="/assets/gunesin-menu.js?v=20260420-01" defer></script>
   <!-- BOTTOM BAR -->
   <div id="bar">
     <div id="barActions">
       <button id="garsonBtn" class="bar-btn"><span class="bar-icon">🖐️</span><span>Garson Çağır</span></button>
       <button id="hesapBtn"  class="bar-btn"><span class="bar-icon">🧾</span><span>Hesap İste</span></button>
     </div>
-    <button id="barRatingBtn" class="bar-btn">Bizi Değerlendirin</button>
   </div>
   </body>
   </html>`;

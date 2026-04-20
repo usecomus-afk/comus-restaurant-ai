@@ -255,11 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $('ratingBtn').addEventListener('click', openRating);
   $('ratingBtn').addEventListener('touchstart', e => { e.preventDefault(); openRating(); }, { passive: false });
-  const barRatingBtn = $('barRatingBtn');
-  if (barRatingBtn) {
-    barRatingBtn.addEventListener('click', openRating);
-    barRatingBtn.addEventListener('touchstart', e => { e.preventDefault(); openRating(); }, { passive: false });
-  }
   $('ratingClose').addEventListener('click', closeRating);
   $('ratingOverlay').addEventListener('click', closeRating);
 
