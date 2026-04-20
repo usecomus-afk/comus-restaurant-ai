@@ -1916,7 +1916,7 @@ function renderPage(masaId: string): string {
   }
   #hdrLeft,#hdrRight{min-height:1px}
   #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-  #gsLogo{height:110px;width:110px;max-width:110px;max-height:110px;object-fit:contain;display:block}
+  #gsLogo{height:114px;width:114px;max-width:114px;max-height:114px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
   .gs-brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
   .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
