@@ -2223,7 +2223,7 @@ function renderPage(masaId: string): string {
     <div id="hdrLeft"></div>
     <div id="hdrCenter">
       <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
-        <img id="gsLogo" src="/img/gunesin-logo-v2.png" alt="Güneşin Sofrası" loading="eager">
+        <img id="gsLogo" src="/assets/img/gunesin-logo-v2.png" alt="Güneşin Sofrası" loading="eager">
       </a>
       <div id="gsBrand">
         <div class="gs-brand-name">Güneşin Sofrası</div>
