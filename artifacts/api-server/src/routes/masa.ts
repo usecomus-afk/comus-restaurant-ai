@@ -1916,33 +1916,30 @@ function renderPage(masaId: string): string {
   }
 
   /* ── HEADER ── */
-  #hdr{
-    position:fixed;top:0;left:0;right:0;height:var(--hh);
-    background:rgba(255,252,247,.92);border-bottom:1px solid rgba(110,65,49,.11);
-    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-    padding:6px 0;z-index:200;
-    box-shadow:0 2px 14px rgba(43,33,26,.06);
-    backdrop-filter: blur(4px);
+  #hdr {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--hh);
+    background: #fff; border-bottom: 1px solid var(--cb);
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; padding: 8px 0; z-index: 200;
+    box-shadow: 0 1px 8px rgba(44,24,16,.07);
   }
-  #hdrLeft{min-height:1px}
-  #hdrRight{
-    min-height:1px;display:flex;align-items:flex-start;justify-content:flex-end;
-    padding-top:8px;padding-right:8px;
+
+  #hdrLeft { visibility: hidden; }
+
+  #hdrCenter {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
   }
-  #hdrCenter{
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-    position:relative;z-index:1;opacity:1;
+
+  #hdrRight {
+    display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+    gap: 4px; padding-right: 14px;
   }
-  #gsLogoLink{
-    display:inline-flex;align-items:center;justify-content:center;
-    border-radius:12px;cursor:pointer;
-    transition:transform .15s ease,opacity .15s ease;
-    -webkit-tap-highlight-color:transparent;
+
+  #gunesinText {
+    height: 42px; width: auto; object-fit: contain;
   }
-  #gsLogoLink:hover{opacity:.9;transform:scale(1.02)}
-  #gsLogoLink:active{opacity:.85;transform:scale(.98)}
+
   #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
-  #gsText{height:30px;width:auto;max-width:180px;object-fit:contain;display:block}
 
   /* ── CAT NAV ── */
   #catNav{
@@ -1975,15 +1972,17 @@ function renderPage(masaId: string): string {
   }
 
   /* ── RATING BUTTON ── */
-  #ratingBtn{
-    width:auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-    padding:4px 8px;background:transparent;border:1px solid #D4890A;border-radius:16px;
-    color:#D4890A;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;
-    -webkit-tap-highlight-color:transparent;transition:background .15s,opacity .15s;
+  #ratingBtn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 16px; background: transparent; border: 2px solid var(--gold);
+    border-radius: 24px; color: var(--gold); font-weight: 700; letter-spacing: 1px;
+    cursor: pointer; transition: all .15s;
   }
-  #ratingBtn:active{background:#F6ECDE;opacity:.95}
-  .rt-stars{font-size:7px;color:#f5b700;line-height:1;letter-spacing:0}
-  .rt-hint{font-size:7px;font-weight:700;color:#D4890A;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;line-height:1}
+
+  #ratingBtn:active { background: #FFF3D0; opacity: 0.9; }
+
+  .rt-stars { font-size: 13px; color: #f5b700; }
+  .rt-hint { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
   #gsQuoteWrap{padding:16px 20px;background:var(--bg);text-align:center}
   #gsQuote{
@@ -2262,12 +2261,10 @@ function renderPage(masaId: string): string {
   <header id="hdr">
     <div id="hdrLeft"></div>
     <div id="hdrCenter">
-      <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
-        <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
-      </a>
-      <img id="gsText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
+      <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
     </div>
     <div id="hdrRight">
+      <img id="gunesinText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
       <button id="ratingBtn">
         <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
