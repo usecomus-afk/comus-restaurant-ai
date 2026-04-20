@@ -1904,7 +1904,7 @@ function renderPage(masaId: string): string {
     --txt:#2B211A;--muted:#7A6756;
     --font-serif:'Playfair Display',serif;
     --font-sans:'Inter','Nunito',sans-serif;
-    --hh:90px;--nh:50px;--bh:56px;
+    --hh:90px;--nh:50px;--bh:92px;
   }
   html,body{height:100%;color:var(--txt);font-family:var(--font-sans);overflow-x:hidden}
   body{
@@ -1929,7 +1929,7 @@ function renderPage(masaId: string): string {
     min-height:1px;display:flex;align-items:flex-end;justify-content:flex-end;
     padding-top:0;padding-right:12px;padding-bottom:6px;
   }
-  #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0}
+  #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
   #gsLogoLink{
     display:inline-flex;align-items:center;justify-content:center;
     border-radius:12px;cursor:pointer;
@@ -1939,7 +1939,9 @@ function renderPage(masaId: string): string {
   #gsLogoLink:hover{opacity:.9;transform:scale(1.02)}
   #gsLogoLink:active{opacity:.85;transform:scale(.98)}
   #gsLogo{height:110px;width:110px;max-width:110px;max-height:110px;object-fit:contain;display:block}
-  #gsBrand{display:none}
+  #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .gs-brand-name{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
+  .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
 
   /* ── CAT NAV ── */
   #catNav{
@@ -2039,15 +2041,15 @@ function renderPage(masaId: string): string {
   #bar{
     position:fixed;bottom:0;left:0;right:0;height:var(--bh);
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
-    display:flex;flex-direction:column;gap:0;
-    padding:0;margin:0;
+    display:flex;flex-direction:column;gap:8px;
+    padding:4px 8px 0 8px;
     z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
   }
-  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;height:100%}
+  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
   .bar-btn{
-    border-radius:0;border:none;color:#F4EEE6;
+    border-radius:8px;border:none;color:#F4EEE6;
     font-family:var(--font-sans);font-size:14px;font-weight:600;
-    height:100%;padding:0;margin:0;display:flex;align-items:center;justify-content:center;gap:4px;
+    height:auto;padding:10px 8px;display:flex;align-items:center;justify-content:center;gap:4px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
@@ -2223,6 +2225,10 @@ function renderPage(masaId: string): string {
       <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
         <img id="gsLogo" src="/assets/img/gunesin-logo-v2.png" alt="Güneşin Sofrası" loading="eager">
       </a>
+      <div id="gsBrand">
+        <div class="gs-brand-name">Güneşin Sofrası</div>
+        <div class="gs-brand-sub">Meyhane</div>
+      </div>
     </div>
     <div id="hdrRight">
       <button id="ratingBtn">
