@@ -1,34 +1,14 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import Anthropic from "@anthropic-ai/sdk";
 import { menus } from "../lib/store.js";
-import { PARSER_PROMPT, applyChanges, type ParsedChanges } from "./menu-update.js";
+import {
+  findDishById,
+  isAuthorizedTelegramChat,
+  parsePriceCommand,
+  parseStockCommand,
+  sendTelegramMessage,
+} from "../lib/telegram.js";
 
 const router: IRouter = Router();
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-const RESTAURANT_ID = "default";
-
-async function sendTelegram(chatId: string | number, text: string): Promise<void> {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  if (!token) return;
-  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text, parse_mode: "Markdown" }),
-  }).catch(() => {});
-}
-
-function isAuthorized(chatId: number, chatType: string): boolean {
-  const allowed = process.env.TELEGRAM_CHAT_ID;
-  if (!allowed) return false;
-  // Accept the configured group/channel
-  if (String(chatId) === String(allowed)) return true;
-  // Also accept direct messages to the bot (private chats)
-  // The bot token is private so only staff who know the bot can DM it
-  if (chatType === "private") return true;
-  return false;
-}
-
 /* ── INFO: check current webhook status ────────────────────── */
 router.get("/info", async (req: Request, res: Response) => {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -103,71 +83,80 @@ router.post("/webhook", async (req: Request, res: Response) => {
   const chatType = msg.chat.type ?? "unknown";
   const text     = msg.text.trim();
 
-  if (!isAuthorized(chatId, chatType)) {
+  if (!isAuthorizedTelegramChat(chatId)) {
     req.log.warn({ chatId, chatType }, "Unauthorized Telegram message ignored");
     return;
   }
 
   if (text.startsWith("/start") || text.startsWith("/help")) {
-    await sendTelegram(chatId,
-      `🍽️ *Rebel Bar & Bistro — Menü Yönetimi*\n\n` +
-      `Menüyü doğal dil ile yönetebilirsiniz:\n\n` +
-      `• *Fiyat güncelle:* "Rebel Burger fiyatını 600 TL yap"\n` +
-      `• *Tükendi:* "kuzu incik bitti"\n` +
-      `• *Geldi:* "kuzu incik geldi"\n` +
-      `• *Yeni ürün:* "yeni ürün ekle: İsim, 350TL, Açıklama"\n` +
-      `• *Çıkar:* "Rebel Burger'i menüden çıkar"\n` +
-      `• *Günün özel:* "bugün özel: Dana Ribs, 850TL, Özel sos ile"\n`
-    );
+    const helpText = [
+      "Güneşin Sofrası Telegram Yönetim",
+      "",
+      "Komutlar:",
+      "/fiyat [urun_id] [yeni_fiyat]",
+      "Örn: /fiyat g010 290",
+      "/stok [urun_id] [aktif/pasif]",
+      "Örn: /stok g010 pasif",
+    ].join("\n");
+    await sendTelegramMessage(String(chatId), helpText);
     return;
   }
 
-  const menu = menus.get(RESTAURANT_ID)!;
-  const menuSummary = menu.dishes
-    .map((d) => `- id: ${d.id}, "${d.name}", ${d.price} TL, ${d.category}${d.available === false ? " [TÜKENDİ]" : ""}${d.isSpecial ? " [ÖZEL]" : ""}`)
-    .join("\n");
-
-  let parsed: ParsedChanges;
-  try {
-    const completion = await anthropic.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1024,
-      system: PARSER_PROMPT,
-      messages: [
-        {
-          role: "user",
-          content: `Güncel menü (${RESTAURANT_ID}):\n${menuSummary}\n\nYönetici mesajı: "${text}"`,
-        },
-      ],
-    });
-
-    const raw = completion.content[0]?.type === "text" ? completion.content[0].text : "{}";
-    parsed = JSON.parse(raw) as ParsedChanges;
-  } catch (err) {
-    req.log.error({ err, text }, "Telegram webhook AI parse error");
-    await sendTelegram(chatId, "❌ AI servisi şu anda kullanılamıyor. Lütfen tekrar deneyin.");
+  const menuEntries = Array.from(menus.entries());
+  if (menuEntries.length === 0) {
+    await sendTelegramMessage(String(chatId), "❌ Menü bulunamadı.");
     return;
   }
 
-  if (!Array.isArray(parsed.changes) || parsed.changes.length === 0) {
-    await sendTelegram(chatId,
-      `❓ Anlaşılamadı: "${text}"\n\nYardım için /help yazın.`
-    );
+  const priceCommand = parsePriceCommand(text);
+  if (priceCommand) {
+    const target = findDishById(priceCommand.dishId, menuEntries);
+    if (!target) {
+      await sendTelegramMessage(String(chatId), `❌ Ürün bulunamadı: ${priceCommand.dishId}`);
+      return;
+    }
+
+    target.dish.price = priceCommand.newPrice;
+    const menu = menus.get(target.key);
+    if (!menu) {
+      await sendTelegramMessage(String(chatId), "❌ Geçersiz fiyat. Örn: /fiyat g010 290");
+      return;
+    }
+    menu.updatedAt = new Date().toISOString();
+    menus.set(target.key, menu);
+
+    await sendTelegramMessage(String(chatId), `✅ Fiyat güncellendi\nÜrün: ${target.dish.name} (${target.dish.id})\nYeni fiyat: ${priceCommand.newPrice.toLocaleString("tr-TR")} ₺`);
+    req.log.info({ chatId, dishId: target.dish.id, price: priceCommand.newPrice, menuKey: target.key }, "menu price updated via telegram command");
     return;
   }
 
-  const { menu: updatedMenu, applied, notFound } = applyChanges(menu, parsed.changes);
-  menus.set(RESTAURANT_ID, updatedMenu);
+  const stockCommand = parseStockCommand(text);
 
-  req.log.info({ chatId, applied, notFound }, "menu updated via Telegram");
+  if (stockCommand) {
+    const target = findDishById(stockCommand.dishId, menuEntries);
+    if (!target) {
+      await sendTelegramMessage(String(chatId), `❌ Ürün bulunamadı: ${stockCommand.dishId}`);
+      return;
+    }
 
-  const lines: string[] = [];
-  lines.push(...applied);
-  if (notFound.length > 0) {
-    notFound.forEach((n) => lines.push(`❌ '${n}' menüde bulunamadı`));
+    target.dish.available = stockCommand.isActive;
+    const menu = menus.get(target.key);
+    if (!menu) {
+      await sendTelegramMessage(String(chatId), "❌ Menü bulunamadı.");
+      return;
+    }
+    menu.updatedAt = new Date().toISOString();
+    menus.set(target.key, menu);
+
+    await sendTelegramMessage(String(chatId), `✅ Stok güncellendi\nÜrün: ${target.dish.name} (${target.dish.id})\nDurum: ${stockCommand.isActive ? "aktif" : "pasif"}`);
+    req.log.info({ chatId, dishId: target.dish.id, isActive: stockCommand.isActive, menuKey: target.key }, "menu stock updated via telegram command");
+    return;
   }
 
-  await sendTelegram(chatId, lines.join("\n"));
+  await sendTelegramMessage(
+    String(chatId),
+    "❓ Komut anlaşılamadı.\n\nKullanım:\n/fiyat [urun_id] [yeni_fiyat]\n/stok [urun_id] [aktif/pasif]",
+  );
 });
 
 export default router;

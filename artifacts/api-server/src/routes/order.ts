@@ -3,6 +3,11 @@ import { randomUUID } from "crypto";
 import { orders, type Order, type OrderItem, type OrderStatus } from "../lib/store.js";
 import { broadcast } from "../lib/ws.js";
 import { dbLogOrder } from "../lib/supabaseDb.js";
+import {
+  normalizeOrderItems,
+  sendOrderNotification,
+  sendServiceRequestNotification,
+} from "../lib/telegram.js";
 
 const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   received: ["preparing", "served"],
@@ -61,6 +66,12 @@ router.post("/", (req: Request, res: Response) => {
   dbLogOrder(order);
   req.log.info({ orderId, restaurantId, tableNumber }, "order placed");
   broadcast("order:created", order);
+
+  sendOrderNotification(tableNumber, normalizeOrderItems(items as unknown[])).then((result) => {
+    if (!result.ok) {
+      req.log.error({ error: result.error, orderId }, "failed to send telegram order notification");
+    }
+  });
 
   res.status(201).json({
     success: true,
@@ -154,59 +165,29 @@ router.get("/", (req: Request, res: Response) => {
 
 /* ── GARSON / HESAP CALL NOTIFICATION ───────────────── */
 router.post("/notify", async (req: Request, res: Response) => {
-  const token  = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-
-  const { masaId, type } = req.body as { masaId?: string; type?: string };
-  const display = String(masaId ?? "?").replace(/^masa-/i, "");
-  const time    = new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
-
-  if (!token || !chatId) {
-    req.log.warn("Telegram not configured for notify");
-    res.status(503).json({ success: false, error: "Telegram not configured" });
-    return;
-  }
-
-  let text: string;
-  if (type === "garson") {
-    text = `🔔 *GARSON ÇAĞRISI*\n\n📍 Masa: *${display}*\n⏰ ${time}\nMüşteri garson bekliyor.`;
-  } else if (type === "hesap") {
-    text = `💳 *ADİSYON TALEBİ*\n\n📍 Masa: *${display}*\n⏰ ${time}`;
-  } else {
+  const { masaId, tableNumber, type } = req.body as {
+    masaId?: string | number;
+    tableNumber?: string | number;
+    type?: string;
+  };
+  const effectiveTable = tableNumber ?? masaId ?? "?";
+  if (type !== "garson" && type !== "hesap") {
     res.status(400).json({ success: false, error: "type must be 'garson' or 'hesap'" });
     return;
   }
 
-  try {
-    const tgRes  = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ chat_id: chatId, text, parse_mode: "Markdown" }),
-    });
-    const tgData = (await tgRes.json()) as { ok: boolean; description?: string };
-    if (tgData.ok) {
-      req.log.info({ masaId: display, type }, "call notification sent");
-      res.json({ success: true });
-    } else {
-      res.status(502).json({ success: false, error: tgData.description ?? "Telegram error" });
-    }
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Network error";
-    res.status(500).json({ success: false, error: msg });
+  const result = await sendServiceRequestNotification(effectiveTable, type);
+  if (result.ok) {
+    req.log.info({ tableNumber: effectiveTable, type }, "call notification sent");
+    res.json({ success: true });
+    return;
   }
+
+  res.status(500).json({ success: false, error: result.error ?? "Telegram error" });
 });
 
 /* ── TELEGRAM NOTIFICATION ───────────────────────────── */
 router.post("/telegram", async (req: Request, res: Response) => {
-  const token  = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-
-  if (!token || !chatId) {
-    req.log.warn("Telegram not configured — set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID");
-    res.status(503).json({ success: false, error: "Telegram not configured" });
-    return;
-  }
-
   const { masaId, items } = req.body as {
     masaId?: string;
     items?: Array<{ dishId?: string; name?: string; dishName?: string; quantity?: number; unitPrice?: number }>;
@@ -217,44 +198,15 @@ router.post("/telegram", async (req: Request, res: Response) => {
     return;
   }
 
-  const displayMasa = String(masaId).replace(/^masa-/i, "");
-  let total = 0;
-  let text  = `🍺 *Rebel Bar & Bistro — Yeni Sipariş*\n\n`;
-  text     += `📍 Masa: *${displayMasa}*\n\n`;
-  text     += `*Ürünler:*\n`;
-
-  for (const item of items) {
-    const qty  = Number(item.quantity ?? 1);
-    const unit = Number(item.unitPrice ?? 0);
-    const sub  = qty * unit;
-    total += sub;
-    text += `• ${item.dishName ?? item.name ?? item.dishId} ×${qty} — ${sub.toLocaleString("tr-TR")} ₺\n`;
+  const result = await sendOrderNotification(masaId, normalizeOrderItems(items as unknown[]));
+  if (result.ok) {
+    req.log.info({ masaId }, "telegram order notification sent");
+    res.json({ success: true });
+    return;
   }
 
-  text += `\n💰 *Toplam: ${total.toLocaleString("tr-TR")} ₺*`;
-  text += `\n⏰ ${new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}`;
-
-  try {
-    const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ chat_id: chatId, text, parse_mode: "Markdown" }),
-    });
-
-    const tgData = (await tgRes.json()) as { ok: boolean; description?: string };
-
-    if (tgData.ok) {
-      req.log.info({ masaId: displayMasa }, "telegram order notification sent");
-      res.json({ success: true });
-    } else {
-      req.log.error({ description: tgData.description }, "telegram API error");
-      res.status(502).json({ success: false, error: tgData.description ?? "Telegram error" });
-    }
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Network error";
-    req.log.error({ err: msg }, "telegram fetch failed");
-    res.status(500).json({ success: false, error: msg });
-  }
+  req.log.error({ error: result.error, masaId }, "telegram fetch failed");
+  res.status(500).json({ success: false, error: result.error ?? "Telegram error" });
 });
 
 export default router;
