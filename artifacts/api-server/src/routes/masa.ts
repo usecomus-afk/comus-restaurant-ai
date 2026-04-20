@@ -1942,7 +1942,6 @@ function renderPage(masaId: string): string {
   #gsLogoLink:hover{opacity:.9;transform:scale(1.02)}
   #gsLogoLink:active{opacity:.85;transform:scale(.98)}
   #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
-  #gsText{height:30px;width:auto;max-width:180px;object-fit:contain;display:block}
 
   /* ── CAT NAV ── */
   #catNav{
@@ -2274,7 +2273,6 @@ function renderPage(masaId: string): string {
       </a>
     </div>
     <div id="hdrRight">
-      <img id="gsText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
       <button id="ratingBtn">
         <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
