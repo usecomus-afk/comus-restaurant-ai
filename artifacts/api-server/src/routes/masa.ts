@@ -1079,7 +1079,7 @@ function renderPage(masaId: string): string {
   </button>
   <div class="brand-center">
     ${isGunesin
-      ? `<div class="brand-name" style="font-size:15px;letter-spacing:.01em">Güneşin Sofrası</div><div class="brand-sub">Meyhane</div>`
+      ? ``
       : `<div class="brand-name">rebel<span class="brand-accent">.</span></div><div class="brand-sub">Bar &amp; Bistro</div>`
     }
   </div>
