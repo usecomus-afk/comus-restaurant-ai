@@ -1904,7 +1904,7 @@ function renderPage(masaId: string): string {
     --txt:#2B211A;--muted:#7A6756;
     --font-serif:'Playfair Display',serif;
     --font-sans:'Inter','Nunito',sans-serif;
-    --hh:120px;--nh:50px;--bh:122px;
+    --hh:90px;--nh:50px;--bh:92px;
   }
   html,body{height:100%;color:var(--txt);font-family:var(--font-sans);overflow-x:hidden}
   body{
@@ -1938,9 +1938,9 @@ function renderPage(masaId: string): string {
   }
   #gsLogoLink:hover{opacity:.9;transform:scale(1.02)}
   #gsLogoLink:active{opacity:.85;transform:scale(.98)}
-  #gsLogo{height:114px;width:114px;max-width:114px;max-height:114px;object-fit:contain;display:block}
+  #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
-  .gs-brand-name{font-family:var(--font-serif);font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
+  .gs-brand-name{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
   .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
 
   /* ── CAT NAV ── */
@@ -1975,14 +1975,14 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
-    width:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-    padding:6px 10px;background:transparent;border:1.5px solid #D4890A;border-radius:20px;
+    width:auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    padding:4px 8px;background:transparent;border:1px solid #D4890A;border-radius:16px;
     color:#D4890A;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;
     -webkit-tap-highlight-color:transparent;transition:background .15s,opacity .15s;
   }
   #ratingBtn:active{background:#F6ECDE;opacity:.95}
-  .rt-stars{font-size:9px;color:#f5b700;line-height:1;letter-spacing:0}
-  .rt-hint{font-size:9px;font-weight:700;color:#D4890A;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;line-height:1}
+  .rt-stars{font-size:7px;color:#f5b700;line-height:1;letter-spacing:0}
+  .rt-hint{font-size:7px;font-weight:700;color:#D4890A;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap;line-height:1}
 
   /* ── STANDARD CARD ── */
   .gs-std-grid{display:flex;flex-direction:column;gap:12px}
@@ -2042,18 +2042,18 @@ function renderPage(masaId: string): string {
     position:fixed;bottom:0;left:0;right:0;height:var(--bh);
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
     display:flex;flex-direction:column;gap:8px;
-    padding:8px 14px;padding-bottom:max(8px,env(safe-area-inset-bottom));
+    padding:8px;padding-bottom:max(8px,env(safe-area-inset-bottom));
     z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
   }
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
   .bar-btn{
     border-radius:8px;border:none;color:#F4EEE6;
-    font-family:var(--font-sans);font-size:12.5px;font-weight:600;
-    height:40px;display:flex;align-items:center;justify-content:center;gap:5px;
+    font-family:var(--font-sans);font-size:14px;font-weight:600;
+    height:auto;padding:10px 8px;display:flex;align-items:center;justify-content:center;gap:4px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
-  .bar-icon{font-size:13px;line-height:1}
+  .bar-icon{font-size:11px;line-height:1}
   #garsonBtn{background:linear-gradient(180deg,#384D67,#2F435A)}
   #hesapBtn{background:linear-gradient(180deg,#6F4535,#603A2D)}
 
