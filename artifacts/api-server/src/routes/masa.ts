@@ -1924,7 +1924,11 @@ function renderPage(masaId: string): string {
     box-shadow:0 2px 14px rgba(43,33,26,.06);
     backdrop-filter: blur(4px);
   }
-  #hdrLeft,#hdrRight{min-height:1px}
+  #hdrLeft{min-height:1px}
+  #hdrRight{
+    min-height:1px;display:flex;align-items:flex-start;justify-content:flex-end;
+    padding-top:8px;padding-right:8px;
+  }
   #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
   #gsLogoLink{
     display:inline-flex;align-items:center;justify-content:center;
@@ -1971,13 +1975,14 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
-    width:auto;display:flex;align-items:center;justify-content:center;gap:0;
-    padding:9px 18px;background:rgba(255,255,255,.75);border:1.5px solid var(--gold);border-radius:24px;
-    color:#8A6740;font-weight:600;letter-spacing:.08em;cursor:pointer;
-    -webkit-tap-highlight-color:transparent;transition:background .15s;
+    width:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    padding:6px 10px;background:transparent;border:1.5px solid #D4890A;border-radius:20px;
+    color:#D4890A;font-size:9px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s,opacity .15s;
   }
   #ratingBtn:active{background:#F6ECDE;opacity:.95}
-  .rt-hint{font-size:10.5px;font-weight:600;color:#8A6740;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+  .rt-stars{font-size:9px;color:#f5b700;line-height:1;letter-spacing:0}
+  .rt-hint{font-size:9px;font-weight:700;color:#D4890A;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;line-height:1}
 
   /* ── STANDARD CARD ── */
   .gs-std-grid{display:flex;flex-direction:column;gap:12px}
@@ -2040,7 +2045,6 @@ function renderPage(masaId: string): string {
     padding:8px 14px;padding-bottom:max(8px,env(safe-area-inset-bottom));
     z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
   }
-  #barRatingRow{width:100%;display:flex;justify-content:center}
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
   .bar-btn{
     border-radius:8px;border:none;color:#F4EEE6;
@@ -2226,7 +2230,12 @@ function renderPage(masaId: string): string {
         <div class="gs-brand-sub">Meyhane</div>
       </div>
     </div>
-    <div id="hdrRight"></div>
+    <div id="hdrRight">
+      <button id="ratingBtn">
+        <span class="rt-stars">★★★★★</span>
+        <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
+      </button>
+    </div>
   </header>
 
   <!-- CATEGORY NAV -->
@@ -2254,11 +2263,6 @@ function renderPage(masaId: string): string {
 
   <!-- BOTTOM BAR -->
   <div id="bar">
-    <div id="barRatingRow">
-      <button id="ratingBtn">
-        <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
-      </button>
-    </div>
     <div id="barActions">
       <button id="garsonBtn" class="bar-btn"><span class="bar-icon">🖐️</span><span>Garson Çağır</span></button>
       <button id="hesapBtn"  class="bar-btn"><span class="bar-icon">🧾</span><span>Hesap İste</span></button>
