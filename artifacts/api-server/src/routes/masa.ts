@@ -1926,8 +1926,8 @@ function renderPage(masaId: string): string {
   }
   #hdrLeft{min-height:1px}
   #hdrRight{
-    min-height:1px;display:flex;align-items:flex-start;justify-content:flex-end;
-    padding-top:8px;padding-right:8px;
+    min-height:1px;display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-start;
+    gap:4px;padding-top:8px;padding-right:8px;
   }
   #hdrCenter{
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
@@ -2265,9 +2265,9 @@ function renderPage(masaId: string): string {
       <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
         <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
       </a>
-      <img id="gsText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
     </div>
     <div id="hdrRight">
+      <img id="gsText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
       <button id="ratingBtn">
         <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
