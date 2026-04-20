@@ -1964,7 +1964,7 @@ function renderPage(masaId: string): string {
   }
   .gs-section{margin-bottom:34px}
   .gs-cat-title{
-    font-family:var(--font-serif);font-size:22px;font-weight:600;
+    font-family:var(--font-serif);font-size:22px;font-weight:500;
     color:var(--pri);margin-bottom:14px;padding-bottom:8px;
     border-bottom:1px solid rgba(110,65,49,.18);
   }
@@ -1984,7 +1984,7 @@ function renderPage(masaId: string): string {
   .gs-std-card{
     background:var(--card);border:none;border-radius:8px;
     padding:15px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
-    box-shadow:0 6px 22px rgba(43,33,26,.06);
+    box-shadow:0 5px 16px rgba(43,33,26,.045);
   }
   .std-body{flex:1;min-width:0}
   .std-name{font-family:var(--font-serif);font-size:17px;font-weight:600;color:var(--txt);margin-bottom:5px;line-height:1.3}
@@ -2005,7 +2005,7 @@ function renderPage(masaId: string): string {
     background:linear-gradient(135deg,#FFFCF7,#F8F0E3);
     border:none;border-radius:10px;
     padding:16px 16px 54px;position:relative;overflow:hidden;
-    box-shadow:0 7px 24px rgba(43,33,26,.08);
+    box-shadow:0 6px 18px rgba(43,33,26,.06);
   }
   .fix-badge{
     display:inline-block;background:#B08A57;color:#fff;
@@ -2019,7 +2019,7 @@ function renderPage(masaId: string): string {
 
   /* ── RAKI CARD ── */
   .gs-raki-grid{display:flex;flex-direction:column;gap:12px}
-  .gs-raki-card{background:var(--card);border:none;border-radius:8px;padding:15px 16px;box-shadow:0 6px 22px rgba(43,33,26,.06)}
+  .gs-raki-card{background:var(--card);border:none;border-radius:8px;padding:15px 16px;box-shadow:0 5px 16px rgba(43,33,26,.045)}
   .raki-name{font-family:var(--font-serif);font-size:17px;font-weight:600;color:var(--txt);margin-bottom:10px}
   .raki-prices{display:flex;flex-direction:column;gap:7px}
   .rp-btn{
@@ -2035,10 +2035,10 @@ function renderPage(masaId: string): string {
   /* ── BOTTOM BAR ── */
   #bar{
     position:fixed;bottom:0;left:0;right:0;height:var(--bh);
-    background:#F8F2E8;border-top:1px solid rgba(110,65,49,.1);
+    background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
     display:flex;flex-direction:column;gap:8px;
     padding:8px 14px;padding-bottom:max(8px,env(safe-area-inset-bottom));
-    z-index:200;box-shadow:0 -4px 18px rgba(43,33,26,.08);
+    z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
   }
   #barRatingRow{width:100%;display:flex;justify-content:center}
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
@@ -2050,8 +2050,8 @@ function renderPage(masaId: string): string {
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
   .bar-icon{font-size:13px;line-height:1}
-  #garsonBtn{background:linear-gradient(180deg,#41566F,#36485E)}
-  #hesapBtn{background:linear-gradient(180deg,#7A4D3B,#6E4131)}
+  #garsonBtn{background:linear-gradient(180deg,#384D67,#2F435A)}
+  #hesapBtn{background:linear-gradient(180deg,#6F4535,#603A2D)}
 
   /* ── FABS ── */
   #cartFab{
