@@ -2047,7 +2047,7 @@ function renderPage(masaId: string): string {
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
     display:flex;flex-direction:column;gap:2px;
     padding:4px 6px;padding-bottom:max(4px,env(safe-area-inset-bottom));
-    z-index:220;box-shadow:0 -6px 18px rgba(43,33,26,.11);
+    z-index:360;box-shadow:0 -6px 18px rgba(43,33,26,.11);
     pointer-events:auto;
   }
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;pointer-events:auto}
@@ -2058,6 +2058,11 @@ function renderPage(masaId: string): string {
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
     pointer-events:auto;position:relative;z-index:1;
   }
+  /* Keep bar tappable above generic overlays; hide it only while a sheet is open */
+  #cartOverlay.v ~ #bar,
+  #aiOverlay.v ~ #bar,
+  #ratingOverlay.v ~ #bar,
+  #feedbackOverlay.v ~ #bar { pointer-events:none; opacity:0; }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
   .bar-icon{font-size:11px;line-height:1}
   #garsonBtn{background:linear-gradient(180deg,#384D67,#2F435A)}
