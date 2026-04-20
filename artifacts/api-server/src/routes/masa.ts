@@ -1935,10 +1935,6 @@ function renderPage(masaId: string): string {
     gap: 4px; padding-right: 14px;
   }
 
-  #gunesinText {
-    height: 42px; width: auto; object-fit: contain;
-  }
-
   #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
 
   /* ── CAT NAV ── */
@@ -2264,7 +2260,6 @@ function renderPage(masaId: string): string {
       <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
     </div>
     <div id="hdrRight">
-      <img id="gunesinText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
       <button id="ratingBtn">
         <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
