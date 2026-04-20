@@ -2047,7 +2047,7 @@ function renderPage(masaId: string): string {
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
     display:flex !important;flex-direction:column;gap:0;
     padding:0;margin:0;
-    z-index:620;box-shadow:0 -6px 18px rgba(43,33,26,.11);
+    z-index:99999 !important;box-shadow:0 -6px 18px rgba(43,33,26,.11);
     visibility:visible !important;
     pointer-events:auto;
   }
@@ -2073,10 +2073,11 @@ function renderPage(masaId: string): string {
     background:var(--acc);border:none;
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;box-shadow:0 3px 12px rgba(232,107,46,.45);z-index:140;
-    pointer-events:auto;touch-action:manipulation;
+    pointer-events:none;touch-action:manipulation;
     -webkit-tap-highlight-color:transparent;
   }
-  #cartBadge{font-size:20px;line-height:1;pointer-events:none;user-select:none}
+  #cartFab > span{pointer-events:auto}
+  #cartBadge{font-size:20px;line-height:1;pointer-events:auto;user-select:none}
   #aiFab{
     position:fixed;bottom:calc(var(--bh) + 74px);right:16px;
     width:52px;height:52px;border-radius:50%;
@@ -2087,8 +2088,12 @@ function renderPage(masaId: string): string {
     cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.3);z-index:140;
     font-size:10px;font-weight:800;color:#fff;line-height:1.2;text-align:center;
     gap:1px;-webkit-tap-highlight-color:transparent;
-    pointer-events:auto;touch-action:manipulation;
+    pointer-events:none;touch-action:manipulation;
   }
+  #aiFab > span{pointer-events:auto}
+  /* Floating FAB wrappers should not block taps outside icon glyphs */
+  #cartFab,#aiFab{pointer-events:none}
+  #cartFab > *,#aiFab > *{pointer-events:auto}
 
   /* ── TOAST ── */
   #toast{
@@ -2275,14 +2280,6 @@ function renderPage(masaId: string): string {
     <img id="gsQuote" src="/assets/img/gunesin-quote.png" alt="Güneşin Sofrası alıntı" loading="lazy">
   </div>
 
-  <!-- BOTTOM BAR -->
-  <div id="bar">
-    <div id="barActions">
-      <button id="garsonBtn" class="bar-btn"><span class="bar-icon">🖐️</span><span>Garson Çağır</span></button>
-      <button id="hesapBtn"  class="bar-btn"><span class="bar-icon">🧾</span><span>Hesap İste</span></button>
-    </div>
-  </div>
-
   <!-- CART OVERLAY + DRAWER -->
   <div id="cartOverlay"></div>
   <aside id="cartDrawer" role="dialog" aria-label="Sepet">
@@ -2365,6 +2362,13 @@ function renderPage(masaId: string): string {
 
   <script>window.GS_TABLE = ${JSON.stringify(displayN)};</script>
   <script src="/assets/gunesin-menu.js?v=20260420-01" defer></script>
+  <!-- BOTTOM BAR -->
+  <div id="bar">
+    <div id="barActions">
+      <button id="garsonBtn" class="bar-btn"><span class="bar-icon">🖐️</span><span>Garson Çağır</span></button>
+      <button id="hesapBtn"  class="bar-btn"><span class="bar-icon">🧾</span><span>Hesap İste</span></button>
+    </div>
+  </div>
   </body>
   </html>`;
   }
