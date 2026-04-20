@@ -1904,7 +1904,7 @@ function renderPage(masaId: string): string {
     --txt:#2B211A;--muted:#7A6756;
     --font-serif:'Playfair Display',serif;
     --font-sans:'Inter','Nunito',sans-serif;
-    --hh:130px;--nh:50px;--bh:92px;
+    --hh:130px;--nh:50px;--bh:78px;
   }
   html,body{height:100%;color:var(--txt);font-family:var(--font-sans);overflow-x:hidden}
   body{
@@ -2045,16 +2045,18 @@ function renderPage(masaId: string): string {
   #bar{
     position:fixed;bottom:0;left:0;right:0;height:var(--bh);
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
-    display:flex;flex-direction:column;gap:8px;
-    padding:8px;padding-bottom:max(8px,env(safe-area-inset-bottom));
-    z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
+    display:flex;flex-direction:column;gap:2px;
+    padding:4px 6px;padding-bottom:max(4px,env(safe-area-inset-bottom));
+    z-index:220;box-shadow:0 -6px 18px rgba(43,33,26,.11);
+    pointer-events:auto;
   }
-  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;pointer-events:auto}
   .bar-btn{
     border-radius:8px;border:none;color:#F4EEE6;
     font-family:var(--font-sans);font-size:14px;font-weight:600;
-    height:auto;padding:10px 8px;display:flex;align-items:center;justify-content:center;gap:4px;
+    height:40px;padding:6px 6px;display:flex;align-items:center;justify-content:center;gap:4px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
+    pointer-events:auto;position:relative;z-index:1;
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
   .bar-icon{font-size:11px;line-height:1}
