@@ -2068,20 +2068,26 @@ function renderPage(masaId: string): string {
   #cartFab{
     position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
     width:50px;height:50px;border-radius:50%;
+    max-width:50px;max-height:50px;min-width:0;min-height:0;
+    padding:0;margin:0;overflow:hidden;contain:layout paint;
     background:var(--acc);border:none;
     display:flex;align-items:center;justify-content:center;
-    cursor:pointer;box-shadow:0 3px 12px rgba(232,107,46,.45);z-index:150;
+    cursor:pointer;box-shadow:0 3px 12px rgba(232,107,46,.45);z-index:140;
+    pointer-events:auto;touch-action:manipulation;
     -webkit-tap-highlight-color:transparent;
   }
   #cartBadge{font-size:20px;line-height:1;pointer-events:none;user-select:none}
   #aiFab{
     position:fixed;bottom:calc(var(--bh) + 74px);right:16px;
     width:52px;height:52px;border-radius:50%;
+    max-width:52px;max-height:52px;min-width:0;min-height:0;
+    padding:0;margin:0;overflow:hidden;contain:layout paint;
     background:#1c1c3e;border:1.5px solid #3d3d7a;
     display:flex;flex-direction:column;align-items:center;justify-content:center;
-    cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.3);z-index:150;
+    cursor:pointer;box-shadow:0 3px 14px rgba(0,0,0,.3);z-index:140;
     font-size:10px;font-weight:800;color:#fff;line-height:1.2;text-align:center;
     gap:1px;-webkit-tap-highlight-color:transparent;
+    pointer-events:auto;touch-action:manipulation;
   }
 
   /* ── TOAST ── */
