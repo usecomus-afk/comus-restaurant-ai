@@ -116,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeCart = () => { $('cartOverlay').classList.remove('v'); $('cartDrawer').classList.remove('open'); };
 
   $('cartFab').addEventListener('click', openCart);
+  $('cartFab').addEventListener('touchstart', e => { e.preventDefault(); openCart(); }, { passive: false });
   $('cartClose').addEventListener('click', closeCart);
   $('cartOverlay').addEventListener('click', closeCart);
 
@@ -140,8 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try { await post('/api/order/notify', { restaurantId: RID, tableNumber: TABLE, type }); }
     catch (e) { console.error('[GS] notify', e); }
   }
-  $('garsonBtn').addEventListener('click', () => notify('garson'));
-  $('hesapBtn').addEventListener('click',  () => notify('hesap'));
+  const onGarson = e => { if (e && e.cancelable) e.preventDefault(); notify('garson'); };
+  const onHesap  = e => { if (e && e.cancelable) e.preventDefault(); notify('hesap'); };
+  $('garsonBtn').addEventListener('click', onGarson);
+  $('hesapBtn').addEventListener('click',  onHesap);
+  $('garsonBtn').addEventListener('touchstart', onGarson, { passive: false });
+  $('hesapBtn').addEventListener('touchstart',  onHesap,  { passive: false });
 
   /* ── 7. AI GURME DRAWER ── */
   function aiAppend(role, text) {
@@ -193,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   $('aiFab').addEventListener('click', openAi);
+  $('aiFab').addEventListener('touchstart', e => { e.preventDefault(); openAi(); }, { passive: false });
   $('aiClose').addEventListener('click', closeAi);
   $('aiOverlay').addEventListener('click', closeAi);
   $('aiSend').addEventListener('click', sendAiMsg);
@@ -248,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeFeedback = () => { $('feedbackOverlay').classList.remove('v'); $('feedbackModal').classList.remove('open'); };
 
   $('ratingBtn').addEventListener('click', openRating);
+  $('ratingBtn').addEventListener('touchstart', e => { e.preventDefault(); openRating(); }, { passive: false });
   $('ratingClose').addEventListener('click', closeRating);
   $('ratingOverlay').addEventListener('click', closeRating);
 

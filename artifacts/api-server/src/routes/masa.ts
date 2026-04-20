@@ -1929,7 +1929,10 @@ function renderPage(masaId: string): string {
     min-height:1px;display:flex;align-items:flex-start;justify-content:flex-end;
     padding-top:8px;padding-right:8px;
   }
-  #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+  #hdrCenter{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    position:relative;z-index:1;opacity:1;
+  }
   #gsLogoLink{
     display:inline-flex;align-items:center;justify-content:center;
     border-radius:12px;cursor:pointer;
@@ -2050,6 +2053,10 @@ function renderPage(masaId: string): string {
     z-index:99999 !important;box-shadow:0 -6px 18px rgba(43,33,26,.11);
     visibility:visible !important;
     pointer-events:auto;
+    opacity:0.999 !important;
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+    contain:layout style paint;
     -webkit-transform:translate3d(0,0,0);
     transform:translate3d(0,0,0);
     isolation:isolate;
@@ -2059,8 +2066,8 @@ function renderPage(masaId: string): string {
     border-radius:0;border:none;color:#F4EEE6;
     font-family:var(--font-sans);font-size:14px;font-weight:600;
     height:100%;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:4px;
-    cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
-    pointer-events:auto;position:relative;z-index:2;
+    cursor:pointer !important;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
+    pointer-events:auto !important;position:relative;z-index:10 !important;opacity:1 !important;
     -webkit-transform:translate3d(0,0,0);
     transform:translate3d(0,0,0);
   }
@@ -2099,6 +2106,16 @@ function renderPage(masaId: string): string {
   /* Floating FAB wrappers should not block taps outside icon glyphs */
   #cartFab,#aiFab{pointer-events:none}
   #cartFab > *,#aiFab > *{pointer-events:auto}
+
+  @supports (-webkit-touch-callout: none) {
+    #bar, .bar-btn, #barActions, .barActions {
+      opacity: 0.999 !important;
+      -webkit-transform: translate3d(0,0,0) !important;
+      transform: translate3d(0,0,0) !important;
+      isolation: isolate !important;
+      contain: layout style paint !important;
+    }
+  }
 
   /* ── TOAST ── */
   #toast{
