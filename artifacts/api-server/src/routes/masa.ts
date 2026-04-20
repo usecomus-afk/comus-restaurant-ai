@@ -1942,7 +1942,7 @@ function renderPage(masaId: string): string {
   #gsLogoLink:hover{opacity:.9;transform:scale(1.02)}
   #gsLogoLink:active{opacity:.85;transform:scale(.98)}
   #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
-  #gsText{height:30px;width:auto;max-width:180px;object-fit:contain;display:block}
+  #gunesinText{height:30px;width:auto;max-width:180px;object-fit:contain;display:block}
 
   /* ── CAT NAV ── */
   #catNav{
@@ -2262,12 +2262,10 @@ function renderPage(masaId: string): string {
   <header id="hdr">
     <div id="hdrLeft"></div>
     <div id="hdrCenter">
-      <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
-        <img id="gsLogo" src="/assets/img/gunesin-sun.png" alt="Güneşin Sofrası" loading="eager">
-      </a>
-      <img id="gsText" src="/assets/img/gunesin-text.png" alt="Güneşin Sofrası Meyhane" loading="eager">
+      <img id="gsLogo" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası">
     </div>
     <div id="hdrRight">
+      <img id="gunesinText" src="/assets/img/gunesin-text.png" alt="Güneşin">
       <button id="ratingBtn">
         <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
