@@ -2050,6 +2050,9 @@ function renderPage(masaId: string): string {
     z-index:99999 !important;box-shadow:0 -6px 18px rgba(43,33,26,.11);
     visibility:visible !important;
     pointer-events:auto;
+    -webkit-transform:translate3d(0,0,0);
+    transform:translate3d(0,0,0);
+    isolation:isolate;
   }
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;height:100%;pointer-events:auto}
   .bar-btn{
@@ -2058,6 +2061,8 @@ function renderPage(masaId: string): string {
     height:100%;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:4px;
     cursor:pointer;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
     pointer-events:auto;position:relative;z-index:2;
+    -webkit-transform:translate3d(0,0,0);
+    transform:translate3d(0,0,0);
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
   .bar-icon{font-size:11px;line-height:1}
