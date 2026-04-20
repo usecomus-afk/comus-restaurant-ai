@@ -1926,8 +1926,8 @@ function renderPage(masaId: string): string {
   }
   #hdrLeft{min-height:1px}
   #hdrRight{
-    min-height:1px;display:flex;align-items:flex-start;justify-content:flex-end;
-    padding-top:8px;padding-right:8px;
+    min-height:1px;display:flex;align-items:flex-end;justify-content:flex-end;
+    padding-top:0;padding-right:12px;padding-bottom:6px;
   }
   #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
   #gsLogoLink{
@@ -2042,7 +2042,7 @@ function renderPage(masaId: string): string {
     position:fixed;bottom:0;left:0;right:0;height:var(--bh);
     background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
     display:flex;flex-direction:column;gap:8px;
-    padding:8px;padding-bottom:max(8px,env(safe-area-inset-bottom));
+    padding:4px 8px 0 8px;
     z-index:200;box-shadow:0 -6px 18px rgba(43,33,26,.11);
   }
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
