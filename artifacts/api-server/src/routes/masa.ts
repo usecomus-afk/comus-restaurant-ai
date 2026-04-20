@@ -1938,7 +1938,7 @@ function renderPage(masaId: string): string {
   }
   #gsLogoLink:hover{opacity:.9;transform:scale(1.02)}
   #gsLogoLink:active{opacity:.85;transform:scale(.98)}
-  #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
+  #gsLogo{height:110px;width:110px;max-width:110px;max-height:110px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
   .gs-brand-name{font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
   .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
@@ -2223,7 +2223,7 @@ function renderPage(masaId: string): string {
     <div id="hdrLeft"></div>
     <div id="hdrCenter">
       <a id="gsLogoLink" href="https://www.instagram.com/gunesinsofrasimeyhane?igsh=MWRib2w4OGNuMmhtZg==" target="_blank" rel="noopener noreferrer" aria-label="Güneşin Sofrası Instagram">
-        <img id="gsLogo" src="/assets/img/gunesin-logo.png" alt="Güneşin Sofrası" loading="eager">
+        <img id="gsLogo" src="/img/gunesin-logo-v2.png" alt="Güneşin Sofrası" loading="eager">
       </a>
       <div id="gsBrand">
         <div class="gs-brand-name">Güneşin Sofrası</div>
