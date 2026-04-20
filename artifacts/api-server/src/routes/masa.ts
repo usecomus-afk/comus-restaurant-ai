@@ -1916,7 +1916,7 @@ function renderPage(masaId: string): string {
   }
   #hdrLeft,#hdrRight{min-height:1px}
   #hdrCenter{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-  #gsLogo{height:100px;width:100px;max-width:100px;max-height:100px;object-fit:contain;display:block}
+  #gsLogo{height:110px;width:110px;max-width:110px;max-height:110px;object-fit:contain;display:block}
   #gsBrand{display:flex;flex-direction:column;align-items:center;gap:2px}
   .gs-brand-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--pri);letter-spacing:.04em;text-align:center}
   .gs-brand-sub{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center}
@@ -1953,13 +1953,12 @@ function renderPage(masaId: string): string {
 
   /* ── RATING BUTTON ── */
   #ratingBtn{
-    width:100%;display:flex;align-items:center;justify-content:center;gap:8px;
+    width:auto;display:flex;align-items:center;justify-content:center;gap:0;
     padding:10px;background:transparent;border:2px solid #D4890A;border-radius:24px;
     color:#D4890A;font-weight:700;letter-spacing:1px;cursor:pointer;
     -webkit-tap-highlight-color:transparent;transition:background .15s;
   }
   #ratingBtn:active{background:#FFF3D0;opacity:.9}
-  .rt-stars{font-size:14px;letter-spacing:1px;color:#f5b700;line-height:1}
   .rt-hint{font-size:11px;font-weight:700;color:#D4890A;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 
   /* ── STANDARD CARD ── */
@@ -2023,7 +2022,7 @@ function renderPage(masaId: string): string {
     padding:8px 14px;padding-bottom:max(8px,env(safe-area-inset-bottom));
     z-index:200;box-shadow:0 -2px 10px rgba(44,24,16,.07);
   }
-  #barRatingRow{width:100%}
+  #barRatingRow{width:100%;display:flex;justify-content:center}
   #barActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
   .bar-btn{
     border-radius:10px;border:none;color:#fff;
@@ -2236,7 +2235,6 @@ function renderPage(masaId: string): string {
   <div id="bar">
     <div id="barRatingRow">
       <button id="ratingBtn">
-        <span class="rt-stars">★★★★★</span>
         <span class="rt-hint">DENEYİMİNİZİ PAYLAŞIN</span>
       </button>
     </div>
