@@ -1904,7 +1904,8 @@ function renderPage(masaId: string): string {
     --txt:#2B211A;--muted:#7A6756;
     --font-serif:'Playfair Display',serif;
     --font-sans:'Inter','Nunito',sans-serif;
-    --hh:130px;--nh:50px;--bh:60px;
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+    --hh:108px;--nh:52px;--bh:74px;
   }
   html,body{height:100%;color:var(--txt);font-family:var(--font-sans);overflow-x:hidden}
   body{
@@ -1916,33 +1917,51 @@ function renderPage(masaId: string): string {
   }
 
   /* ── HEADER ── */
-  #hdr {
-    position: fixed; top: 0; left: 0; right: 0; height: var(--hh);
-    background: #fff; border-bottom: 1px solid var(--cb);
-    display: grid; grid-template-columns: 1fr auto 1fr;
-    align-items: center; padding: 8px 0; z-index: 200;
-    box-shadow: 0 1px 8px rgba(44,24,16,.07);
+  #hdr{
+    position:fixed;top:0;left:0;right:0;height:var(--hh);
+    background:rgba(255,255,255,.95);border-bottom:1px solid var(--cb);
+    display:grid;grid-template-columns:72px 1fr auto;align-items:center;
+    padding:10px 14px;z-index:900;
+    box-shadow:0 2px 12px rgba(44,24,16,.07);
+    backdrop-filter:blur(8px);
+  }
+  #hdrLeft{visibility:hidden}
+  #hdrCenter{
+    display:flex;align-items:center;justify-content:center;
+  }
+  #hdrRight{
+    display:flex;align-items:center;justify-content:flex-end;
+  }
+  #gsLogo{
+    width:auto;height:auto;max-height:76px;max-width:128px;
+    object-fit:contain;display:block;
+  }
+  #ratingBtn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:10px 14px;background:#fff;border:1.5px solid rgba(184,141,86,.55);
+    border-radius:999px;color:#8A6740;font-size:11px;font-weight:700;letter-spacing:.06em;
+    cursor:pointer;transition:all .15s ease;-webkit-tap-highlight-color:transparent;
+    box-shadow:0 1px 6px rgba(44,24,16,.06);
+  }
+  #ratingBtn:hover{background:#FFFBF4}
+  #ratingBtn:active{background:#F6ECDE;transform:translateY(1px)}
+  .rt-stars{font-size:12px;color:#F3B21C;letter-spacing:0}
+  .rt-hint{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+
+  /* ── CONTENT LAYOUT ── */
+  #contentRoot{
+    position:fixed;left:0;right:0;
+    top:var(--hh);bottom:calc(var(--bh) + var(--safe-bottom));
+    display:flex;flex-direction:column;min-height:0;
+    z-index:10;
   }
 
-  #hdrLeft { visibility: hidden; }
-
-  #hdrCenter {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-  }
-
-  #hdrRight {
-    display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
-    gap: 4px; padding-right: 14px;
-  }
-
-  #gsLogo{height:75px;width:75px;max-width:75px;max-height:75px;object-fit:contain;display:block}
-
-  /* ── CAT NAV ── */
   #catNav{
-    position:fixed;top:var(--hh);left:0;right:0;height:var(--nh);
+    position:sticky;top:0;left:0;right:0;height:var(--nh);
     background:#FBF6EE;border-bottom:1px solid rgba(110,65,49,.08);
     overflow-x:auto;white-space:nowrap;display:flex;align-items:center;gap:8px;padding:0 16px;
-    scrollbar-width:none;-webkit-overflow-scrolling:touch;z-index:100;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;z-index:30;
+    flex:0 0 var(--nh);
   }
   #catNav::-webkit-scrollbar{display:none}
   .gs-pill{
@@ -1955,10 +1974,10 @@ function renderPage(masaId: string): string {
 
   /* ── MAIN CONTENT ── */
   #menuContent{
-    margin-top:calc(var(--hh) + var(--nh));
-    padding:22px 16px 32px;
-    height:calc(100dvh - var(--hh) - var(--nh) - var(--bh));
+    flex:1;min-height:0;
+    padding:20px 16px calc(26px + var(--safe-bottom));
     overflow-y:auto;-webkit-overflow-scrolling:touch;
+    scroll-padding-top:14px;
   }
   .gs-section{margin-bottom:34px}
   .gs-cat-title{
@@ -1967,23 +1986,13 @@ function renderPage(masaId: string): string {
     border-bottom:1px solid rgba(110,65,49,.18);
   }
 
-  /* ── RATING BUTTON ── */
-  #ratingBtn {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 10px 16px; background: transparent; border: 2px solid var(--gold);
-    border-radius: 24px; color: var(--gold); font-weight: 700; letter-spacing: 1px;
-    cursor: pointer; transition: all .15s;
+  #gsQuoteWrap{
+    padding:2px 2px 18px;
+    text-align:center;
   }
-
-  #ratingBtn:active { background: #FFF3D0; opacity: 0.9; }
-
-  .rt-stars { font-size: 13px; color: #f5b700; }
-  .rt-hint { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
-
-  #gsQuoteWrap{padding:16px 20px;background:var(--bg);text-align:center}
   #gsQuote{
     max-width:90%;width:auto;height:auto;max-height:100px;object-fit:contain;
-    display:block;margin:0 auto;opacity:.85;
+    display:block;margin:0 auto;opacity:.82;
   }
 
   /* ── STANDARD CARD ── */
@@ -2041,14 +2050,15 @@ function renderPage(masaId: string): string {
 
   /* ── BOTTOM BAR ── */
   #bar{
-    position:fixed;bottom:0;left:0;right:0;height:60px;
-    background:#F2EBDD;border-top:1px solid rgba(110,65,49,.14);
-    display:flex !important;flex-direction:column;gap:0;
-    padding:0;margin:0;
-    z-index:99999 !important;box-shadow:0 -6px 18px rgba(43,33,26,.11);
+    position:fixed;bottom:0;left:0;right:0;
+    height:calc(var(--bh) + var(--safe-bottom));
+    background:rgba(242,235,221,.95);border-top:1px solid rgba(110,65,49,.14);
+    display:flex !important;align-items:center;
+    padding:10px 12px calc(10px + var(--safe-bottom));margin:0;
+    z-index:99999 !important;box-shadow:0 -8px 20px rgba(43,33,26,.11);
     visibility:visible !important;
-    pointer-events:auto;
-    opacity:0.999 !important;
+    pointer-events:auto !important;
+    opacity:1 !important;
     -webkit-backface-visibility:hidden;
     backface-visibility:hidden;
     contain:layout style paint;
@@ -2056,24 +2066,27 @@ function renderPage(masaId: string): string {
     transform:translate3d(0,0,0);
     isolation:isolate;
   }
-  #barActions{display:grid;grid-template-columns:1fr 1fr;gap:0;width:100%;height:100%;pointer-events:auto}
+  #barActions{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;
+    width:100%;height:100%;pointer-events:auto !important;
+  }
   .bar-btn{
-    border-radius:0;border:none;color:#F4EEE6;
-    font-family:var(--font-sans);font-size:14px;font-weight:600;
-    height:100%;padding:0 8px;display:flex;align-items:center;justify-content:center;gap:4px;
+    border-radius:12px;border:none;color:#F4EEE6;
+    font-family:var(--font-sans);font-size:13px;font-weight:600;
+    height:100%;padding:0 10px;display:flex;align-items:center;justify-content:center;gap:8px;
     cursor:pointer !important;-webkit-tap-highlight-color:transparent;transition:opacity .15s,transform .15s;
     pointer-events:auto !important;position:relative;z-index:10 !important;opacity:1 !important;
     -webkit-transform:translate3d(0,0,0);
     transform:translate3d(0,0,0);
   }
   .bar-btn:active{opacity:.9;transform:translateY(1px)}
-  .bar-icon{font-size:11px;line-height:1}
+  .bar-icon{width:16px;height:16px;display:block;flex-shrink:0}
   #garsonBtn{background:linear-gradient(180deg,#384D67,#2F435A)}
   #hesapBtn{background:linear-gradient(180deg,#6F4535,#603A2D)}
 
   /* ── FABS ── */
   #cartFab{
-    position:fixed;bottom:calc(var(--bh) + 14px);right:16px;
+    position:fixed;bottom:calc(var(--bh) + var(--safe-bottom) + 14px);right:16px;
     width:50px;height:50px;border-radius:50%;
     max-width:50px;max-height:50px;min-width:0;min-height:0;
     padding:0;margin:0;overflow:hidden;contain:layout paint;
@@ -2086,7 +2099,7 @@ function renderPage(masaId: string): string {
   #cartFab > span{pointer-events:auto}
   #cartBadge{font-size:20px;line-height:1;pointer-events:auto;user-select:none}
   #aiFab{
-    position:fixed;bottom:calc(var(--bh) + 74px);right:16px;
+    position:fixed;bottom:calc(var(--bh) + var(--safe-bottom) + 74px);right:16px;
     width:52px;height:52px;border-radius:50%;
     max-width:52px;max-height:52px;min-width:0;min-height:0;
     padding:0;margin:0;overflow:hidden;contain:layout paint;
@@ -2114,7 +2127,7 @@ function renderPage(masaId: string): string {
 
   /* ── TOAST ── */
   #toast{
-    position:fixed;bottom:calc(var(--bh) + 142px);left:50%;
+    position:fixed;bottom:calc(var(--bh) + var(--safe-bottom) + 142px);left:50%;
     transform:translateX(-50%) translateY(16px);
     background:#2C1810;color:#FDF6EC;
     padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;
@@ -2249,6 +2262,18 @@ function renderPage(masaId: string): string {
     cursor:pointer;margin-top:4px;-webkit-tap-highlight-color:transparent;
   }
   #feedbackSubmit:disabled{opacity:.35;cursor:not-allowed}
+
+  @media (max-width: 480px){
+    :root{--hh:98px;--nh:48px;--bh:70px}
+    #hdr{padding:8px 10px;grid-template-columns:56px 1fr auto}
+    #gsLogo{max-height:66px}
+    #ratingBtn{padding:8px 10px;gap:6px}
+    .rt-stars{font-size:11px}
+    .rt-hint{font-size:9px}
+    #menuContent{padding:16px 12px calc(22px + var(--safe-bottom))}
+    #bar{padding:8px 10px calc(8px + var(--safe-bottom))}
+    .bar-btn{font-size:12px;gap:6px}
+  }
   </style>
   </head>
   <body>
@@ -2267,14 +2292,17 @@ function renderPage(masaId: string): string {
     </div>
   </header>
 
-  <!-- CATEGORY NAV -->
-  <nav id="catNav" aria-label="Menü kategorileri">
-    ${navPills}
-  </nav>
-
-  <!-- MAIN CONTENT -->
-  <main id="menuContent">
-    ${menuSections}
+  <!-- CONTENT -->
+  <main id="contentRoot">
+    <nav id="catNav" aria-label="Menü kategorileri">
+      ${navPills}
+    </nav>
+    <section id="menuContent">
+      <div id="gsQuoteWrap">
+        <img id="gsQuote" src="/assets/img/gunesin-quote.png" alt="Güneşin Sofrası alıntı" loading="lazy">
+      </div>
+      ${menuSections}
+    </section>
   </main>
 
   <!-- TOAST -->
@@ -2289,10 +2317,6 @@ function renderPage(masaId: string): string {
   <button id="aiFab" aria-label="AI Gurme">
     <span>AI</span><span>Gurme</span>
   </button>
-
-  <div id="gsQuoteWrap">
-    <img id="gsQuote" src="/assets/img/gunesin-quote.png" alt="Güneşin Sofrası alıntı" loading="lazy">
-  </div>
 
   <!-- CART OVERLAY + DRAWER -->
   <div id="cartOverlay"></div>
@@ -2377,12 +2401,25 @@ function renderPage(masaId: string): string {
   <script>window.GS_TABLE = ${JSON.stringify(displayN)};</script>
   <script src="/assets/gunesin-menu.js?v=20260420-01" defer></script>
   <!-- BOTTOM BAR -->
-  <div id="bar">
+  <footer id="bar">
     <div id="barActions">
-      <button id="garsonBtn" class="bar-btn"><span class="bar-icon">🖐️</span><span>Garson Çağır</span></button>
-      <button id="hesapBtn"  class="bar-btn"><span class="bar-icon">🧾</span><span>Hesap İste</span></button>
+      <button id="garsonBtn" class="bar-btn">
+        <svg class="bar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 11V5a2 2 0 0 1 4 0v6"/>
+          <path d="M11 11V4a2 2 0 1 1 4 0v7"/>
+          <path d="M15 11V6a2 2 0 1 1 4 0v8c0 4-3 7-7 7h-1c-4 0-7-3-7-7V9a2 2 0 1 1 4 0v2"/>
+        </svg>
+        <span>Garson Çağır</span>
+      </button>
+      <button id="hesapBtn"  class="bar-btn">
+        <svg class="bar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 3h12a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2-3-2V5a2 2 0 0 1 2-2z"/>
+          <path d="M9 8h6M9 12h6"/>
+        </svg>
+        <span>Hesap İste</span>
+      </button>
     </div>
-  </div>
+  </footer>
   </body>
   </html>`;
   }
